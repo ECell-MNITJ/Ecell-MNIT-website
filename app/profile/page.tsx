@@ -48,7 +48,7 @@ export default async function Profile() {
                 </h2>
 
                 {registrations && registrations.length > 0 ? (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {registrations.map((reg: any) => {
                             const event = reg.events;
                             if (!event) return null;

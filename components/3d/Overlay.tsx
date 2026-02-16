@@ -160,7 +160,7 @@ export default function Overlay({ events, startups, stats }: OverlayProps) {
                         <p className="text-gray-300">Check out our latest initiatives</p>
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {events.length > 0 ? (
                             events.map((event) => (
                                 <Link

@@ -98,7 +98,7 @@ export default function Contact() {
                 {/* Contact Section */}
                 <section className="section pointer-events-none pb-40">
                     <div className="container-custom pointer-events-auto">
-                        <div className="grid lg:grid-cols-2 gap-8 md:gap-12">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
                             {/* Contact Information */}
                             <div className="space-y-8 bg-zinc-900/80 backdrop-blur-xl p-8 rounded-2xl border border-zinc-700 shadow-2xl h-fit">
                                 <div>

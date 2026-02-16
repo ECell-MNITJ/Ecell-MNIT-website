@@ -197,7 +197,7 @@ export default async function Events() {
                                 <div className="w-20 h-1 bg-gradient-to-r from-primary-golden to-yellow-700 mx-auto rounded-full" />
                             </div>
 
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {upcomingEvents.map((event) => (
                                     <EventCard key={event.id} event={event} />
                                 ))}
@@ -218,7 +218,7 @@ export default async function Events() {
                                 <p className="text-gray-300 mt-4">Events happening right now!</p>
                             </div>
 
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {ongoingEvents.map((event) => (
                                     <EventCard key={event.id} event={event} />
                                 ))}
@@ -238,7 +238,7 @@ export default async function Events() {
                                 <div className="w-20 h-1 bg-gradient-to-r from-primary-golden to-yellow-700 mx-auto rounded-full" />
                             </div>
 
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {pastEvents.map((event) => (
                                     <EventCard key={event.id} event={event} />
                                 ))}

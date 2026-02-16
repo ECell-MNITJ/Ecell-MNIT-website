@@ -57,7 +57,7 @@ export default async function About() {
                 {/* Our Story */}
                 <section className="section py-20 pointer-events-none">
                     <div className="container-custom pointer-events-auto">
-                        <div className="grid md:grid-cols-2 gap-12 items-center">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                             <div className="order-2 md:order-1">
                                 <h2 className="text-4xl font-heading text-primary-green mb-6">Our Story</h2>
                                 <div className="w-20 h-1 bg-gradient-to-r from-primary-golden to-yellow-700 mb-6 rounded-full" />
@@ -86,7 +86,7 @@ export default async function About() {
                 {/* Mission & Vision */}
                 <section className="section py-20 pointer-events-none">
                     <div className="container-custom pointer-events-auto">
-                        <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
                             <div className="bg-zinc-900/80 backdrop-blur-xl p-8 rounded-2xl border border-zinc-700 shadow-2xl hover:border-primary-golden/30 transition-colors">
                                 <div className="text-5xl mb-4">🎯</div>
                                 <h2 className="text-3xl font-heading text-primary-green mb-4">Our Mission</h2>
@@ -110,7 +110,7 @@ export default async function About() {
                 <section className="section py-20 pointer-events-none">
                     <div className="container-custom pointer-events-auto">
                         <div className="bg-zinc-900/80 backdrop-blur-md rounded-3xl overflow-hidden border border-white/5 shadow-2xl">
-                            <div className="grid md:grid-cols-3">
+                            <div className="grid grid-cols-1 md:grid-cols-3">
                                 <div className="md:col-span-1 bg-gradient-to-br from-gray-800 to-black relative h-64 md:h-auto overflow-hidden group">
                                     {/* Placeholder for Director's Image */}
                                     <div className="absolute inset-0 flex items-center justify-center bg-gray-800 text-gray-500">
@@ -151,7 +151,7 @@ export default async function About() {
                             <div className="w-20 h-1 bg-gradient-to-r from-primary-golden to-yellow-700 mx-auto mb-6 rounded-full" />
                         </div>
 
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {[
                                 {
                                     icon: '📚',
@@ -206,7 +206,7 @@ export default async function About() {
                             </h2>
                             <div className="w-20 h-1 bg-gradient-to-r from-primary-golden to-yellow-700 mx-auto rounded-full" />
                         </div>
-                        <div className="grid md:grid-cols-2 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             {[
                                 {
                                     quote: "E-Cell MNIT provided me with the mentorship and network I needed to take my startup from an idea to reality. The support here is unparalleled.",
@@ -246,7 +246,7 @@ export default async function About() {
                         </div>
 
                         {teamMembers.length > 0 ? (
-                            <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-8">
+                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
                                 {teamMembers.map((member) => (
                                     <div
                                         key={member.id}
