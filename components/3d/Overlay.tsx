@@ -23,7 +23,7 @@ export default function Overlay({ events, startups, stats }: OverlayProps) {
     };
 
     return (
-        <SafeScrollHtml style={{ width: '100%', height: '100%' }}>
+        <SafeScrollHtml style={{ width: '100%', height: '100%', zIndex: 100, position: 'relative' }}>
             {/* Section 1: Hero (Welcome) */}
             <section className="w-full h-screen flex flex-col justify-center items-center px-6 md:px-10 text-center pointer-events-none">
                 <div className="bg-black/60 backdrop-blur-md p-8 md:p-12 rounded-2xl border border-white/10 max-w-4xl pointer-events-auto shadow-2xl transition-transform hover:scale-[1.01]">

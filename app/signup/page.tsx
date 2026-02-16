@@ -41,20 +41,20 @@ export default function Signup() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-primary-green via-gray-900 to-primary-green flex items-center justify-center p-4">
+        <div className="min-h-screen pt-32 pb-12 flex items-center justify-center p-4">
             <Toaster position="top-right" />
 
-            <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8">
+            <div className="max-w-md w-full bg-black/60 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white/10">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-heading text-primary-green mb-2">
+                    <h1 className="text-3xl font-heading text-primary-golden mb-2">
                         Create Account
                     </h1>
-                    <p className="text-gray-600">Join the E-Cell community</p>
+                    <p className="text-gray-400">Join the E-Cell community</p>
                 </div>
 
                 <form onSubmit={handleSignup} className="space-y-6">
                     <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
                             Full Name
                         </label>
                         <input
@@ -63,13 +63,13 @@ export default function Signup() {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent transition-all"
+                            className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent transition-all placeholder-gray-500"
                             placeholder="John Doe"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                             Email Address
                         </label>
                         <input
@@ -78,13 +78,13 @@ export default function Signup() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent transition-all"
+                            className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent transition-all placeholder-gray-500"
                             placeholder="you@example.com"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                             Password
                         </label>
                         <input
@@ -94,7 +94,7 @@ export default function Signup() {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             minLength={6}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent transition-all"
+                            className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent transition-all placeholder-gray-500"
                             placeholder="••••••••"
                         />
                     </div>
@@ -102,16 +102,16 @@ export default function Signup() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-gradient-to-r from-primary-golden to-yellow-700 text-white font-semibold py-3 rounded-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-gradient-to-r from-primary-golden to-yellow-700 text-black font-bold py-3 rounded-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {loading ? 'Creating account...' : 'Sign Up'}
                     </button>
                 </form>
 
-                <div className="mt-8 pt-6 border-t border-gray-200 text-center">
-                    <p className="text-gray-600">
+                <div className="mt-8 pt-6 border-t border-gray-700 text-center">
+                    <p className="text-gray-400">
                         Already have an account?{' '}
-                        <Link href="/login" className="text-primary-green font-semibold hover:text-primary-golden transition-colors">
+                        <Link href="/login" className="text-primary-golden font-semibold hover:text-white transition-colors">
                             Sign in
                         </Link>
                     </p>

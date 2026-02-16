@@ -38,17 +38,10 @@ function LoginForm() {
     };
 
     return (
-        <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8">
-            <div className="text-center mb-8">
-                <h1 className="text-3xl font-heading text-primary-green mb-2">
-                    Welcome Back
-                </h1>
-                <p className="text-gray-600">Sign in to your account</p>
-            </div>
-
+        <>
             <form onSubmit={handleLogin} className="space-y-6">
                 <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                         Email Address
                     </label>
                     <input
@@ -57,13 +50,13 @@ function LoginForm() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent transition-all"
+                        className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent transition-all placeholder-gray-500"
                         placeholder="you@example.com"
                     />
                 </div>
 
                 <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                         Password
                     </label>
                     <input
@@ -72,7 +65,7 @@ function LoginForm() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent transition-all"
+                        className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent transition-all placeholder-gray-500"
                         placeholder="••••••••"
                     />
                 </div>
@@ -80,16 +73,16 @@ function LoginForm() {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-gradient-to-r from-primary-golden to-yellow-700 text-white font-semibold py-3 rounded-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-gradient-to-r from-primary-golden to-yellow-700 text-black font-bold py-3 rounded-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {loading ? 'Signing in...' : 'Sign In'}
                 </button>
             </form>
 
-            <div className="mt-8 pt-6 border-t border-gray-200 text-center">
-                <p className="text-gray-600">
+            <div className="mt-8 pt-6 border-t border-gray-700 text-center">
+                <p className="text-gray-400">
                     Don't have an account?{' '}
-                    <Link href="/signup" className="text-primary-green font-semibold hover:text-primary-golden transition-colors">
+                    <Link href="/signup" className="text-primary-golden font-semibold hover:text-white transition-colors">
                         Sign up
                     </Link>
                 </p>
@@ -105,16 +98,25 @@ function LoginForm() {
                     </Link>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 
 export default function Login() {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-primary-green via-gray-900 to-primary-green flex items-center justify-center p-4">
+        <div className="min-h-screen pt-32 pb-12 flex items-center justify-center p-4">
             <Toaster position="top-right" />
             <Suspense fallback={<div className="text-white">Loading...</div>}>
-                <LoginForm />
+                <div className="max-w-md w-full bg-black/60 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white/10">
+                    <div className="text-center mb-8">
+                        <h1 className="text-3xl font-heading text-primary-golden mb-2">
+                            Welcome Back
+                        </h1>
+                        <p className="text-gray-400">Sign in to your account</p>
+                    </div>
+
+                    <LoginForm />
+                </div>
             </Suspense>
         </div>
     );

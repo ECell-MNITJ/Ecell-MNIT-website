@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { SiteSettings, DEFAULT_SETTINGS, getSiteSettings } from '@/lib/site-settings';
+import { createClient } from '@/lib/supabase/client';
 
 interface SiteSettingsContextType {
     settings: SiteSettings;
@@ -26,6 +27,7 @@ export function SiteSettingsProvider({
 }) {
     const [settings, setSettings] = useState<SiteSettings>(initialSettings);
     const [loading, setLoading] = useState(false);
+    const supabase = createClient();
 
     // If initialSettings are default, try to fetch on mount
     useEffect(() => {
@@ -37,7 +39,7 @@ export function SiteSettingsProvider({
     const refreshSettings = async () => {
         setLoading(true);
         try {
-            const newSettings = await getSiteSettings();
+            const newSettings = await getSiteSettings(supabase);
             setSettings(newSettings);
         } catch (error) {
             console.error('Failed to refresh settings:', error);

@@ -66,7 +66,7 @@ export default function StartupDetailsPage() {
     }
 
     return (
-        <main className="min-h-screen pt-24 px-4 md:px-10 text-white pb-20">
+        <main className="min-h-screen pt-32 px-4 md:px-10 text-white pb-20">
             <div className="max-w-5xl mx-auto">
                 {/* Back Button */}
                 <Link

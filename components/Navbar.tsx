@@ -46,7 +46,7 @@ export default function Navbar() {
     ];
 
     return (
-        <nav className="fixed top-0 left-0 w-full z-50 px-4 pt-4">
+        <nav className="fixed top-0 left-0 w-full z-[200] px-4 pt-4">
             <div
                 className={`mx-auto max-w-7xl rounded-2xl transition-all duration-300 ${isScrolled || isMenuOpen
                     ? 'bg-primary-green/90 backdrop-blur-xl shadow-2xl border border-white/10'

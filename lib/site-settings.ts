@@ -1,5 +1,5 @@
-import { createClient } from '@/lib/supabase/client';
 import { Database } from '@/lib/supabase/types';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 export type SiteSettings = Database['public']['Tables']['site_settings']['Row'];
 export type SiteSettingsUpdate = Database['public']['Tables']['site_settings']['Update'];
@@ -19,14 +19,8 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     updated_at: new Date().toISOString(),
 };
 
-export async function getSiteSettings(): Promise<SiteSettings> {
+export async function getSiteSettings(supabase: SupabaseClient<Database>): Promise<SiteSettings> {
     try {
-        if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-            console.warn('Supabase env vars missing, returning default settings');
-            return DEFAULT_SETTINGS;
-        }
-
-        const supabase = createClient();
         const { data, error } = await supabase
             .from('site_settings')
             .select('*')
@@ -34,7 +28,15 @@ export async function getSiteSettings(): Promise<SiteSettings> {
             .single();
 
         if (error) {
-            console.error('Error fetching site settings:', error);
+            // PGRST116: JSON object returned on .single() when no rows found
+            if (error.code === 'PGRST116') {
+                console.warn('Site settings not found (id=1), using defaults.');
+                return DEFAULT_SETTINGS;
+            }
+
+            console.error('Error fetching site settings:', JSON.stringify(error, null, 2));
+            console.error('Supabase URL defined:', !!process.env.NEXT_PUBLIC_SUPABASE_URL);
+
             // Return defaults if table doesn't exist or other error
             return DEFAULT_SETTINGS;
         }
@@ -46,8 +48,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     }
 }
 
-export async function updateSiteSettings(settings: SiteSettingsUpdate): Promise<{ success: boolean; error?: any }> {
-    const supabase = createClient();
+export async function updateSiteSettings(supabase: SupabaseClient<Database>, settings: SiteSettingsUpdate): Promise<{ success: boolean; error?: any }> {
     try {
         const { error } = await supabase
             .from('site_settings')

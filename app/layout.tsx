@@ -26,12 +26,15 @@ export const metadata: Metadata = {
 import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
 import { getSiteSettings } from "@/lib/site-settings";
 
+import { createServerClient } from "@/lib/supabase/server";
+
 export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const settings = await getSiteSettings();
+    const supabase = await createServerClient();
+    const settings = await getSiteSettings(supabase);
 
     return (
         <html lang="en" className={`${poppins.variable} ${bebasNeue.variable}`}>

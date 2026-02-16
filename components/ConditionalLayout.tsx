@@ -11,20 +11,24 @@ export default function ConditionalLayout({ children }: { children: React.ReactN
     const isEsummitRoute = pathname?.startsWith('/esummit');
     const isUnauthorizedRoute = pathname === '/unauthorized';
 
+    const isAuthRoute = pathname === '/login' || pathname === '/signup';
+
     if (isAdminRoute || isEsummitRoute || isUnauthorizedRoute) {
         // Admin/Unauthorized routes: no navbar/footer, just children
+        // Note: Admin pages usually have their own sidebars/layouts
         return <>{children}</>;
     }
 
     const isHomePage = pathname === '/';
 
-    // Public routes: include navbar and footer
+    // Public routes
     return (
         <>
-            <Navbar />
+            {!isAuthRoute && <Navbar />}
+            {/* Show FixedBackground on all pages except Home (which has its own scroll scene) */}
             {!isHomePage && <FixedBackground />}
             {children}
-            <Footer />
+            {!isAuthRoute && <Footer />}
         </>
     );
 }
