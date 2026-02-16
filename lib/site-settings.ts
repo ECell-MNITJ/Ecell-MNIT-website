@@ -20,8 +20,13 @@ export const DEFAULT_SETTINGS: SiteSettings = {
 };
 
 export async function getSiteSettings(): Promise<SiteSettings> {
-    const supabase = createClient();
     try {
+        if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+            console.warn('Supabase env vars missing, returning default settings');
+            return DEFAULT_SETTINGS;
+        }
+
+        const supabase = createClient();
         const { data, error } = await supabase
             .from('site_settings')
             .select('*')
