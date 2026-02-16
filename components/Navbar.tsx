@@ -99,6 +99,25 @@ export default function Navbar() {
                             )}
                         </div>
 
+                        {/* Mobile Auth Button */}
+                        <div className="md:hidden flex items-center mr-4">
+                            {user ? (
+                                <Link
+                                    href="/profile"
+                                    className="text-white hover:text-primary-golden transition-colors"
+                                >
+                                    <FiUser className="w-6 h-6" />
+                                </Link>
+                            ) : (
+                                <Link
+                                    href="/login"
+                                    className="text-white font-medium hover:text-primary-golden transition-colors text-sm border border-white/20 px-3 py-1.5 rounded-full"
+                                >
+                                    Login
+                                </Link>
+                            )}
+                        </div>
+
                         {/* Mobile Menu Button */}
                         <button
                             className="md:hidden flex flex-col gap-1.5 p-2"

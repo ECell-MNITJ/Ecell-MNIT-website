@@ -106,6 +106,25 @@ export default function EsNavbar() {
                         )}
                     </div>
 
+                    {/* Mobile Auth Button */}
+                    <div className="md:hidden flex items-center mr-2">
+                        {user ? (
+                            <Link
+                                href="/esummit/profile"
+                                className="w-10 h-10 rounded-full bg-esummit-primary/20 flex items-center justify-center text-esummit-accent border border-esummit-primary/30"
+                            >
+                                <FiUser />
+                            </Link>
+                        ) : (
+                            <Link
+                                href="/esummit/login"
+                                className="text-white text-xs font-bold uppercase tracking-wider bg-white/10 px-4 py-2 rounded-full border border-white/10 hover:bg-white/20"
+                            >
+                                Login
+                            </Link>
+                        )}
+                    </div>
+
                     {/* Mobile Menu Button */}
                     <button
                         className="md:hidden flex flex-col gap-1.5 p-2 z-50"
