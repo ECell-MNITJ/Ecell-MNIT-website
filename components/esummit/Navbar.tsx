@@ -106,24 +106,6 @@ export default function EsNavbar() {
                         )}
                     </div>
 
-                    {/* Mobile Auth Button */}
-                    <div className="md:hidden flex items-center mr-2">
-                        {user ? (
-                            <Link
-                                href="/esummit/profile"
-                                className="w-10 h-10 rounded-full bg-esummit-primary/20 flex items-center justify-center text-esummit-accent border border-esummit-primary/30"
-                            >
-                                <FiUser />
-                            </Link>
-                        ) : (
-                            <Link
-                                href="/esummit/login"
-                                className="text-white text-xs font-bold uppercase tracking-wider bg-white/10 px-4 py-2 rounded-full border border-white/10 hover:bg-white/20"
-                            >
-                                Login
-                            </Link>
-                        )}
-                    </div>
 
                     {/* Mobile Menu Button */}
                     <button
@@ -153,7 +135,7 @@ export default function EsNavbar() {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            className="md:hidden overflow-hidden"
+                            className="md:hidden overflow-y-auto max-h-[85vh]"
                         >
                             <ul className="flex flex-col gap-2 pt-6 pb-2">
                                 {navLinks.map((link) => (

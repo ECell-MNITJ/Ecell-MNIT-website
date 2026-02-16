@@ -99,24 +99,6 @@ export default function Navbar() {
                             )}
                         </div>
 
-                        {/* Mobile Auth Button */}
-                        <div className="md:hidden flex items-center mr-4">
-                            {user ? (
-                                <Link
-                                    href="/profile"
-                                    className="text-white hover:text-primary-golden transition-colors"
-                                >
-                                    <FiUser className="w-6 h-6" />
-                                </Link>
-                            ) : (
-                                <Link
-                                    href="/login"
-                                    className="text-white font-medium hover:text-primary-golden transition-colors text-sm border border-white/20 px-3 py-1.5 rounded-full"
-                                >
-                                    Login
-                                </Link>
-                            )}
-                        </div>
 
                         {/* Mobile Menu Button */}
                         <button
@@ -141,7 +123,7 @@ export default function Navbar() {
 
                     {/* Mobile Menu */}
                     <div
-                        className={`md:hidden overflow-hidden transition-all duration-300 ${isMenuOpen ? 'max-h-96' : 'max-h-0'
+                        className={`md:hidden overflow-y-auto transition-all duration-300 ${isMenuOpen ? 'max-h-[85vh] opacity-100' : 'max-h-0 opacity-0'
                             }`}
                     >
                         <ul className="py-4 space-y-2">
