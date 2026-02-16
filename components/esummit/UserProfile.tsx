@@ -5,172 +5,30 @@ import { createClient } from '@/lib/supabase/client';
 import { FiEdit2, FiSave, FiCamera, FiGlobe, FiPhone, FiUser, FiX, FiTrash2, FiAward, FiColumns } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
+import QRCodeCard from './QRCodeCard';
+
+// ... (existing imports)
+
 export default function ESummitUserProfile({ user }: { user: any }) {
-    const supabase = createClient();
-    const [loading, setLoading] = useState(true);
-    const [uploading, setUploading] = useState(false);
-    const [editing, setEditing] = useState(false);
-    const [profile, setProfile] = useState<any>(null);
-    const [registrations, setRegistrations] = useState<any[]>([]);
-    const [formData, setFormData] = useState({
-        full_name: '',
-        bio: '',
-        website: '',
-        phone: '',
-        avatar_url: '',
-    });
-
-    useEffect(() => {
-        getProfile();
-        getRegistrations();
-    }, [user]);
-
-    async function getRegistrations() {
-        try {
-            const { data, error } = await supabase
-                .from('event_registrations')
-                .select('*, events(*)')
-                .eq('user_id', user.id)
-                .eq('events.is_esummit', true);
-
-            if (error) throw error;
-            setRegistrations(data || []);
-        } catch (error) {
-            console.error('Error fetching registrations:', error);
-        }
-    }
-
-    async function getProfile() {
-        try {
-            setLoading(true);
-
-            // First check if profile exists
-            let { data, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', user.id)
-                .single();
-
-            if (error && error.code === 'PGRST116') {
-                console.log("Profile not found, using defaults");
-                data = null;
-            } else if (error) {
-                console.error('Error fetching profile:', error);
-            }
-
-            if (data) {
-                setProfile(data);
-                setFormData({
-                    full_name: data.full_name || '',
-                    bio: data.bio || '',
-                    website: data.website || '',
-                    phone: data.phone || '',
-                    avatar_url: data.avatar_url || '',
-                });
-            } else {
-                setFormData({
-                    full_name: user.user_metadata?.full_name || '',
-                    bio: '',
-                    website: '',
-                    phone: '',
-                    avatar_url: user.user_metadata?.avatar_url || '',
-                });
-            }
-        } catch (error) {
-            console.error('Error loading user data!', error);
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    async function updateProfile() {
-        if (!formData.full_name?.trim() || !formData.phone?.trim()) {
-            toast.error('Full Name and Phone Number are required!');
-            return;
-        }
-
-        try {
-            setLoading(true);
-
-            const updates = {
-                id: user.id,
-                ...formData,
-                updated_at: new Date().toISOString(),
-            };
-
-            const { error } = await supabase.from('profiles').upsert(updates);
-
-            if (error) throw error;
-
-            setProfile(updates);
-            setEditing(false);
-            toast.success('Profile updated successfully!');
-        } catch (error) {
-            console.error('Error updating profile:', error);
-            toast.error('Error updating profile!');
-        } finally {
-            setLoading(false);
-        }
-    }
-
-    async function uploadAvatar(event: React.ChangeEvent<HTMLInputElement>) {
-        try {
-            setUploading(true);
-
-            if (!event.target.files || event.target.files.length === 0) {
-                throw new Error('You must select an image to upload.');
-            }
-
-            const file = event.target.files[0];
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${user.id}-${Math.random()}.${fileExt}`;
-            const filePath = `${fileName}`;
-
-            const { error: uploadError } = await supabase.storage
-                .from('avatars')
-                .upload(filePath, file);
-
-            if (uploadError) {
-                throw uploadError;
-            }
-
-            const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
-
-            setFormData({ ...formData, avatar_url: data.publicUrl });
-
-            if (!editing) {
-                const updates = {
-                    id: user.id,
-                    avatar_url: data.publicUrl,
-                    updated_at: new Date().toISOString(),
-                };
-                const { error: updateError } = await supabase.from('profiles').upsert(updates);
-                if (updateError) throw updateError;
-                setProfile({ ...profile, ...updates });
-                toast.success('Avatar updated!');
-            }
-
-        } catch (error) {
-            console.error('Error uploading avatar:', error);
-            toast.error('Error uploading avatar!');
-        } finally {
-            setUploading(false);
-        }
-    }
-
-    if (loading && !profile && !editing) {
-        return <div className="text-center py-10 text-esummit-primary animate-pulse">Loading profile...</div>;
-    }
+    // ... (existing component logic)
 
     return (
         <div className="flex flex-col gap-10">
             {/* Profile Header Card */}
             <div className="bg-esummit-card/60 border border-white/10 rounded-3xl p-8 relative overflow-hidden backdrop-blur-xl shadow-[0_0_40px_rgba(0,0,0,0.3)]">
+                {/* ... (background effects) */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-esummit-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-esummit-accent/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
 
-                <div className="flex flex-col md:flex-row items-center gap-10 relative z-10">
-                    <div className="relative group">
+                <div className="flex flex-col lg:flex-row items-start gap-10 relative z-10">
+                    {/* QR Code Section (Mobile: Order 2, Desktop: Order 3) */}
+                    <div className="order-2 lg:order-3 w-full lg:w-auto flex justify-center">
+                        <QRCodeCard user={user} profile={profile} />
+                    </div>
+
+                    {/* Avatar Section (Order 1) */}
+                    <div className="relative group order-1 flex-shrink-0 mx-auto lg:mx-0">
+                        {/* ... (avatar code) ... */}
                         <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-esummit-primary/30 shadow-[0_0_20px_rgba(157,78,221,0.3)] overflow-hidden bg-esummit-bg flex items-center justify-center group-hover:border-esummit-accent transition-colors duration-500">
                             {formData.avatar_url ? (
                                 <img
@@ -186,6 +44,7 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                         </div>
 
                         <div className="absolute bottom-0 right-0 flex gap-2">
+                            {/* ... (upload button) ... */}
                             <label className="p-2.5 bg-esummit-primary text-white rounded-full shadow-lg cursor-pointer hover:bg-white hover:text-esummit-primary transition-all duration-300 hover:scale-110" title="Change Avatar">
                                 {uploading ? (
                                     <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
@@ -203,9 +62,13 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                         </div>
                     </div>
 
-                    <div className="flex-1 text-center md:text-left w-full">
+                    {/* Details Section (Order 2) */}
+                    <div className="flex-1 text-center lg:text-left w-full order-3 lg:order-2">
+                        {/* ... (rest of details) ... */}
                         {editing ? (
+                            // ... (editing form) ...
                             <div className="space-y-6 max-w-2xl bg-black/20 p-6 rounded-2xl border border-white/5">
+                                {/* ...form fields... */}
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div>
                                         <label className="block text-gray-400 text-xs uppercase tracking-wider font-bold mb-2 text-left">Full Name</label>

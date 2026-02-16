@@ -35,8 +35,8 @@ export default async function Profile() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 pt-20">
-            <div className="bg-gradient-to-br from-primary-green to-gray-900 text-white">
+        <div className="min-h-screen pt-32 text-white relative">
+            <div className="relative z-10">
                 <div className="container-custom py-16">
                     <UserProfile user={user} />
                 </div>
