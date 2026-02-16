@@ -79,7 +79,7 @@ export default function ContactPage() {
                     </p>
                 </motion.div>
 
-                <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-6xl mx-auto">
                     {/* Contact Info */}
                     <motion.div
                         initial={{ opacity: 0, x: -50 }}
@@ -129,7 +129,7 @@ export default function ContactPage() {
                         className="bg-esummit-card/30 backdrop-blur-xl border border-white/10 p-8 md:p-10 rounded-3xl"
                     >
                         <form onSubmit={handleSubmit} className="space-y-6">
-                            <div className="grid md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-gray-400">Your Name</label>
                                     <input

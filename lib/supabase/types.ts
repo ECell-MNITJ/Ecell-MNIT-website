@@ -330,6 +330,7 @@ export interface Database {
                     bio: string | null;
                     website: string | null;
                     phone: string | null;
+                    qr_code_url: string | null;
                 };
                 Insert: {
                     id: string;
@@ -339,6 +340,7 @@ export interface Database {
                     bio?: string | null;
                     website?: string | null;
                     phone?: string | null;
+                    qr_code_url?: string | null;
                 };
                 Update: {
                     id?: string;
@@ -348,6 +350,7 @@ export interface Database {
                     bio?: string | null;
                     website?: string | null;
                     phone?: string | null;
+                    qr_code_url?: string | null;
                 };
                 Relationships: [];
             };

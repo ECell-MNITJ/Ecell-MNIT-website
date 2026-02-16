@@ -149,7 +149,7 @@ export default async function ESummitEventsPage() {
                                     <h2 className="text-3xl font-bold text-white tracking-wide">Happening Now</h2>
                                     <div className="h-px flex-1 bg-gradient-to-r from-esummit-accent/50 to-transparent" />
                                 </div>
-                                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                     {ongoingEvents.map(event => (
                                         <EventCard key={event.id} event={event} />
                                     ))}
@@ -163,7 +163,7 @@ export default async function ESummitEventsPage() {
                                     <h2 className="text-3xl font-bold text-white tracking-wide">Upcoming Events</h2>
                                     <div className="h-px flex-1 bg-gradient-to-r from-esummit-primary/50 to-transparent" />
                                 </div>
-                                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                     {upcomingEvents.map(event => (
                                         <EventCard key={event.id} event={event} />
                                     ))}
@@ -177,7 +177,7 @@ export default async function ESummitEventsPage() {
                                     <h2 className="text-3xl font-bold text-gray-400 tracking-wide">Past Events</h2>
                                     <div className="h-px flex-1 bg-gradient-to-r from-gray-700 to-transparent" />
                                 </div>
-                                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                     {pastEvents.map(event => (
                                         <EventCard key={event.id} event={event} />
                                     ))}
