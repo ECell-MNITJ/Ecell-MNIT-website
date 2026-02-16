@@ -1,0 +1,92 @@
+/* eslint-disable */
+/* stylelint-disable */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        @apply scroll-smooth;
+    }
+
+    body {
+        @apply font-body text-gray-800 antialiased;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-heading tracking-wide;
+    }
+}
+
+@layer components {
+    .btn {
+        @apply inline-block px-6 py-3 md:px-8 md:py-4 font-semibold text-center rounded-lg transition-all duration-300 uppercase tracking-widest text-sm md:text-base;
+    }
+
+    .btn-primary {
+        @apply bg-gradient-to-r from-primary-golden to-yellow-700 text-white shadow-lg hover:shadow-xl hover:-translate-y-1;
+    }
+
+    .btn-outline {
+        @apply border-2 border-primary-golden text-white hover:bg-primary-golden hover:text-white;
+    }
+
+    .section {
+        @apply py-12 md:py-16 lg:py-20;
+    }
+
+    .container-custom {
+        @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    }
+}
+
+@layer utilities {
+    .animate-fade-in-up {
+        animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes marquee {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    .animate-marquee {
+        animation: marquee 20s linear infinite;
+    }
+}
