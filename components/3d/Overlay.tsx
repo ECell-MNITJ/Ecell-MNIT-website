@@ -46,7 +46,7 @@ export default function Overlay({ events, startups, stats }: OverlayProps) {
 
             {/* Section 2: Highlights (Why E-Cell?) */}
             <section className="w-full h-screen flex flex-col justify-center items-center px-6 md:px-20 pointer-events-none">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl w-full items-center">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-6xl w-full items-center">
                     {/* Left Column: Core Values */}
                     <div className="bg-zinc-900/80 backdrop-blur-xl p-8 rounded-2xl border border-zinc-700 shadow-2xl w-full pointer-events-auto">
                         <h2 className="text-3xl md:text-4xl font-heading text-primary-green mb-6 border-b border-zinc-700 pb-4">Why E-Cell?</h2>
@@ -103,7 +103,7 @@ export default function Overlay({ events, startups, stats }: OverlayProps) {
 
             {/* Section 3: Stats & Vision */}
             <section className="w-full h-screen flex flex-col justify-center items-center px-6 md:px-20 pointer-events-none">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl w-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-6xl w-full">
                     {/* Vision Card */}
                     <div className="bg-zinc-900/80 backdrop-blur-xl p-8 rounded-2xl border border-zinc-700 shadow-2xl pointer-events-auto flex flex-col justify-center">
                         <h2 className="text-3xl md:text-4xl font-heading text-white mb-6">Our Vision</h2>
@@ -160,7 +160,7 @@ export default function Overlay({ events, startups, stats }: OverlayProps) {
                         <p className="text-gray-300">Check out our latest initiatives</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8">
                         {events.length > 0 ? (
                             events.map((event) => (
                                 <Link

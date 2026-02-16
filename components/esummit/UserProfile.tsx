@@ -81,9 +81,10 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                 .from('event_registrations')
                 .select(`
                     *,
-                    events (*)
+                    events!inner(*)
                 `)
                 .eq('user_id', user.id)
+                .eq('events.is_esummit', true)
                 .order('created_at', { ascending: false });
 
             if (error) {

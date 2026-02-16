@@ -61,7 +61,7 @@ export default function StartupsPage() {
                         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-golden"></div>
                     </div>
                 ) : startups.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
                         {startups.map((startup, index) => (
                             <motion.div
                                 key={startup.id}
