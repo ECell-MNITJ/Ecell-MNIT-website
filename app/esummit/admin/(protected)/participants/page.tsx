@@ -15,7 +15,13 @@ export default function ParticipantsPage() {
     useEffect(() => {
         fetchParticipants();
 
-        // Real-time subscription
+        // 1. Polling Fallback (every 15s)
+        // This ensures data stays fresh even if Realtime connection drops or RLS filters events
+        const intervalId = setInterval(() => {
+            fetchParticipants(true); // silent refresh
+        }, 15000);
+
+        // 2. Real-time subscription
         const channel = supabase
             .channel('participants_changes')
             .on(
@@ -31,26 +37,38 @@ export default function ParticipantsPage() {
                         setParticipants((prev) => [payload.new, ...prev]);
                     } else if (payload.eventType === 'UPDATE') {
                         setParticipants((prev) =>
-                            prev.map((p) => (p.id === payload.new.id ? payload.new : p))
+                            prev.map((p) => (p.id === payload.new.id ? { ...p, ...payload.new } : p))
                         );
                         if (payload.new.esummit_checked_in) {
-                            toast.success(`Check-in: ${payload.new.full_name || 'User'}`);
+                            // Only toast if it's a new check-in (prev status was false/undefined)
+                            // Since we don't have easy access to prev state inside this callback for comparison without ref,
+                            // we'll just show the toast. 
+                            toast.success(`Update: ${payload.new.full_name || 'User'}`, { id: `update-${payload.new.id}` });
                         }
                     } else if (payload.eventType === 'DELETE') {
                         setParticipants((prev) => prev.filter((p) => p.id !== payload.old.id));
                     }
                 }
             )
-            .subscribe();
+            .subscribe((status) => {
+                console.log('Subscription status:', status);
+                if (status === 'SUBSCRIBED') {
+                    // toast.success('Live connection established');
+                } else if (status === 'CHANNEL_ERROR') {
+                    console.error('Realtime connection error');
+                    // Polling will handle it
+                }
+            });
 
         return () => {
             supabase.removeChannel(channel);
+            clearInterval(intervalId);
         };
     }, []);
 
-    const fetchParticipants = async () => {
+    const fetchParticipants = async (silent = false) => {
         try {
-            setLoading(true);
+            if (!silent) setLoading(true);
             const { data, error } = await supabase
                 .from('profiles')
                 .select('*')
@@ -125,7 +143,7 @@ export default function ParticipantsPage() {
                         />
                     </div>
                     <button
-                        onClick={fetchParticipants}
+                        onClick={() => fetchParticipants(false)}
                         className="p-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors"
                         title="Refresh"
                     >

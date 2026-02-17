@@ -171,15 +171,21 @@ export default function QRScannerPage() {
             }
 
             // 4. Mark as Checked In
-            const { error: updateError } = await supabase
+            const { data: updatedData, error: updateError } = await supabase
                 .from('profiles')
                 .update({
                     esummit_checked_in: true,
-                    esummit_checked_in_at: new Date().toISOString()
+                    esummit_checked_in_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
                 })
-                .eq('id', userId);
+                .eq('id', userId)
+                .select();
 
             if (updateError) throw updateError;
+
+            if (!updatedData || updatedData.length === 0) {
+                throw new Error('Permission Denied: Could not update profile. You may not have staff permissions.');
+            }
 
             setVerificationStatus('success');
             setVerificationMessage('VERIFIED');
