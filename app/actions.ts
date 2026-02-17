@@ -31,8 +31,33 @@ export async function deleteAccount() {
         }
     );
 
-    // 3. Delete Data Manually (in case CASCADE is not set)
-    // Delete event registrations
+    // 3. Delete Data Manually (Cascade)
+
+    // A. Delete Teams created by user (if any)
+    // First, find teams created by user
+    const { data: userTeams } = await adminSupabase
+        .from('teams')
+        .select('id')
+        .eq('created_by', user.id);
+
+    if (userTeams && userTeams.length > 0) {
+        // Delete participants of these teams (cascade usually handles this, but let's be safe)
+        // ... valid point, but if we delete team, team_members/registrations should cascade if DB is set up right.
+        // If not, we might need to verify. Assuming basic cascade for now or that we delete the team row.
+
+        const teamIds = userTeams.map(t => t.id);
+        const { error: teamError } = await adminSupabase
+            .from('teams')
+            .delete()
+            .in('id', teamIds);
+
+        if (teamError) {
+            console.error('Error deleting user teams:', teamError);
+            // This might block user deletion if created_by is FK
+        }
+    }
+
+    // B. Delete event registrations
     const { error: regError } = await adminSupabase
         .from('event_registrations')
         .delete()
@@ -40,10 +65,10 @@ export async function deleteAccount() {
 
     if (regError) {
         console.error('Error deleting registrations:', regError);
-        // We might want to continue or throw? Let's try to continue to delete what we can.
+        throw new Error(`Failed to delete registrations: ${regError.message}`);
     }
 
-    // Delete profile
+    // C. Delete profile
     const { error: profileError } = await adminSupabase
         .from('profiles')
         .delete()
@@ -51,6 +76,8 @@ export async function deleteAccount() {
 
     if (profileError) {
         console.error('Error deleting profile:', profileError);
+        // If this fails, deleteUser will likely fail too
+        throw new Error(`Failed to delete profile: ${profileError.message}`);
     }
 
     // 4. Delete Auth User

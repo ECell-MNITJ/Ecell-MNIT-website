@@ -188,7 +188,8 @@ export default function QRScannerPage() {
         } catch (error: any) {
             console.error('Scan error:', error);
             setVerificationStatus('error');
-            setVerificationMessage('System Error');
+            // Show the actual error message to help debugging (e.g. RLS violation)
+            setVerificationMessage(error.message || 'System Error');
         }
     };
 

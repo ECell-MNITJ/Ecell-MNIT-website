@@ -31,7 +31,13 @@ export default function ProfileEnforcer({ user }: { user: any }) {
                 .single();
 
             if (error) {
-                console.error('Error checking profile:', error);
+                // If profile not found (PGRST116), it means user is new/incomplete.
+                if (error.code === 'PGRST116') {
+                    console.log('Profile not found, prompting completion');
+                    setIsModalOpen(true);
+                    return;
+                }
+                console.error('Error checking profile:', JSON.stringify(error, null, 2));
                 return;
             }
 
