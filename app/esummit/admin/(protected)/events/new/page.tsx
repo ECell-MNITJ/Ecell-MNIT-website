@@ -40,6 +40,29 @@ export default function NewESummitEvent() {
         gallery: [],
         faq: []
     });
+    const [showCustomCategory, setShowCustomCategory] = useState(false);
+
+    const CATEGORIES = [
+        { value: 'General', label: 'General' },
+        { value: 'Workshop', label: 'Workshop' },
+        { value: 'Summit', label: 'Summit' },
+        { value: 'Competition', label: 'Competition' },
+        { value: 'Webinar', label: 'Webinar' },
+        { value: 'Networking', label: 'Networking' },
+        { value: 'Keynote', label: 'Keynote' },
+        { value: 'Panel', label: 'Panel Discussion' },
+    ];
+
+    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        if (value === 'Other') {
+            setShowCustomCategory(true);
+            setFormData(prev => ({ ...prev, category: '' }));
+        } else {
+            setShowCustomCategory(false);
+            setFormData(prev => ({ ...prev, category: value }));
+        }
+    };
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -215,22 +238,31 @@ export default function NewESummitEvent() {
 
                         <div>
                             <label htmlFor="category" className="block text-sm font-medium text-gray-300 mb-2">Category *</label>
-                            <select
-                                id="category"
-                                required
-                                value={formData.category}
-                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            >
-                                <option value="General">General</option>
-                                <option value="Workshop">Workshop</option>
-                                <option value="Summit">Summit</option>
-                                <option value="Competition">Competition</option>
-                                <option value="Webinar">Webinar</option>
-                                <option value="Networking">Networking</option>
-                                <option value="Keynote">Keynote</option>
-                                <option value="Panel">Panel Discussion</option>
-                            </select>
+                            <div className="space-y-2">
+                                <select
+                                    id="category"
+                                    required
+                                    value={showCustomCategory ? 'Other' : (CATEGORIES.some(c => c.value === formData.category) ? formData.category : 'Other')}
+                                    onChange={handleCategoryChange}
+                                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                >
+                                    {CATEGORIES.map(cat => (
+                                        <option key={cat.value} value={cat.value}>{cat.label}</option>
+                                    ))}
+                                    <option value="Other">Other (Custom)</option>
+                                </select>
+
+                                {showCustomCategory && (
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.category}
+                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                        placeholder="Enter custom category"
+                                        className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500"
+                                    />
+                                )}
+                            </div>
                         </div>
                     </div>
 

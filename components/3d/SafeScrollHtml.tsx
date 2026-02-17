@@ -23,6 +23,10 @@ export default function SafeScrollHtml({ children, style, className }: any) {
         if (style) Object.assign(div.style, style);
         if (className) div.className = className;
 
+        // Ensure HTML content is above the canvas and allows interactions
+        div.style.zIndex = '100';
+        div.style.pointerEvents = 'none'; // Allow click-through by default, children must enable pointer-events: auto
+
         el.appendChild(div);
 
         // Create Root

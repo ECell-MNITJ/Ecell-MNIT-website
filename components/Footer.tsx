@@ -18,7 +18,8 @@ export default function Footer() {
         { name: 'Twitter', icon: 'fab fa-twitter', href: settings.twitter_url },
         { name: 'Instagram', icon: 'fab fa-instagram', href: settings.instagram_url },
         { name: 'LinkedIn', icon: 'fab fa-linkedin-in', href: settings.linkedin_url },
-    ].filter(link => link.href);
+        { name: 'YouTube', icon: 'fab fa-youtube', href: settings.youtube_url },
+    ].filter(link => link.href && link.href.trim() !== '');
 
     return (
         <footer className="bg-gradient-to-br from-primary-green to-gray-900 text-white">

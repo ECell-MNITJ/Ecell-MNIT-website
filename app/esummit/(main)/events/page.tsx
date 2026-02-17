@@ -23,7 +23,7 @@ async function getEsummitEvents(): Promise<Event[]> {
         .order('date', { ascending: false });
 
     if (error) {
-        console.error('Error fetching E-Summit events:', error);
+        console.error('Error fetching E-Summit events:', JSON.stringify(error, null, 2));
         return [];
     }
 

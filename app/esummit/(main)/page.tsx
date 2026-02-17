@@ -11,9 +11,9 @@ const ParallaxText = ({ children, baseVelocity = 100 }: { children: string; base
     // Simplified marquee for now to reduce complexity in this file, 
     // but we can bring back the full marquee component if needed.
     return (
-        <div className="overflow-hidden whitespace-nowrap flex gap-8 py-4 opacity-30">
+        <div className="overflow-hidden whitespace-nowrap flex gap-8 py-4 opacity-80">
             <motion.div
-                className="text-6xl md:text-9xl font-black uppercase text-transparent bg-clip-text bg-gradient-to-r from-esummit-secondary/20 to-esummit-primary/20"
+                className="text-4xl md:text-9xl font-black uppercase text-transparent bg-clip-text bg-gradient-to-r from-esummit-secondary/50 to-esummit-primary/50"
                 animate={{ x: [0, -1000] }}
                 transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
             >
@@ -165,17 +165,17 @@ export default function ESummitPage() {
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1 }}
-                        className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-esummit-secondary/20 bg-esummit-card/30 backdrop-blur-sm text-sm font-medium text-esummit-secondary tracking-widest mb-8"
+                        className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-esummit-secondary/20 bg-esummit-card/30 backdrop-blur-sm text-xs md:text-sm font-medium text-esummit-secondary tracking-widest mb-6 md:mb-8"
                     >
                         <span className="w-1.5 h-1.5 rounded-full bg-esummit-primary animate-pulse" />
                         MNIT JAIPUR
                     </motion.div>
 
                     <div className="relative mb-8">
-                        <h1 className="text-8xl md:text-[150px] font-black leading-[0.85] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-esummit-secondary to-esummit-secondary/50">
+                        <h1 className="text-5xl sm:text-7xl md:text-[150px] font-black leading-[0.9] md:leading-[0.85] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-esummit-secondary to-esummit-secondary/50">
                             VISIONARY
                             <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-esummit-primary via-yellow-200 to-esummit-primary block mt-2">
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-esummit-primary via-yellow-500 to-esummit-primary block mt-2">
                                 ASCENT
                             </span>
                         </h1>
@@ -183,18 +183,18 @@ export default function ESummitPage() {
                             initial={{ scaleX: 0 }}
                             animate={{ scaleX: 1 }}
                             transition={{ duration: 1.5, delay: 0.5, ease: "circOut" }}
-                            className="absolute -bottom-4 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-esummit-primary to-transparent"
+                            className="absolute -bottom-4 left-4 right-4 md:left-1/4 md:right-1/4 h-px bg-gradient-to-r from-transparent via-esummit-primary to-transparent"
                         />
                     </div>
 
-                    <p className="text-xl md:text-2xl text-esummit-secondary/70 max-w-2xl mx-auto font-light leading-relaxed mb-12">
+                    <p className="text-lg md:text-2xl text-esummit-secondary/70 max-w-2xl mx-auto font-light leading-relaxed mb-8 md:mb-12 px-4">
                         E-Summit 2026 by E-Cell MNIT. Where ideas take flight and innovation knows no bounds.
                     </p>
 
-                    <div className="flex flex-col sm:flex-row justify-center gap-6">
+                    <div className="flex flex-col sm:flex-row justify-center gap-4 md:gap-6 px-4">
                         <Link
                             href="/esummit/events"
-                            className="group relative px-10 py-5 bg-esummit-primary text-esummit-bg font-black uppercase tracking-widest text-sm hover:bg-yellow-400 transition-colors clip-path-slant"
+                            className="group relative px-8 py-4 md:px-10 md:py-5 bg-esummit-primary text-esummit-bg font-black uppercase tracking-widest text-xs md:text-sm hover:bg-yellow-400 transition-colors clip-path-slant flex justify-center"
                         >
                             <span className="relative z-10 flex items-center gap-2">
                                 Explore Events <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
@@ -203,7 +203,7 @@ export default function ESummitPage() {
                         </Link>
                         <Link
                             href="/esummit/about"
-                            className="px-10 py-5 bg-transparent border border-esummit-secondary/20 text-white font-bold uppercase tracking-widest text-sm hover:bg-white/5 transition-colors"
+                            className="px-8 py-4 md:px-10 md:py-5 bg-transparent border border-esummit-secondary/20 text-white font-bold uppercase tracking-widest text-xs md:text-sm hover:bg-white/5 transition-colors flex justify-center"
                         >
                             Our Vision
                         </Link>
@@ -211,7 +211,7 @@ export default function ESummitPage() {
                 </motion.div>
 
                 {/* Decorative Bottom Fade */}
-                <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-esummit-bg to-transparent z-20 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-full h-20 md:h-32 bg-gradient-to-t from-esummit-bg to-transparent z-20 pointer-events-none" />
             </section>
 
             {/* Marquee Separator */}
@@ -221,25 +221,25 @@ export default function ESummitPage() {
 
             {/* Impact/Stats Section */}
             {settings.show_stats && (
-                <section className="py-32 relative z-10">
+                <section className="py-20 md:py-32 relative z-10">
                     <div className="container mx-auto px-4">
-                        <div className="flex flex-col md:flex-row justify-between items-end mb-20">
+                        <div className="flex flex-col md:flex-row justify-between items-end mb-12 md:mb-20">
                             <motion.div
                                 initial={{ opacity: 0, x: -50 }}
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
                                 className="max-w-2xl"
                             >
-                                <h2 className="text-4xl md:text-6xl font-black mb-6">
+                                <h2 className="text-3xl md:text-6xl font-black mb-4 md:mb-6">
                                     BY THE <span className="text-esummit-primary">NUMBERS</span>
                                 </h2>
-                                <p className="text-esummit-secondary/60 text-lg">
+                                <p className="text-esummit-secondary/60 text-base md:text-lg">
                                     Our legacy of fostering entrepreneurship speaks for itself.
                                 </p>
                             </motion.div>
                         </div>
 
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                             {stats.length > 0 ? (
                                 stats.map((stat, index) => (
                                     <StatCard key={stat.id} value={stat.value} label={stat.label} delay={0.1 * (index + 1)} />
@@ -260,13 +260,13 @@ export default function ESummitPage() {
 
             {/* Features/Strategy Section */}
             {settings.show_blueprint && (
-                <section className="py-32 relative z-10 bg-esummit-bg/50">
+                <section className="py-20 md:py-32 relative z-10 bg-esummit-bg/50">
                     <div className="container mx-auto px-4">
                         <motion.h2
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            className="text-center text-4xl md:text-6xl font-black mb-24"
+                            className="text-center text-3xl md:text-6xl font-black mb-16 md:mb-24"
                         >
                             THE <span className="text-esummit-accent">BLUEPRINT</span>
                         </motion.h2>
@@ -324,10 +324,10 @@ export default function ESummitPage() {
             )}
 
             {/* Gallery Preview */}
-            <GallerySection source="esummit" className="py-20 relative z-10 bg-gradient-to-b from-esummit-bg to-esummit-card/20" />
+            <GallerySection source="esummit" className="py-16 md:py-20 relative z-10 bg-gradient-to-b from-esummit-bg to-esummit-card/20" />
 
             {/* CTA Section */}
-            <section className="py-40 relative overflow-hidden flex items-center justify-center">
+            <section className="py-24 md:py-40 relative overflow-hidden flex items-center justify-center">
                 {/* Warp Speed Effect Background (simulated with radial gradient for now) */}
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-esummit-primary/10 via-esummit-bg to-esummit-bg" />
 
@@ -337,16 +337,16 @@ export default function ESummitPage() {
                     viewport={{ once: true }}
                     className="relative z-10 text-center max-w-4xl mx-auto px-4"
                 >
-                    <h2 className="text-5xl md:text-8xl font-black mb-8 leading-tight tracking-tighter">
+                    <h2 className="text-4xl md:text-8xl font-black mb-6 md:mb-8 leading-tight tracking-tighter">
                         EXPERIENCE THE <br />
                         <span className="text-esummit-primary drop-shadow-[0_0_20px_rgba(255,184,0,0.5)]">FUTURE</span>
                     </h2>
-                    <p className="text-xl text-esummit-secondary/70 mb-12">
+                    <p className="text-lg md:text-xl text-esummit-secondary/70 mb-8 md:mb-12">
                         Join us at E-Summit 2026. Your journey starts here.
                     </p>
                     <Link
                         href={registerLink}
-                        className="inline-flex h-16 animate-shimmer items-center justify-center rounded-full border border-esummit-primary/30 bg-[linear-gradient(110deg,#000103,45%,#FFB800,55%,#000103)] bg-[length:200%_100%] px-12 font-bold text-white transition-colors focus:outline-none focus:ring-2 focus:ring-esummit-primary focus:ring-offset-2 focus:ring-offset-esummit-bg text-xl uppercase tracking-widest"
+                        className="inline-flex h-14 md:h-16 animate-shimmer items-center justify-center rounded-full border border-esummit-primary/30 bg-[linear-gradient(110deg,#000103,45%,#FFB800,55%,#000103)] bg-[length:200%_100%] px-8 md:px-12 font-bold text-white transition-colors focus:outline-none focus:ring-2 focus:ring-esummit-primary focus:ring-offset-2 focus:ring-offset-esummit-bg text-lg md:text-xl uppercase tracking-widest"
                     >
                         Register Now
                     </Link>

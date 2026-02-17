@@ -53,20 +53,20 @@ export default function ESummitAdminVerify() {
         <div className="min-h-screen bg-gradient-to-br from-purple-900 via-gray-900 to-purple-900 flex items-center justify-center p-4">
             <Toaster position="top-right" />
 
-            <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8 border border-purple-500/20">
+            <div className="max-w-md w-full bg-gray-900 rounded-2xl shadow-2xl p-8 border border-gray-700">
                 <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
-                        <FiLock className="w-8 h-8 text-purple-600" />
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-900/30 rounded-full mb-4">
+                        <FiLock className="w-8 h-8 text-purple-400" />
                     </div>
-                    <h1 className="text-3xl font-heading text-purple-900 mb-2">
+                    <h1 className="text-3xl font-heading text-white mb-2">
                         E-Summit Admin Access
                     </h1>
-                    <p className="text-gray-600">Enter the admin password to continue</p>
+                    <p className="text-gray-400">Enter the admin password to continue</p>
                 </div>
 
                 <form onSubmit={handleVerify} className="space-y-6">
                     <div>
-                        <label htmlFor="admin-password" className="block text-sm font-medium text-gray-700 mb-2">
+                        <label htmlFor="admin-password" className="block text-sm font-medium text-gray-300 mb-2">
                             Admin Password
                         </label>
                         <input
@@ -76,7 +76,7 @@ export default function ESummitAdminVerify() {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             autoFocus
-                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all placeholder-gray-500"
                             placeholder="••••••••"
                         />
                     </div>
@@ -93,7 +93,7 @@ export default function ESummitAdminVerify() {
                 <div className="mt-6 text-center">
                     <button
                         onClick={handleLogout}
-                        className="text-gray-600 text-sm hover:text-purple-600 transition-colors"
+                        className="text-gray-400 text-sm hover:text-purple-400 transition-colors"
                     >
                         Sign out and return to login
                     </button>

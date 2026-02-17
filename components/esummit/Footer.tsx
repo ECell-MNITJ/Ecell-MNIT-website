@@ -31,7 +31,7 @@ export default function EsFooter({ user }: { user: any }) {
         { name: 'Twitter', icon: 'fab fa-twitter', href: esummitSettings?.twitter_url },
         { name: 'Facebook', icon: 'fab fa-facebook-f', href: esummitSettings?.facebook_url },
         { name: 'YouTube', icon: 'fab fa-youtube', href: esummitSettings?.youtube_url },
-    ].filter(link => link.href);
+    ].filter(link => link.href && link.href.trim() !== '');
 
     return (
         <footer className="bg-esummit-bg text-white border-t border-white/5 relative overflow-hidden">

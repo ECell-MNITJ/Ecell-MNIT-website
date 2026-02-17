@@ -149,6 +149,73 @@ const BackgroundCanvas = () => {
 
         let animationFrameId: number;
 
+        // Star Settings
+        const STAR_COUNT = 400;
+        interface Star {
+            x: number;
+            y: number;
+            size: number;
+            opacity: number;
+            speed: number;
+        }
+        let stars: Star[] = [];
+
+        const initStars = () => {
+            stars = [];
+            for (let i = 0; i < STAR_COUNT; i++) {
+                stars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    size: Math.random() * 1.5,
+                    opacity: Math.random(),
+                    speed: Math.random() * 0.05 + 0.01
+                });
+            }
+        };
+
+        const drawStars = (ctx: CanvasRenderingContext2D) => {
+            ctx.fillStyle = '#FFFFFF';
+            stars.forEach(star => {
+                ctx.globalAlpha = star.opacity * (Math.random() * 0.3 + 0.7); // Twinkle
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Move stars slowly
+                star.y -= star.speed;
+                if (star.y < 0) {
+                    star.y = height;
+                    star.x = Math.random() * width;
+                }
+            });
+            ctx.globalAlpha = 1;
+        };
+
+        const drawAmbientGlow = (ctx: CanvasRenderingContext2D) => {
+            // Left Glow
+            const gradientLeft = ctx.createRadialGradient(0, height / 2, 0, 0, height / 2, width * 0.3);
+            gradientLeft.addColorStop(0, 'rgba(157, 78, 221, 0.05)'); // Primary E-Summit purple
+            gradientLeft.addColorStop(1, 'transparent');
+            ctx.fillStyle = gradientLeft;
+            ctx.fillRect(0, 0, width * 0.3, height);
+
+            // Right Glow
+            const gradientRight = ctx.createRadialGradient(width, height / 2, 0, width, height / 2, width * 0.3);
+            gradientRight.addColorStop(0, 'rgba(0, 240, 255, 0.05)'); // Secondary Cyan
+            gradientRight.addColorStop(1, 'transparent');
+            ctx.fillStyle = gradientRight;
+            ctx.fillRect(width * 0.7, 0, width * 0.3, height);
+        };
+
+        const resize = () => {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            initGlobe();
+            initStars();
+        };
+
         const draw = () => {
             // Auto rotation + Mouse influence
             pRotate += 0.002;
@@ -158,6 +225,10 @@ const BackgroundCanvas = () => {
             // Clear
             ctx.fillStyle = '#050A14';
             ctx.fillRect(0, 0, width, height);
+
+            // Draw Background Elements
+            drawStars(ctx);
+            drawAmbientGlow(ctx);
 
             // Process Points
             points.forEach(p => {
@@ -261,13 +332,7 @@ const BackgroundCanvas = () => {
             animationFrameId = requestAnimationFrame(draw);
         };
 
-        const resize = () => {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
-            initGlobe();
-        };
+
 
         const handleMouseMove = (e: MouseEvent) => {
             const x = (e.clientX / width) * 2 - 1;

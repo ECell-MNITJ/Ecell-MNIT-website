@@ -210,6 +210,8 @@ export interface Database {
                     created_at: string;
                     team_id: string | null;
                     role: string;
+                    checked_in: boolean;
+                    checked_in_at: string | null;
                 };
                 Insert: {
                     id?: string;
@@ -218,6 +220,8 @@ export interface Database {
                     created_at?: string;
                     team_id?: string | null;
                     role?: string;
+                    checked_in?: boolean;
+                    checked_in_at?: string | null;
                 };
                 Update: {
                     id?: string;
@@ -226,6 +230,8 @@ export interface Database {
                     created_at?: string;
                     team_id?: string | null;
                     role?: string;
+                    checked_in?: boolean;
+                    checked_in_at?: string | null;
                 };
                 Relationships: [
                     {
@@ -331,6 +337,8 @@ export interface Database {
                     website: string | null;
                     phone: string | null;
                     qr_code_url: string | null;
+                    role: string;
+                    age: number | null;
                 };
                 Insert: {
                     id: string;
@@ -341,6 +349,8 @@ export interface Database {
                     website?: string | null;
                     phone?: string | null;
                     qr_code_url?: string | null;
+                    role?: string;
+                    age?: number | null;
                 };
                 Update: {
                     id?: string;
@@ -563,6 +573,7 @@ export interface Database {
                     id: number;
                     show_stats: boolean;
                     show_blueprint: boolean;
+                    scanner_password: string;
                     created_at: string;
                     updated_at: string;
                 };
@@ -570,6 +581,7 @@ export interface Database {
                     id?: number;
                     show_stats?: boolean;
                     show_blueprint?: boolean;
+                    scanner_password?: string;
                     created_at?: string;
                     updated_at?: string;
                 };
@@ -577,6 +589,7 @@ export interface Database {
                     id?: number;
                     show_stats?: boolean;
                     show_blueprint?: boolean;
+                    scanner_password?: string;
                     created_at?: string;
                     updated_at?: string;
                 };
@@ -605,6 +618,12 @@ export interface Database {
                     is_success: boolean;
                 };
                 Returns: undefined;
+            };
+            verify_scanner_password: {
+                Args: {
+                    input_password: string;
+                };
+                Returns: boolean;
             };
         };
         Enums: {

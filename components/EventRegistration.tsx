@@ -6,6 +6,7 @@ import { FiUsers, FiUserPlus, FiLogIn, FiCheck, FiCopy, FiInfo } from 'react-ico
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import TeamMembers from './TeamMembers';
+import RegistrationDetailsModal from './esummit/RegistrationDetailsModal';
 
 interface EventRegistrationProps {
     event: {
@@ -26,6 +27,8 @@ export default function EventRegistration({ event, user }: EventRegistrationProp
     const [registration, setRegistration] = useState<any>(null);
     const [team, setTeam] = useState<any>(null);
     const [activeTab, setActiveTab] = useState<'create' | 'join'>('create');
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
 
     // Form states
     const [teamName, setTeamName] = useState('');
@@ -60,12 +63,39 @@ export default function EventRegistration({ event, user }: EventRegistrationProp
         }
     }
 
+    async function checkProfileCompleteness() {
+        if (!user) return false;
+
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('phone, age, qr_code_url')
+            .eq('id', user.id)
+            .single();
+
+        // Check if phone AND age are present (full_name is assumed from auth/initial creation)
+        // Also check if QR code is generated
+        if (!profile || !profile.phone || !profile.age || !profile.qr_code_url) {
+            return false;
+        }
+        return true;
+    }
+
+    async function executeWithProfileCheck(action: () => void) {
+        if (!user) {
+            router.push(`/login?next=/events/${event.id}`);
+            return;
+        }
+
+        const isComplete = await checkProfileCompleteness();
+        if (isComplete) {
+            action();
+        } else {
+            setPendingAction(() => action);
+            setShowDetailsModal(true);
+        }
+    }
+
     async function generateJoinCode() {
-        // Implementation of validation logic handled server-side/db constraint mostly, 
-        // but we generate a random string here for simplicity if RLS allows, 
-        // OR we rely on a database function. 
-        // For this implementation, let's generate a simple code client-side 
-        // and handle collision by retrying or relying on the unique constraint error.
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         let code = '';
         for (let i = 0; i < 6; i++) {
@@ -75,15 +105,6 @@ export default function EventRegistration({ event, user }: EventRegistrationProp
     }
 
     async function handleDetailedRegistration() {
-        if (!user) {
-            router.push(`/login?next=/events/${event.id}`);
-            return;
-        }
-
-        // If external link exists and NOT a team event, redirect there (legacy behavior support)
-        // BUT user asked to "ask user consent to register" instead of redirecting.
-        // So we prioritized internal registration.
-
         if (!confirm(`Are you sure you want to register for ${event.title}?`)) return;
 
         setLoading(true);
@@ -107,13 +128,13 @@ export default function EventRegistration({ event, user }: EventRegistrationProp
         }
     }
 
-    async function handleCreateTeam(e: React.FormEvent) {
-        e.preventDefault();
+    async function handleCreateTeam(e?: React.FormEvent) {
+        if (e) e.preventDefault();
         if (!teamName.trim()) return;
 
         setLoading(true);
         try {
-            const code = await generateJoinCode(); // In reality, better done securely or checked loops
+            const code = await generateJoinCode();
 
             // 1. Create Team
             const { data: newTeam, error: teamError } = await supabase
@@ -140,7 +161,7 @@ export default function EventRegistration({ event, user }: EventRegistrationProp
                 });
 
             if (regError) {
-                // Rollback team creation if registration fails (best effort)
+                // Rollback team creation if registration fails
                 await supabase.from('teams').delete().eq('id', newTeam.id);
                 throw regError;
             }
@@ -155,8 +176,8 @@ export default function EventRegistration({ event, user }: EventRegistrationProp
         }
     }
 
-    async function handleJoinTeam(e: React.FormEvent) {
-        e.preventDefault();
+    async function handleJoinTeam(e?: React.FormEvent) {
+        if (e) e.preventDefault();
         if (!joinCode.trim()) return;
 
         setLoading(true);
@@ -198,7 +219,6 @@ export default function EventRegistration({ event, user }: EventRegistrationProp
             toast.success('Joined team successfully!');
             checkRegistration();
         } catch (error: any) {
-            // specific duplicate key error handling
             if (error.code === '23505') {
                 toast.error('You are already registered for this event');
             } else {
@@ -261,9 +281,6 @@ export default function EventRegistration({ event, user }: EventRegistrationProp
                         <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
                             <FiInfo className="inline" /> Share this code with your teammates to let them join.
                         </p>
-                        <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
-                            <FiInfo className="inline" /> Share this code with your teammates to let them join.
-                        </p>
                     </div>
                 )}
 
@@ -274,103 +291,116 @@ export default function EventRegistration({ event, user }: EventRegistrationProp
         );
     }
 
-    if (!event.is_team_event) {
-        return (
-            <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                <h3 className="text-xl font-heading text-primary-green mb-2">Register for Event</h3>
-                <p className="text-gray-600 mb-6">Click the button below to confirm your registration.</p>
-                <button
-                    onClick={handleDetailedRegistration}
-                    disabled={loading}
-                    className="w-full bg-primary-golden text-white py-3 rounded-lg font-bold hover:bg-yellow-600 transition-colors disabled:opacity-50"
-                >
-                    {loading ? 'Registering...' : 'Register Now'}
-                </button>
-            </div>
-        );
-    }
-
     return (
-        <div className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
-            <div className="flex border-b border-gray-200">
-                <button
-                    onClick={() => setActiveTab('create')}
-                    className={`flex-1 py-4 text-center font-medium transition-colors ${activeTab === 'create'
-                        ? 'bg-white text-primary-golden border-b-2 border-primary-golden'
-                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                        }`}
-                >
-                    <span className="flex items-center justify-center gap-2">
-                        <FiUserPlus /> Create Team
-                    </span>
-                </button>
-                <button
-                    onClick={() => setActiveTab('join')}
-                    className={`flex-1 py-4 text-center font-medium transition-colors ${activeTab === 'join'
-                        ? 'bg-white text-primary-golden border-b-2 border-primary-golden'
-                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                        }`}
-                >
-                    <span className="flex items-center justify-center gap-2">
-                        <FiLogIn /> Join Team
-                    </span>
-                </button>
-            </div>
+        <>
+            <RegistrationDetailsModal
+                isOpen={showDetailsModal}
+                onClose={() => setShowDetailsModal(false)}
+                user={user}
+                onComplete={() => {
+                    setShowDetailsModal(false);
+                    if (pendingAction) {
+                        pendingAction();
+                        setPendingAction(null);
+                    }
+                }}
+            />
 
-            <div className="p-6">
-                {activeTab === 'create' ? (
-                    <form onSubmit={handleCreateTeam}>
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Team Name</label>
-                            <input
-                                type="text"
-                                value={teamName}
-                                onChange={(e) => setTeamName(e.target.value)}
-                                placeholder="Enter a cool team name"
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none"
-                                required
-                            />
-                        </div>
-                        <div className="bg-blue-50 text-blue-700 text-sm p-3 rounded-lg mb-4 flex gap-2">
-                            <FiInfo className="shrink-0 mt-0.5" />
-                            <p>You will be the team leader. A unique join code will be generated for you to share with teammates.</p>
-                        </div>
+            {!event.is_team_event ? (
+                <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h3 className="text-xl font-heading text-primary-green mb-2">Register for Event</h3>
+                    <p className="text-gray-600 mb-6">Click the button below to confirm your registration.</p>
+                    <button
+                        onClick={() => executeWithProfileCheck(handleDetailedRegistration)}
+                        disabled={loading}
+                        className="w-full bg-primary-golden text-white py-3 rounded-lg font-bold hover:bg-yellow-600 transition-colors disabled:opacity-50"
+                    >
+                        {loading ? 'Registering...' : 'Register Now'}
+                    </button>
+                </div>
+            ) : (
+                <div className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
+                    <div className="flex border-b border-gray-200">
                         <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full bg-primary-golden text-white py-3 rounded-lg font-bold hover:bg-yellow-600 transition-colors disabled:opacity-50"
+                            onClick={() => setActiveTab('create')}
+                            className={`flex-1 py-4 text-center font-medium transition-colors ${activeTab === 'create'
+                                ? 'bg-white text-primary-golden border-b-2 border-primary-golden'
+                                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                                }`}
                         >
-                            {loading ? 'Creating Team...' : 'Create & Register'}
+                            <span className="flex items-center justify-center gap-2">
+                                <FiUserPlus /> Create Team
+                            </span>
                         </button>
-                    </form>
-                ) : (
-                    <form onSubmit={handleJoinTeam}>
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Join Code</label>
-                            <input
-                                type="text"
-                                value={joinCode}
-                                onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                                placeholder="Enter 6-digit code"
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none uppercase tracking-widest"
-                                required
-                                maxLength={6}
-                            />
-                        </div>
-                        <div className="bg-blue-50 text-blue-700 text-sm p-3 rounded-lg mb-4 flex gap-2">
-                            <FiInfo className="shrink-0 mt-0.5" />
-                            <p>Ask your team leader for the join code. Ensure the team isn't full before joining.</p>
-                        </div>
                         <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full bg-primary-green text-white py-3 rounded-lg font-bold hover:bg-green-700 transition-colors disabled:opacity-50"
+                            onClick={() => setActiveTab('join')}
+                            className={`flex-1 py-4 text-center font-medium transition-colors ${activeTab === 'join'
+                                ? 'bg-white text-primary-golden border-b-2 border-primary-golden'
+                                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                                }`}
                         >
-                            {loading ? 'Joining...' : 'Join Team'}
+                            <span className="flex items-center justify-center gap-2">
+                                <FiLogIn /> Join Team
+                            </span>
                         </button>
-                    </form>
-                )}
-            </div>
-        </div>
+                    </div>
+
+                    <div className="p-6">
+                        {activeTab === 'create' ? (
+                            <form onSubmit={(e) => { e.preventDefault(); executeWithProfileCheck(() => handleCreateTeam(e)); }}>
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Team Name</label>
+                                    <input
+                                        type="text"
+                                        value={teamName}
+                                        onChange={(e) => setTeamName(e.target.value)}
+                                        placeholder="Enter a cool team name"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none"
+                                        required
+                                    />
+                                </div>
+                                <div className="bg-blue-50 text-blue-700 text-sm p-3 rounded-lg mb-4 flex gap-2">
+                                    <FiInfo className="shrink-0 mt-0.5" />
+                                    <p>You will be the team leader. A unique join code will be generated for you to share with teammates.</p>
+                                </div>
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full bg-primary-golden text-white py-3 rounded-lg font-bold hover:bg-yellow-600 transition-colors disabled:opacity-50"
+                                >
+                                    {loading ? 'Creating Team...' : 'Create & Register'}
+                                </button>
+                            </form>
+                        ) : (
+                            <form onSubmit={(e) => { e.preventDefault(); executeWithProfileCheck(() => handleJoinTeam(e)); }}>
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Join Code</label>
+                                    <input
+                                        type="text"
+                                        value={joinCode}
+                                        onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                                        placeholder="Enter 6-digit code"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none uppercase tracking-widest"
+                                        required
+                                        maxLength={6}
+                                    />
+                                </div>
+                                <div className="bg-blue-50 text-blue-700 text-sm p-3 rounded-lg mb-4 flex gap-2">
+                                    <FiInfo className="shrink-0 mt-0.5" />
+                                    <p>Ask your team leader for the join code. Ensure the team isn't full before joining.</p>
+                                </div>
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full bg-primary-green text-white py-3 rounded-lg font-bold hover:bg-green-700 transition-colors disabled:opacity-50"
+                                >
+                                    {loading ? 'Joining...' : 'Join Team'}
+                                </button>
+                            </form>
+                        )}
+                    </div>
+                </div>
+            )}
+        </>
     );
 }

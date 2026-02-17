@@ -73,7 +73,8 @@ export default function Contact() {
         { name: 'Twitter', icon: 'fab fa-twitter', href: settings.twitter_url },
         { name: 'Instagram', icon: 'fab fa-instagram', href: settings.instagram_url },
         { name: 'LinkedIn', icon: 'fab fa-linkedin-in', href: settings.linkedin_url },
-    ].filter(link => link.href); // Only show links that exist
+        { name: 'YouTube', icon: 'fab fa-youtube', href: settings.youtube_url },
+    ].filter(link => link.href && link.href.trim() !== ''); // Only show links that exist and are not just whitespace
 
     // Dynamic height calculation
     // Base 2.0 covers Hero and Form. Each contact info item adds a small amount.

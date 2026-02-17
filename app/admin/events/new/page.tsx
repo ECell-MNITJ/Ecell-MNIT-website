@@ -37,6 +37,23 @@ export default function NewEvent() {
         gallery: [],
         faq: []
     });
+    const [showCustomCategory, setShowCustomCategory] = useState(false);
+
+    const CATEGORIES = [
+        'General', 'Workshop', 'Summit', 'Competition',
+        'Webinar', 'Networking', 'Keynote', 'Panel'
+    ];
+
+    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        if (value === 'Other') {
+            setShowCustomCategory(true);
+            setFormData({ ...formData, category: '' });
+        } else {
+            setShowCustomCategory(false);
+            setFormData({ ...formData, category: value });
+        }
+    };
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -190,20 +207,31 @@ export default function NewEvent() {
 
                         <div>
                             <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Category *</label>
-                            <select
-                                id="category"
-                                required
-                                value={formData.category}
-                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent"
-                            >
-                                <option value="General">General</option>
-                                <option value="Workshop">Workshop</option>
-                                <option value="Summit">Summit</option>
-                                <option value="Competition">Competition</option>
-                                <option value="Webinar">Webinar</option>
-                                <option value="Networking">Networking</option>
-                            </select>
+                            <div className="space-y-2">
+                                <select
+                                    id="category"
+                                    required
+                                    value={showCustomCategory ? 'Other' : formData.category}
+                                    onChange={handleCategoryChange}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent"
+                                >
+                                    {CATEGORIES.map(cat => (
+                                        <option key={cat} value={cat}>{cat}</option>
+                                    ))}
+                                    <option value="Other">Other (Custom)</option>
+                                </select>
+
+                                {showCustomCategory && (
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.category}
+                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                        placeholder="Enter custom category"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent"
+                                    />
+                                )}
+                            </div>
                         </div>
                     </div>
 

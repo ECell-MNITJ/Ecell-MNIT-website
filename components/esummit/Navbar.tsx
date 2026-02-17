@@ -51,8 +51,12 @@ export default function EsNavbar() {
             transition={{ duration: 0.8, ease: "circOut" }}
             className="fixed top-0 left-0 w-full z-50 px-4 pt-4 md:pt-6"
         >
-            <div
-                className="mx-auto max-w-7xl rounded-full transition-all duration-500 ease-in-out bg-esummit-card/80 backdrop-blur-xl shadow-[0_0_30px_rgba(0,0,0,0.5)] border border-esummit-primary/20 py-3 md:py-4 px-6"
+            <motion.div
+                animate={{
+                    borderRadius: isMenuOpen ? 24 : 50,
+                }}
+                transition={{ duration: 0.5, ease: "circOut" }}
+                className="mx-auto max-w-7xl bg-esummit-card/80 backdrop-blur-xl shadow-[0_0_30px_rgba(0,0,0,0.5)] border border-esummit-primary/20 py-3 md:py-4 px-6"
             >
                 <div className="flex items-center justify-between">
                     {/* Logo */}
@@ -132,6 +136,7 @@ export default function EsNavbar() {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.5, ease: "circOut" }}
                             className="md:hidden overflow-y-auto max-h-[85vh]"
                         >
                             <ul className="flex flex-col gap-2 pt-6 pb-2">
@@ -173,7 +178,7 @@ export default function EsNavbar() {
                         </motion.div>
                     )}
                 </AnimatePresence>
-            </div>
+            </motion.div>
         </motion.nav>
     );
 }

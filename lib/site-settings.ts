@@ -10,10 +10,10 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     contact_email: 'ecell@mnit.ac.in',
     contact_phone: '+91 95496 57348',
     address: 'Malaviya National Institute of Technology, Jaipur, Rajasthan, India',
-    facebook_url: 'https://www.facebook.com/ecellmnit/',
-    twitter_url: 'https://twitter.com/ecell_mnit',
-    instagram_url: 'https://www.instagram.com/ecell_mnit/',
-    linkedin_url: 'https://www.linkedin.com/company/ecell-mnit-jaipur/',
+    facebook_url: null,
+    twitter_url: null,
+    instagram_url: null,
+    linkedin_url: null,
     youtube_url: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -39,6 +39,21 @@ export async function getSiteSettings(supabase: SupabaseClient<Database>): Promi
 
             // Return defaults if table doesn't exist or other error
             return DEFAULT_SETTINGS;
+        }
+
+        // Filter out legacy defaults if they exist in the DB
+        const legacyDefaults = [
+            'https://www.facebook.com/ecellmnit/',
+            'https://twitter.com/ecell_mnit',
+            'https://www.instagram.com/ecell_mnit/',
+            'https://www.linkedin.com/company/ecell-mnit-jaipur/'
+        ];
+
+        if (data) {
+            if (legacyDefaults.includes(data.facebook_url || '')) data.facebook_url = null;
+            if (legacyDefaults.includes(data.twitter_url || '')) data.twitter_url = null;
+            if (legacyDefaults.includes(data.instagram_url || '')) data.instagram_url = null;
+            if (legacyDefaults.includes(data.linkedin_url || '')) data.linkedin_url = null;
         }
 
         return data;

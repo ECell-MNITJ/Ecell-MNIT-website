@@ -121,9 +121,8 @@ export default function Navbar() {
                         </button>
                     </div>
 
-                    {/* Mobile Menu */}
                     <div
-                        className={`md:hidden overflow-y-auto transition-all duration-300 ${isMenuOpen ? 'max-h-[85vh] opacity-100' : 'max-h-0 opacity-0'
+                        className={`md:hidden overflow-y-auto transition-all duration-300 fixed inset-0 z-40 bg-zinc-900/95 backdrop-blur-xl pt-24 ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
                             }`}
                     >
                         <ul className="py-4 space-y-2">

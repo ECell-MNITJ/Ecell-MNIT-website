@@ -42,6 +42,29 @@ export default function EditESummitEvent() {
         gallery: [],
         faq: []
     });
+    const [showCustomCategory, setShowCustomCategory] = useState(false);
+
+    const CATEGORIES = [
+        { value: 'General', label: 'General' },
+        { value: 'Workshop', label: 'Workshop' },
+        { value: 'Summit', label: 'Summit' },
+        { value: 'Competition', label: 'Competition' },
+        { value: 'Webinar', label: 'Webinar' },
+        { value: 'Networking', label: 'Networking' },
+        { value: 'Keynote', label: 'Keynote' },
+        { value: 'Panel', label: 'Panel Discussion' },
+    ];
+
+    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value;
+        if (value === 'Other') {
+            setShowCustomCategory(true);
+            setFormData(prev => ({ ...prev, category: '' }));
+        } else {
+            setShowCustomCategory(false);
+            setFormData(prev => ({ ...prev, category: value }));
+        }
+    };
 
     useEffect(() => {
         fetchEvent();
@@ -57,6 +80,11 @@ export default function EditESummitEvent() {
 
             if (error) throw error;
             if (!data) throw new Error('Event not found');
+
+            if (data) {
+                const isCustom = !CATEGORIES.some(c => c.value === data.category);
+                setShowCustomCategory(isCustom);
+            }
 
             setFormData({
                 title: data.title,
@@ -261,22 +289,31 @@ export default function EditESummitEvent() {
 
                         <div>
                             <label htmlFor="category" className="block text-sm font-medium text-gray-300 mb-2">Category *</label>
-                            <select
-                                id="category"
-                                required
-                                value={formData.category}
-                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            >
-                                <option value="General">General</option>
-                                <option value="Workshop">Workshop</option>
-                                <option value="Summit">Summit</option>
-                                <option value="Competition">Competition</option>
-                                <option value="Webinar">Webinar</option>
-                                <option value="Networking">Networking</option>
-                                <option value="Keynote">Keynote</option>
-                                <option value="Panel">Panel Discussion</option>
-                            </select>
+                            <div className="space-y-2">
+                                <select
+                                    id="category"
+                                    required
+                                    value={showCustomCategory ? 'Other' : (CATEGORIES.some(c => c.value === formData.category) ? formData.category : 'Other')}
+                                    onChange={handleCategoryChange}
+                                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                >
+                                    {CATEGORIES.map(cat => (
+                                        <option key={cat.value} value={cat.value}>{cat.label}</option>
+                                    ))}
+                                    <option value="Other">Other (Custom)</option>
+                                </select>
+
+                                {showCustomCategory && (
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.category}
+                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                        placeholder="Enter custom category"
+                                        className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500"
+                                    />
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -300,7 +337,6 @@ export default function EditESummitEvent() {
                             value={formData.details_url}
                             onChange={(e) => setFormData({ ...formData, details_url: e.target.value })}
                             className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500"
-                            placeholder="https://... (Leave empty to use default event page)"
                         />
                         <p className="text-sm text-gray-500 mt-1">If provided, users will be redirected to this URL when clicking "View Details"</p>
                     </div>
@@ -332,19 +368,15 @@ export default function EditESummitEvent() {
                                 <span className="text-gray-300">Mark as featured</span>
                             </label>
                         </div>
-                    </div>
 
-                    <div className="border-t border-gray-800 pt-6 mt-6">
-                        <h3 className="text-lg font-medium text-white mb-4">Registration Settings</h3>
-
-                        <div className="mb-4">
+                        <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">Registration Status</label>
                             <label className="flex items-center gap-3 cursor-pointer">
                                 <input
                                     type="checkbox"
                                     checked={formData.registrations_open}
                                     onChange={(e) => setFormData({ ...formData, registrations_open: e.target.checked })}
-                                    className="w-5 h-5 text-purple-600 focus:ring-purple-500 rounded bg-gray-800 border-gray-600"
+                                    className="w-5 h-5 text-primary-golden focus:ring-primary-golden rounded bg-gray-800 border-gray-600"
                                 />
                                 <span className="text-gray-300">Registrations Open</span>
                             </label>
@@ -352,6 +384,10 @@ export default function EditESummitEvent() {
                                 Uncheck to close registrations for this event.
                             </p>
                         </div>
+                    </div>
+
+                    <div className="border-t border-gray-800 pt-6 mt-6">
+                        <h3 className="text-lg font-medium text-white mb-4">Registration Settings</h3>
 
                         <div className="mb-4">
                             <label className="flex items-center gap-3 cursor-pointer">
