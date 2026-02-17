@@ -52,7 +52,7 @@ const FeatureRow = ({ title, desc, icon: Icon, align = 'left', delay, image_url 
         <div className="flex-1 w-full order-2 md:order-1">
             <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-r from-esummit-primary to-esummit-accent opacity-20 blur-2xl group-hover:opacity-30 transition-opacity duration-500 rounded-full" />
-                <div className={`h-64 w-full rounded-2xl border border-white/10 bg-esummit-card/50 backdrop-blur-sm flex items-center justify-center overflow-hidden relative z-10`}>
+                <div className={`h-40 md:h-64 w-full rounded-2xl border border-white/10 bg-esummit-card/50 backdrop-blur-sm flex items-center justify-center overflow-hidden relative z-10`}>
                     {/* Visual Content */}
                     <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-10" />
 
@@ -172,7 +172,7 @@ export default function ESummitPage() {
                     </motion.div>
 
                     <div className="relative mb-8">
-                        <h1 className="text-5xl sm:text-7xl md:text-[150px] font-black leading-[0.9] md:leading-[0.85] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-esummit-secondary to-esummit-secondary/50">
+                        <h1 className="text-6xl sm:text-7xl md:text-[150px] font-black leading-[0.9] md:leading-[0.85] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-esummit-secondary to-esummit-secondary/50">
                             VISIONARY
                             <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-esummit-primary via-yellow-500 to-esummit-primary block mt-2">

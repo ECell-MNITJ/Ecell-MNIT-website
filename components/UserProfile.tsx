@@ -325,12 +325,7 @@ export default function UserProfile({ user }: { user: any }) {
                     </div>
                 ) : (
                     <div className="relative">
-                        <button
-                            onClick={() => setEditing(true)}
-                            className="absolute top-0 right-0 md:static md:inline-flex md:mb-4 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg transition-colors items-center gap-2 text-sm backdrop-blur-sm border border-white/10"
-                        >
-                            <FiEdit2 /> Edit Profile
-                        </button>
+
 
                         <h1 className="text-3xl md:text-5xl font-heading mb-2 text-white">
                             {profile?.full_name || 'Anonymous User'}
@@ -357,7 +352,13 @@ export default function UserProfile({ user }: { user: any }) {
                                 </span>
                             )}
                         </div>
-                        <div className="mt-6 flex justify-center md:justify-start">
+                        <div className="mt-8 flex flex-col gap-3 items-center md:items-start">
+                            <button
+                                onClick={() => setEditing(true)}
+                                className="bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-lg transition-colors flex items-center gap-2 text-sm backdrop-blur-sm border border-white/10 justify-center"
+                            >
+                                <FiEdit2 /> Edit Profile
+                            </button>
                             <button
                                 onClick={handleDeleteAccount}
                                 className="text-red-400 hover:text-red-300 transition-colors flex items-center gap-2 text-sm border border-red-400/30 px-4 py-2 rounded-lg hover:bg-red-400/10"

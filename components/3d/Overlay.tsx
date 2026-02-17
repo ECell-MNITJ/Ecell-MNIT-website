@@ -45,7 +45,7 @@ export default function Overlay({ events, startups, stats }: OverlayProps) {
             </section>
 
             {/* Section 2: Highlights (Why E-Cell?) */}
-            <section className="w-full h-screen flex flex-col justify-center items-center px-6 md:px-20 pointer-events-none">
+            <section className="w-full min-h-screen flex flex-col justify-center items-center px-6 md:px-20 pointer-events-none py-20">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-6xl w-full items-center">
                     {/* Left Column: Core Values */}
                     <div className="bg-zinc-900/80 backdrop-blur-xl p-8 rounded-2xl border border-zinc-700 shadow-2xl w-full pointer-events-auto">
@@ -102,7 +102,7 @@ export default function Overlay({ events, startups, stats }: OverlayProps) {
             </section>
 
             {/* Section 3: Stats & Vision */}
-            <section className="w-full h-screen flex flex-col justify-center items-center px-6 md:px-20 pointer-events-none">
+            <section className="w-full min-h-screen flex flex-col justify-center items-center px-6 md:px-20 pointer-events-none py-20">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 max-w-6xl w-full">
                     {/* Vision Card */}
                     <div className="bg-zinc-900/80 backdrop-blur-xl p-8 rounded-2xl border border-zinc-700 shadow-2xl pointer-events-auto flex flex-col justify-center">
