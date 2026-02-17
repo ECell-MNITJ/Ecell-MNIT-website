@@ -202,7 +202,7 @@ export default function ESummitPage() {
                             {/* Slanted corner effect could be done with clip-path, simplified for now */}
                         </Link>
                         <Link
-                            href="/esummit/about"
+                            href="/esummit/vision"
                             className="px-8 py-4 md:px-10 md:py-5 bg-transparent border border-esummit-secondary/20 text-white font-bold uppercase tracking-widest text-xs md:text-sm hover:bg-white/5 transition-colors flex justify-center"
                         >
                             Our Vision

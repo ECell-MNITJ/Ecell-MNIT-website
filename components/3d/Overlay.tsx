@@ -113,6 +113,9 @@ export default function Overlay({ events, startups, stats }: OverlayProps) {
                         <p className="text-gray-400 text-sm">
                             We believe in the power of student-led innovation to drive social and economic change.
                         </p>
+                        <Link href="/esummit/vision" className="inline-flex items-center text-primary-golden hover:text-white transition-colors font-medium mt-auto group">
+                            Read Our Full Vision <i className="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform" />
+                        </Link>
                     </div>
 
                     {/* Dynamic Stats Grid */}
