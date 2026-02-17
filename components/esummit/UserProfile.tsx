@@ -223,7 +223,7 @@ export default function ESummitUserProfile({ user }: { user: any }) {
         try {
             setLoading(true);
             const { deleteAccount } = await import('@/app/actions');
-            await deleteAccount();
+            await deleteAccount('/esummit/login');
         } catch (error: any) {
             console.error('Error deleting account:', error);
             toast.error(error.message || 'Failed to delete account');

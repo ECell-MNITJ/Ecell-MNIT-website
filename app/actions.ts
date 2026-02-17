@@ -4,7 +4,7 @@ import { createServerClient } from '@/lib/supabase/server';
 import { createClient } from '@supabase/supabase-js';
 import { redirect } from 'next/navigation';
 
-export async function deleteAccount() {
+export async function deleteAccount(redirectPath: string = '/login') {
     // 1. Validate session
     const supabase = await createServerClient();
     const { data: { user }, error } = await supabase.auth.getUser();
@@ -89,5 +89,5 @@ export async function deleteAccount() {
     }
 
     // 5. Redirect
-    redirect('/login');
+    redirect(redirectPath);
 }
