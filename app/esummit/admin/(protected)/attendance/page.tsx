@@ -19,33 +19,23 @@ interface AttendanceRecord {
 }
 
 export default function AttendancePage() {
-    const [records, setRecords] = useState<AttendanceRecord[]>([]);
+    const [records, setRecords] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const supabase = createClient();
 
     const fetchAttendance = async () => {
         setLoading(true);
         try {
+            // Fetch users who have checked in to E-Summit (General Check-in)
             const { data, error } = await supabase
-                .from('event_registrations')
-                .select(`
-                    id,
-                    checked_in_at,
-                    profiles (
-                        full_name,
-                        email,
-                        phone
-                    ),
-                    events (
-                        title
-                    )
-                `)
-                .eq('checked_in', true)
-                .order('checked_in_at', { ascending: false });
+                .from('profiles')
+                .select('id, full_name, email, phone, esummit_checked_in_at, gender')
+                .eq('esummit_checked_in', true)
+                .order('esummit_checked_in_at', { ascending: false });
 
             if (error) throw error;
 
-            setRecords(data as any || []);
+            setRecords(data || []);
         } catch (error: any) {
             console.error('Error fetching attendance:', error);
             toast.error('Failed to load attendance records');
@@ -57,7 +47,12 @@ export default function AttendancePage() {
     useEffect(() => {
         fetchAttendance();
 
-        // Real-time subscription
+        // Polling Fallback (every 15s)
+        const intervalId = setInterval(() => {
+            fetchAttendance(); // refresh
+        }, 15000);
+
+        // Real-time subscription to PROFILES
         const channel = supabase
             .channel('attendance_updates')
             .on(
@@ -65,19 +60,21 @@ export default function AttendancePage() {
                 {
                     event: 'UPDATE',
                     schema: 'public',
-                    table: 'event_registrations',
-                    filter: 'checked_in=eq.true'
+                    table: 'profiles',
+                    filter: 'esummit_checked_in=eq.true'
                 },
                 (payload) => {
                     console.log('Real-time update:', payload);
                     fetchAttendance(); // Refresh list on new check-in
-                    toast.success('New check-in detected!');
+                    const name = payload.new.full_name || 'New Attendee';
+                    toast.success(`${name} checked in!`, { id: `checkin-${payload.new.id}` });
                 }
             )
             .subscribe();
 
         return () => {
             supabase.removeChannel(channel);
+            clearInterval(intervalId);
         };
     }, []);
 
@@ -86,7 +83,7 @@ export default function AttendancePage() {
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="text-3xl font-heading text-primary-green mb-2">Live Attendance</h1>
-                    <p className="text-gray-400">Real-time view of checked-in attendees</p>
+                    <p className="text-gray-400">Real-time view of checked-in E-Summit attendees</p>
                 </div>
                 <button
                     onClick={fetchAttendance}
@@ -114,30 +111,36 @@ export default function AttendancePage() {
                                     <th className="p-4 font-medium border-b border-gray-700">Time</th>
                                     <th className="p-4 font-medium border-b border-gray-700">Attendee</th>
                                     <th className="p-4 font-medium border-b border-gray-700">Contact</th>
-                                    <th className="p-4 font-medium border-b border-gray-700">Event</th>
+                                    <th className="p-4 font-medium border-b border-gray-700">Status</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-800">
                                 {records.map((record) => (
-                                    <tr key={record.id} className="hover:bg-gray-800/50 transition-colors">
+                                    <tr key={record.id} className="hover:bg-gray-800/50 transition-colors animate-in fade-in slide-in-from-top-2">
                                         <td className="p-4 text-gray-300 font-mono text-sm whitespace-nowrap">
-                                            {new Date(record.checked_in_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            {record.esummit_checked_in_at ?
+                                                new Date(record.esummit_checked_in_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                                : '-'}
                                             <div className="text-xs text-gray-500">
-                                                {new Date(record.checked_in_at).toLocaleDateString()}
+                                                {record.esummit_checked_in_at ?
+                                                    new Date(record.esummit_checked_in_at).toLocaleDateString()
+                                                    : '-'}
                                             </div>
                                         </td>
                                         <td className="p-4">
-                                            <div className="font-medium text-white">
-                                                {(record.profiles as any)?.full_name || 'N/A'}
+                                            <div className="font-medium text-white text-lg">
+                                                {record.full_name || 'N/A'}
                                             </div>
+                                            <div className="text-xs text-gray-500">{record.gender}</div>
                                         </td>
                                         <td className="p-4 text-gray-400 text-sm">
-                                            <div>{(record.profiles as any)?.email}</div>
-                                            <div className="text-xs">{(record.profiles as any)?.phone}</div>
+                                            <div>{record.email}</div>
+                                            <div className="text-xs font-mono">{record.phone}</div>
                                         </td>
                                         <td className="p-4">
-                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-900/50 text-purple-400 border border-purple-500/20">
-                                                {(record.events as any)?.title}
+                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-900/50 text-green-400 border border-green-500/20">
+                                                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                                Checked In
                                             </span>
                                         </td>
                                     </tr>
