@@ -52,16 +52,13 @@ export default function EsNavbar() {
             className="fixed top-0 left-0 w-full z-50 px-4 pt-4 md:pt-6"
         >
             <div
-                className={`mx-auto max-w-7xl rounded-full transition-all duration-500 ease-in-out ${isScrolled
-                    ? 'bg-esummit-card/80 backdrop-blur-xl shadow-[0_0_30px_rgba(0,0,0,0.5)] border border-esummit-primary/20 py-3 md:py-4 px-6'
-                    : 'bg-transparent py-4 md:py-6 px-4'
-                    }`}
+                className="mx-auto max-w-7xl rounded-full transition-all duration-500 ease-in-out bg-esummit-card/80 backdrop-blur-xl shadow-[0_0_30px_rgba(0,0,0,0.5)] border border-esummit-primary/20 py-3 md:py-4 px-6"
             >
                 <div className="flex items-center justify-between">
                     {/* Logo */}
                     <Link href="/esummit" className="group">
                         <span className="text-2xl font-black text-white tracking-wider flex items-center gap-2 group-hover:scale-105 transition-transform duration-300">
-                            E-SUMMIT <span className="text-esummit-primary drop-shadow-[0_0_10px_rgba(157,78,221,0.8)]">24</span>
+                            E-SUMMIT <span className="text-esummit-primary drop-shadow-[0_0_10px_rgba(157,78,221,0.8)]">26</span>
                         </span>
                     </Link>
 

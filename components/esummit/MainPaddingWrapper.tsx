@@ -7,7 +7,7 @@ export default function MainPaddingWrapper({ children }: { children: React.React
     const isHomePage = pathname === '/esummit';
 
     return (
-        <main className={isHomePage ? '' : 'pt-24 bg-esummit-bg min-h-screen'}>
+        <main className={isHomePage ? '' : 'pt-24 min-h-screen'}>
             {children}
         </main>
     );

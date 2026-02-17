@@ -36,18 +36,18 @@ export default function AgendaEditor({ agenda, onChange }: AgendaEditorProps) {
 
     return (
         <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-700">Agenda</h3>
+            <h3 className="text-lg font-semibold text-gray-300">Agenda</h3>
 
             {/* List */}
             <div className="space-y-3">
                 {agenda.map((item) => (
-                    <div key={item.id} className="flex gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div key={item.id} className="flex gap-4 p-4 bg-gray-800 rounded-lg border border-gray-700">
                         <div className="w-24 shrink-0 font-mono text-sm font-medium text-primary-golden pt-1">
                             {item.time}
                         </div>
                         <div className="flex-1">
-                            <h4 className="font-semibold text-gray-900">{item.title}</h4>
-                            <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+                            <h4 className="font-semibold text-white">{item.title}</h4>
+                            <p className="text-sm text-gray-400 mt-1">{item.description}</p>
                         </div>
                         <button
                             type="button"
@@ -61,7 +61,7 @@ export default function AgendaEditor({ agenda, onChange }: AgendaEditorProps) {
             </div>
 
             {/* Add New */}
-            <div className="grid md:grid-cols-12 gap-3 p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+            <div className="grid md:grid-cols-12 gap-3 p-4 bg-gray-800 rounded-lg border-2 border-dashed border-gray-700">
                 <div className="md:col-span-3">
                     <div className="relative">
                         <FiClock className="absolute left-3 top-3 text-gray-400" />
@@ -70,7 +70,7 @@ export default function AgendaEditor({ agenda, onChange }: AgendaEditorProps) {
                             placeholder="Time (e.g. 10:00 AM)"
                             value={newItem.time}
                             onChange={(e) => setNewItem({ ...newItem, time: e.target.value })}
-                            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-primary-golden"
+                            className="w-full pl-10 pr-3 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-1 focus:ring-primary-golden placeholder-gray-500"
                         />
                     </div>
                 </div>
@@ -80,7 +80,7 @@ export default function AgendaEditor({ agenda, onChange }: AgendaEditorProps) {
                         placeholder="Session Title"
                         value={newItem.title}
                         onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-primary-golden mb-3"
+                        className="w-full px-3 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-1 focus:ring-primary-golden mb-3 placeholder-gray-500"
                     />
                     <div className="relative">
                         <FiAlignLeft className="absolute left-3 top-3 text-gray-400" />
@@ -89,7 +89,7 @@ export default function AgendaEditor({ agenda, onChange }: AgendaEditorProps) {
                             value={newItem.description}
                             onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
                             rows={2}
-                            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-primary-golden"
+                            className="w-full pl-10 pr-3 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-1 focus:ring-primary-golden placeholder-gray-500"
                         />
                     </div>
                 </div>
@@ -98,7 +98,7 @@ export default function AgendaEditor({ agenda, onChange }: AgendaEditorProps) {
                         type="button"
                         onClick={handleAdd}
                         disabled={!newItem.time || !newItem.title}
-                        className="flex items-center justify-center gap-2 w-full py-2 bg-white border border-primary-golden text-primary-golden rounded-lg hover:bg-primary-golden/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="flex items-center justify-center gap-2 w-full py-2 bg-gray-900 border border-primary-golden text-primary-golden rounded-lg hover:bg-primary-golden/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                         <FiPlus /> Add Agenda Item
                     </button>

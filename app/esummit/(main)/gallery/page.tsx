@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 export default function ESummitGalleryPage() {
     return (
-        <div className="min-h-screen bg-esummit-bg text-white pt-24 pb-20">
+        <div className="min-h-screen text-white pt-24 pb-20">
             <div className="container mx-auto px-4 text-center mb-16">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

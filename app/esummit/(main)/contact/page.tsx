@@ -46,7 +46,7 @@ export default function ContactPage() {
     };
 
     return (
-        <div className="bg-esummit-bg min-h-screen text-white pt-24 pb-12 overflow-x-hidden selection:bg-esummit-primary selection:text-white font-body">
+        <div className="min-h-screen text-white pt-24 pb-12 overflow-x-hidden selection:bg-esummit-primary selection:text-white font-body">
             <Toaster position="top-right"
                 toastOptions={{
                     style: {
@@ -75,7 +75,7 @@ export default function ContactPage() {
                         GET IN <span className="text-transparent bg-clip-text bg-gradient-to-r from-esummit-primary to-esummit-accent">TOUCH</span>
                     </h1>
                     <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-                        Have questions about E-Summit 2024? We're here to help. Reach out to us for any queries or partnerships.
+                        Have questions about E-Summit 2026? We're here to help. Reach out to us for any queries or partnerships.
                     </p>
                 </motion.div>
 

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { FiCalendar, FiMapPin, FiClock, FiShare2, FiMonitor, FiUser, FiInfo, FiArrowLeft, FiTag } from 'react-icons/fi';
 import Image from 'next/image';
 import EventRegistration from '@/components/EventRegistration';
+import EventGallery from '@/components/esummit/EventGallery';
 
 interface Event {
     id: string;
@@ -51,12 +52,12 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
     if (!event) {
         return {
-            title: 'Event Not Found - E-Summit 2024',
+            title: 'Event Not Found - E-Summit 2026',
         };
     }
 
     return {
-        title: `${event.title} - E-Summit 2024`,
+        title: `${event.title} - E-Summit 2026`,
         description: event.description,
     };
 }
@@ -224,6 +225,28 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                                     </div>
                                 </div>
                             )}
+
+                            {/* Gallery Section */}
+                            {event.event_details?.gallery && event.event_details.gallery.length > 0 && (
+                                <div>
+                                    <h2 className="text-3xl font-black text-white mb-8 uppercase tracking-wide flex items-center gap-3">
+                                        <span className="w-2 h-8 bg-purple-500 rounded-full" />
+                                        Gallery
+                                    </h2>
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                        {event.event_details.gallery.map((image: any, index: number) => (
+                                            <div key={index} className="relative aspect-square rounded-2xl overflow-hidden border border-white/10 group cursor-pointer hover:border-esummit-primary/50 transition-all shadow-[0_0_15px_rgba(0,0,0,0.3)]">
+                                                <img
+                                                    src={typeof image === 'string' ? image : image.url}
+                                                    alt={typeof image === 'string' ? `Gallery Image ${index + 1}` : image.caption || `Gallery Image ${index + 1}`}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Right Column: Registration & Sidebar */}
@@ -233,12 +256,11 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                                 <div className="bg-esummit-card rounded-3xl shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-esummit-primary/30 overflow-hidden mb-8 relative">
                                     <div className="absolute inset-0 bg-gradient-to-br from-esummit-primary/10 to-transparent pointer-events-none" />
 
-                                    <div className="bg-gradient-to-r from-esummit-primary to-purple-800 p-8 text-white text-center relative overflow-hidden">
-                                        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
-                                        <h3 className="text-2xl font-black uppercase tracking-widest mb-2 relative z-10">Secure Your Spot</h3>
-                                        <p className="text-purple-100 text-sm font-medium tracking-wide relative z-10">Register now to participate</p>
-                                    </div>
+
                                     <div className="p-8">
+                                        <h3 className="text-2xl font-black text-center text-white mb-8 uppercase tracking-widest border-b border-white/10 pb-4">
+                                            Register Now
+                                        </h3>
                                         {event.registrations_open ? (
                                             <EventRegistration
                                                 event={{

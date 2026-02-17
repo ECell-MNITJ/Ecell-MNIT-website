@@ -77,13 +77,13 @@ export default function SpeakerEditor({ speakers, onChange }: SpeakerEditorProps
 
     return (
         <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-700">Speakers</h3>
+            <h3 className="text-lg font-semibold text-gray-300">Speakers</h3>
 
             {/* List */}
             <div className="grid md:grid-cols-2 gap-4">
                 {speakers.map((item) => (
-                    <div key={item.id} className="flex gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200 relative group">
-                        <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden shrink-0">
+                    <div key={item.id} className="flex gap-4 p-4 bg-gray-800 rounded-lg border border-gray-700 relative group">
+                        <div className="w-16 h-16 rounded-full bg-gray-700 overflow-hidden shrink-0">
                             {item.image_url ? (
                                 <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
                             ) : (
@@ -93,14 +93,14 @@ export default function SpeakerEditor({ speakers, onChange }: SpeakerEditorProps
                             )}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold text-gray-900 truncate">{item.name}</h4>
+                            <h4 className="font-semibold text-white truncate">{item.name}</h4>
                             <p className="text-sm text-primary-golden truncate">{item.role}</p>
-                            <p className="text-xs text-gray-500 truncate">{item.company}</p>
+                            <p className="text-xs text-gray-400 truncate">{item.company}</p>
                         </div>
                         <button
                             type="button"
                             onClick={() => handleDelete(item.id)}
-                            className="absolute top-2 right-2 p-1 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full shadow-sm"
+                            className="absolute top-2 right-2 p-1 text-red-400 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-900 rounded-full shadow-sm hover:bg-gray-800"
                         >
                             <FiTrash2 />
                         </button>
@@ -109,11 +109,11 @@ export default function SpeakerEditor({ speakers, onChange }: SpeakerEditorProps
             </div>
 
             {/* Add New */}
-            <div className="p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+            <div className="p-4 bg-gray-800 rounded-lg border-2 border-dashed border-gray-700">
                 <div className="flex gap-6 mb-4">
                     {/* Image Upload */}
                     <div className="shrink-0">
-                        <div className="w-24 h-24 rounded-full bg-gray-200 relative overflow-hidden group">
+                        <div className="w-24 h-24 rounded-full bg-gray-700 relative overflow-hidden group">
                             {imagePreview ? (
                                 <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                             ) : (
@@ -135,21 +135,21 @@ export default function SpeakerEditor({ speakers, onChange }: SpeakerEditorProps
                             placeholder="Name *"
                             value={newItem.name}
                             onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-primary-golden"
+                            className="px-3 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-1 focus:ring-primary-golden placeholder-gray-500"
                         />
                         <input
                             type="text"
                             placeholder="Role (e.g. CEO) *"
                             value={newItem.role}
                             onChange={(e) => setNewItem({ ...newItem, role: e.target.value })}
-                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-primary-golden"
+                            className="px-3 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-1 focus:ring-primary-golden placeholder-gray-500"
                         />
                         <input
                             type="text"
                             placeholder="Company"
                             value={newItem.company}
                             onChange={(e) => setNewItem({ ...newItem, company: e.target.value })}
-                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-primary-golden"
+                            className="px-3 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-1 focus:ring-primary-golden placeholder-gray-500"
                         />
                         <div className="flex gap-2">
                             <div className="relative flex-1">
@@ -159,7 +159,7 @@ export default function SpeakerEditor({ speakers, onChange }: SpeakerEditorProps
                                     placeholder="LinkedIn URL"
                                     value={newItem.linkedin_url}
                                     onChange={(e) => setNewItem({ ...newItem, linkedin_url: e.target.value })}
-                                    className="w-full pl-9 px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-primary-golden text-sm"
+                                    className="w-full pl-9 px-3 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-1 focus:ring-primary-golden text-sm placeholder-gray-500"
                                 />
                             </div>
                         </div>
@@ -169,7 +169,7 @@ export default function SpeakerEditor({ speakers, onChange }: SpeakerEditorProps
                                 value={newItem.bio}
                                 onChange={(e) => setNewItem({ ...newItem, bio: e.target.value })}
                                 rows={2}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-primary-golden"
+                                className="w-full px-3 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-1 focus:ring-primary-golden placeholder-gray-500"
                             />
                         </div>
                     </div>
@@ -179,7 +179,7 @@ export default function SpeakerEditor({ speakers, onChange }: SpeakerEditorProps
                     type="button"
                     onClick={handleAdd}
                     disabled={uploading || !newItem.name || !newItem.role}
-                    className="flex items-center justify-center gap-2 w-full py-2 bg-white border border-primary-golden text-primary-golden rounded-lg hover:bg-primary-golden/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center justify-center gap-2 w-full py-2 bg-gray-900 border border-primary-golden text-primary-golden rounded-lg hover:bg-primary-golden/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                     {uploading ? 'Uploading...' : <><FiPlus /> Add Speaker</>}
                 </button>

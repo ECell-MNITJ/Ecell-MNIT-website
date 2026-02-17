@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { FiEdit2, FiSave, FiCamera, FiGlobe, FiPhone, FiUser, FiX, FiTrash2, FiAward, FiColumns } from 'react-icons/fi';
+import { FiEdit2, FiSave, FiCamera, FiGlobe, FiPhone, FiUser, FiX, FiTrash2, FiAward, FiColumns, FiPower } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 import QRCodeCard from './QRCodeCard';
@@ -60,8 +61,15 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                 });
             } else {
                 // Initialize with auth metadata if available
+                const metaName = user.user_metadata?.name || user.user_metadata?.full_name || '';
+                const tempProfile = {
+                    full_name: metaName,
+                    avatar_url: user.user_metadata?.avatar_url || '',
+                    // ... other fields empty
+                };
+                setProfile(tempProfile); // Set profile state so it renders immediately
                 setFormData({
-                    full_name: user.user_metadata?.full_name || '',
+                    full_name: metaName,
                     bio: '',
                     website: '',
                     phone: '',
@@ -180,6 +188,19 @@ export default function ESummitUserProfile({ user }: { user: any }) {
         }
     }
 
+    const router = useRouter(); // Need to import useRouter
+
+    const handleLogout = async () => {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            toast.error("Error logging out");
+            return;
+        }
+        toast.success("Logged out successfully");
+        router.push("/esummit"); // Redirect to E-Summit home
+        router.refresh();
+    };
+
     if (loading && !profile && !editing) {
         return (
             <div className="flex justify-center items-center h-64">
@@ -195,6 +216,9 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                 {/* Background Effects */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-esummit-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-esummit-accent/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+
+                {/* Logout Button Removed from Absolute */}
+
 
                 <div className="flex flex-col lg:flex-row items-start gap-10 relative z-10">
                     {/* QR Code Section (Mobile: Order 2, Desktop: Order 3) */}
@@ -301,16 +325,24 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                                     <div>
                                         <h1 className="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">
-                                            {profile?.full_name || 'Anonymous User'}
+                                            {profile?.full_name || user.user_metadata?.name || user.user_metadata?.full_name || 'Anonymous User'}
                                         </h1>
                                         <p className="text-esummit-primary font-medium">{user.email}</p>
                                     </div>
-                                    <button
-                                        onClick={() => setEditing(true)}
-                                        className="self-center md:self-start bg-white/5 text-gray-300 hover:bg-esummit-primary hover:text-white px-6 py-2.5 rounded-full transition-all flex items-center gap-2 border border-white/10 hover:border-esummit-primary font-bold uppercase tracking-wide text-sm"
-                                    >
-                                        <FiEdit2 /> Edit Profile
-                                    </button>
+                                    <div className="flex gap-2 self-center md:self-start">
+                                        <button
+                                            onClick={() => setEditing(true)}
+                                            className="bg-white/5 text-gray-300 hover:bg-esummit-primary hover:text-white px-6 py-2.5 rounded-full transition-all flex items-center gap-2 border border-white/10 hover:border-esummit-primary font-bold uppercase tracking-wide text-sm"
+                                        >
+                                            <FiEdit2 /> Edit Profile
+                                        </button>
+                                        <button
+                                            onClick={handleLogout}
+                                            className="bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white px-6 py-2.5 rounded-full transition-all flex items-center gap-2 border border-red-500/20 hover:border-red-500 font-bold uppercase tracking-wide text-sm"
+                                        >
+                                            <FiPower /> Log Out
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {profile?.bio && (

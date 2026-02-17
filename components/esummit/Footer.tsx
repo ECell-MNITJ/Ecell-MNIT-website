@@ -1,15 +1,36 @@
 'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
+import { createClient } from '@/lib/supabase/client';
 
 export default function EsFooter({ user }: { user: any }) {
     const currentYear = new Date().getFullYear();
     const { settings } = useSiteSettings();
 
+    const [esummitSettings, setEsummitSettings] = useState<any>(null);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            const supabase = createClient();
+            const { data } = await supabase
+                .from('esummit_settings')
+                .select('*')
+                .single();
+            if (data) setEsummitSettings(data);
+        };
+        fetchSettings();
+    }, []);
+
+    // Fallback to site settings if not set in esummit settings? Or just use esummit settings.
+    // Let's prioritize E-Summit settings.
     const socialLinks = [
-        { name: 'Instagram', icon: 'fab fa-instagram', href: settings.instagram_url },
-        { name: 'LinkedIn', icon: 'fab fa-linkedin-in', href: settings.linkedin_url },
-        { name: 'Twitter', icon: 'fab fa-twitter', href: settings.twitter_url },
+        { name: 'Instagram', icon: 'fab fa-instagram', href: esummitSettings?.instagram_url },
+        { name: 'LinkedIn', icon: 'fab fa-linkedin-in', href: esummitSettings?.linkedin_url },
+        { name: 'Twitter', icon: 'fab fa-twitter', href: esummitSettings?.twitter_url },
+        { name: 'Facebook', icon: 'fab fa-facebook-f', href: esummitSettings?.facebook_url },
+        { name: 'YouTube', icon: 'fab fa-youtube', href: esummitSettings?.youtube_url },
     ].filter(link => link.href);
 
     return (
@@ -22,7 +43,7 @@ export default function EsFooter({ user }: { user: any }) {
                     {/* Brand */}
                     <div className="text-center md:text-left">
                         <h3 className="text-3xl font-black tracking-widest mb-2">
-                            E-SUMMIT <span className="text-transparent bg-clip-text bg-gradient-to-r from-esummit-primary to-esummit-accent">24</span>
+                            E-SUMMIT <span className="text-transparent bg-clip-text bg-gradient-to-r from-esummit-primary to-esummit-accent">26</span>
                         </h3>
                         <p className="text-gray-400 text-sm tracking-wide">
                             Where Innovation Meets Opportunity

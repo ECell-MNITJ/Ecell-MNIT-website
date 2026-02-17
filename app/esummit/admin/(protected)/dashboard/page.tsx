@@ -44,37 +44,37 @@ export default async function ESummitAdminDashboard() {
 
     return (
         <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-8">Dashboard</h1>
+            <h1 className="text-3xl font-bold text-white mb-8">Dashboard</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 flex items-center p-6">
-                    <div className="p-4 rounded-full bg-purple-100 text-purple-600 mr-4">
+                <div className="bg-gray-900 rounded-xl shadow-sm border border-gray-800 flex items-center p-6">
+                    <div className="p-4 rounded-full bg-purple-900/30 text-purple-400 mr-4">
                         <FiCalendar className="w-8 h-8" />
                     </div>
                     <div>
-                        <p className="text-sm text-gray-500 font-medium">Total Events</p>
-                        <p className="text-3xl font-bold text-gray-800">{stats.events}</p>
+                        <p className="text-sm text-gray-400 font-medium">Total Events</p>
+                        <p className="text-3xl font-bold text-white">{stats.events}</p>
                     </div>
                 </div>
 
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 flex items-center p-6">
-                    <div className="p-4 rounded-full bg-blue-100 text-blue-600 mr-4">
+                <div className="bg-gray-900 rounded-xl shadow-sm border border-gray-800 flex items-center p-6">
+                    <div className="p-4 rounded-full bg-blue-900/30 text-blue-400 mr-4">
                         <FiUsers className="w-8 h-8" />
                     </div>
                     <div>
-                        <p className="text-sm text-gray-500 font-medium">Total Registrations</p>
-                        <p className="text-3xl font-bold text-gray-800">{stats.registrations}</p>
+                        <p className="text-sm text-gray-400 font-medium">Total Registrations</p>
+                        <p className="text-3xl font-bold text-white">{stats.registrations}</p>
                     </div>
                 </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Quick Actions</h2>
+            <div className="bg-gray-900 rounded-xl shadow-sm border border-gray-800 p-8 text-center">
+                <h2 className="text-xl font-bold text-white mb-4">Quick Actions</h2>
                 <div className="flex justify-center gap-4">
                     <Link href="/esummit/admin/events/new" className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-500 transition-colors">
                         Add New Event
                     </Link>
-                    <Link href="/esummit/admin/registrations" className="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                    <Link href="/esummit/admin/registrations" className="bg-gray-800 text-gray-300 px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors">
                         View Registrations
                     </Link>
                 </div>

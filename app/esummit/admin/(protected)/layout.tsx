@@ -21,7 +21,7 @@ export default async function ESummitAdminProtectedLayout({
     }
 
     return (
-        <div className="flex min-h-screen bg-gray-100">
+        <div className="flex min-h-screen bg-[#0a0a0a] text-gray-200">
             <ESummitAdminSidebar />
             <main className="flex-1 ml-64 p-8 overflow-y-auto h-screen">
                 {children}

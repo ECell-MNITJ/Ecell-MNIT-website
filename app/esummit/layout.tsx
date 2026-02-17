@@ -1,3 +1,5 @@
+import BackgroundCanvas from '@/components/esummit/BackgroundCanvas';
+
 export default function ESummitLayout({
     children,
 }: {
@@ -5,6 +7,7 @@ export default function ESummitLayout({
 }) {
     return (
         <>
+            <BackgroundCanvas />
             {children}
         </>
     );

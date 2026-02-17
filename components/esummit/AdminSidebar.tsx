@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FiHome, FiCalendar, FiUsers, FiSettings, FiLogOut } from 'react-icons/fi';
+import { FiHome, FiCalendar, FiUsers, FiSettings, FiLogOut, FiImage } from 'react-icons/fi';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 
@@ -24,6 +24,8 @@ export default function ESummitAdminSidebar() {
         { name: 'Dashboard', path: '/esummit/admin/dashboard', icon: FiHome },
         { name: 'E-Summit Events', path: '/esummit/admin/events', icon: FiCalendar },
         { name: 'Registrations', path: '/esummit/admin/registrations', icon: FiUsers },
+        { name: 'Gallery', path: '/esummit/admin/gallery', icon: FiCalendar }, // Using FiCalendar as placeholder or import FiImage
+        { name: 'Landing Page', path: '/esummit/admin/landing', icon: FiSettings },
         { name: 'Queries', path: '/esummit/admin/queries', icon: FiUsers },
     ];
 

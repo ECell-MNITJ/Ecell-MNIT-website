@@ -161,7 +161,7 @@ ON CONFLICT DO NOTHING;
 -- Insert sample events
 INSERT INTO events (title, description, date, category, status, featured)
 VALUES 
-    ('E-Summit 2024', 'Our flagship entrepreneurship summit featuring renowned speakers and startup competitions.', '2024-03-15 09:00:00+00', 'Summit', 'upcoming', true),
+    ('E-Summit 2026', 'Our flagship entrepreneurship summit featuring renowned speakers and startup competitions.', '2026-03-15 09:00:00+00', 'Summit', 'upcoming', true),
     ('Startup Workshop', 'Hands-on workshop covering business model canvas and pitching strategies.', '2024-04-01 14:00:00+00', 'Workshop', 'upcoming', false),
     ('Pitch Perfect', 'Battle of ideas where students pitch innovative solutions to investors.', '2024-01-20 16:00:00+00', 'Competition', 'past', false)
 ON CONFLICT DO NOTHING;

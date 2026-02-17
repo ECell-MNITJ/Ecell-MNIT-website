@@ -504,6 +504,84 @@ export interface Database {
                 };
                 Relationships: [];
             };
+            esummit_stats: {
+                Row: {
+                    id: string;
+                    label: string;
+                    value: string;
+                    display_order: number;
+                    created_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    label: string;
+                    value: string;
+                    display_order?: number;
+                    created_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    label?: string;
+                    value?: string;
+                    display_order?: number;
+                    created_at?: string;
+                };
+                Relationships: [];
+            };
+            esummit_blueprint: {
+                Row: {
+                    id: string;
+                    title: string;
+                    description: string;
+                    icon: string;
+                    align: 'left' | 'right';
+                    display_order: number;
+                    created_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    title: string;
+                    description: string;
+                    icon: string;
+                    align?: 'left' | 'right';
+                    display_order?: number;
+                    created_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    title?: string;
+                    description?: string;
+                    icon?: string;
+                    align?: 'left' | 'right';
+                    display_order?: number;
+                    created_at?: string;
+                };
+                Relationships: [];
+            };
+            esummit_settings: {
+                Row: {
+                    id: number;
+                    show_stats: boolean;
+                    show_blueprint: boolean;
+                    created_at: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    id?: number;
+                    show_stats?: boolean;
+                    show_blueprint?: boolean;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    id?: number;
+                    show_stats?: boolean;
+                    show_blueprint?: boolean;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Relationships: [];
+            };
         };
         Views: {
             [_ in never]: never;

@@ -117,16 +117,14 @@ export default async function ESummitEventsPage() {
     );
 
     return (
-        <div className="bg-esummit-bg min-h-screen text-white selection:bg-esummit-primary selection:text-white">
+        <div className="min-h-screen text-white selection:bg-esummit-primary selection:text-white">
             {/* Header */}
             <section className="relative py-32 overflow-hidden">
-                <div className="absolute inset-0 bg-esummit-primary/5" />
-                <div className="absolute top-0 left-1/4 w-96 h-96 bg-esummit-primary/10 rounded-full blur-[100px]" />
-                <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-esummit-accent/5 rounded-full blur-[100px]" />
+                {/* Background Removed as requested */}
 
                 <div className="container mx-auto px-4 relative z-10 text-center">
-                    <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-esummit-accent">
-                        E-Summit Events
+                    <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter uppercase pb-2">
+                        <span className="text-white">E-Summit</span> <span className="text-transparent bg-clip-text bg-gradient-to-r from-esummit-primary to-esummit-accent pr-2 relative">Events</span>
                     </h1>
                     <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
                         Discover the lineups, competitions, and workshops at E-Summit.

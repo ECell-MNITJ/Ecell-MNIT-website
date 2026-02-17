@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import { FiUser, FiMail, FiLock, FiArrowRight } from 'react-icons/fi';
+import { FiUser, FiMail, FiLock, FiArrowRight, FiArrowLeft } from 'react-icons/fi';
 
 export default function ESummitSignup() {
     const [name, setName] = useState('');
@@ -54,6 +54,14 @@ export default function ESummitSignup() {
                 }}
             />
 
+            <Link
+                href="/esummit"
+                className="absolute top-6 left-6 md:top-8 md:left-8 flex items-center gap-2 text-white/50 hover:text-white transition-colors z-20 group font-medium"
+            >
+                <FiArrowLeft className="group-hover:-translate-x-1 transition-transform" />
+                Back to Home
+            </Link>
+
             {/* Ambient Background */}
             <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-esummit-primary/10 rounded-full blur-[128px]" />
@@ -70,7 +78,7 @@ export default function ESummitSignup() {
                 <div className="text-center mb-10">
                     <Link href="/esummit" className="inline-block mb-6 group">
                         <span className="text-3xl font-black tracking-wider flex items-center justify-center gap-2 group-hover:scale-105 transition-transform duration-300">
-                            E-SUMMIT <span className="text-esummit-primary drop-shadow-[0_0_8px_rgba(157,78,221,0.8)]">24</span>
+                            E-SUMMIT <span className="text-esummit-primary drop-shadow-[0_0_8px_rgba(157,78,221,0.8)]">26</span>
                         </span>
                     </Link>
                     <h2 className="text-xl font-medium text-gray-300">Join the Revolution</h2>
@@ -126,7 +134,7 @@ export default function ESummitSignup() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-gradient-to-r from-esummit-primary to-purple-600 text-white font-bold uppercase tracking-widest py-4 rounded-xl hover:shadow-[0_0_20px_rgba(157,78,221,0.4)] hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        className="w-full bg-esummit-primary text-black font-bold uppercase tracking-widest py-4 rounded-xl hover:bg-white hover:shadow-[0_0_20px_rgba(255,184,0,0.4)] hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                         {loading ? (
                             <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

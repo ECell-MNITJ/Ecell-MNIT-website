@@ -164,16 +164,16 @@ export default function EditESummitEvent() {
     return (
         <div>
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                <h1 className="text-3xl font-bold text-white mb-2">
                     Edit E-Summit Event
                 </h1>
-                <p className="text-gray-600">Update event details</p>
+                <p className="text-gray-400">Update event details</p>
             </div>
 
-            <div className="bg-white rounded-xl p-8 shadow-lg max-w-2xl border border-purple-100">
+            <div className="bg-gray-900 rounded-xl p-8 shadow-lg max-w-2xl border border-gray-800">
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Event Image</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Event Image</label>
                         <div className="flex items-center gap-6">
                             {imagePreview ? (
                                 <div className="relative">
@@ -194,11 +194,11 @@ export default function EditESummitEvent() {
                                     </button>
                                 </div>
                             ) : (
-                                <div className="w-48 h-32 rounded-lg bg-gray-100 flex items-center justify-center">
-                                    <FiUpload className="w-8 h-8 text-gray-400" />
+                                <div className="w-48 h-32 rounded-lg bg-gray-800 flex items-center justify-center border border-gray-700">
+                                    <FiUpload className="w-8 h-8 text-gray-500" />
                                 </div>
                             )}
-                            <label className="cursor-pointer bg-purple-50 text-purple-600 px-4 py-2 rounded-lg hover:bg-purple-100 transition-colors">
+                            <label className="cursor-pointer bg-purple-900/40 text-purple-400 px-4 py-2 rounded-lg hover:bg-purple-900/60 transition-colors border border-purple-500/30">
                                 <span>Change Image</span>
                                 <input
                                     type="file"
@@ -211,62 +211,62 @@ export default function EditESummitEvent() {
                     </div>
 
                     <div>
-                        <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
+                        <label htmlFor="title" className="block text-sm font-medium text-gray-300 mb-2">Title *</label>
                         <input
                             id="title"
                             type="text"
                             required
                             value={formData.title}
                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                        <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">Description *</label>
                         <textarea
                             id="description"
                             rows={4}
                             required
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="detailed_description" className="block text-sm font-medium text-gray-700 mb-2">Detailed Description (Optional)</label>
+                        <label htmlFor="detailed_description" className="block text-sm font-medium text-gray-300 mb-2">Detailed Description (Optional)</label>
                         <textarea
                             id="detailed_description"
                             rows={8}
                             value={formData.detailed_description}
                             onChange={(e) => setFormData({ ...formData, detailed_description: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500"
                             placeholder="Add a comprehensive description, agenda, requirements, etc."
                         />
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4">
                         <div>
-                            <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-2">Date & Time *</label>
+                            <label htmlFor="date" className="block text-sm font-medium text-gray-300 mb-2">Date & Time *</label>
                             <input
                                 id="date"
                                 type="datetime-local"
                                 required
                                 value={formData.date}
                                 onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500"
                             />
                         </div>
 
                         <div>
-                            <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Category *</label>
+                            <label htmlFor="category" className="block text-sm font-medium text-gray-300 mb-2">Category *</label>
                             <select
                                 id="category"
                                 required
                                 value={formData.category}
                                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                             >
                                 <option value="General">General</option>
                                 <option value="Workshop">Workshop</option>
@@ -281,25 +281,25 @@ export default function EditESummitEvent() {
                     </div>
 
                     <div>
-                        <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                        <label htmlFor="location" className="block text-sm font-medium text-gray-300 mb-2">Location</label>
                         <input
                             id="location"
                             type="text"
                             value={formData.location}
                             onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500"
                             placeholder="e.g., Main Auditorium, MNIT"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="details_url" className="block text-sm font-medium text-gray-700 mb-2">Event Details URL (Optional)</label>
+                        <label htmlFor="details_url" className="block text-sm font-medium text-gray-300 mb-2">Event Details URL (Optional)</label>
                         <input
                             id="details_url"
                             type="url"
                             value={formData.details_url}
                             onChange={(e) => setFormData({ ...formData, details_url: e.target.value })}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500"
                             placeholder="https://... (Leave empty to use default event page)"
                         />
                         <p className="text-sm text-gray-500 mt-1">If provided, users will be redirected to this URL when clicking "View Details"</p>
@@ -307,12 +307,12 @@ export default function EditESummitEvent() {
 
                     <div className="grid md:grid-cols-2 gap-4">
                         <div>
-                            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">Status *</label>
+                            <label htmlFor="status" className="block text-sm font-medium text-gray-300 mb-2">Status *</label>
                             <select
                                 id="status"
                                 value={formData.status}
                                 onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                             >
                                 <option value="upcoming">Upcoming</option>
                                 <option value="ongoing">Ongoing</option>
@@ -321,32 +321,32 @@ export default function EditESummitEvent() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Featured Event</label>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Featured Event</label>
                             <label className="flex items-center gap-3 cursor-pointer">
                                 <input
                                     type="checkbox"
                                     checked={formData.featured}
                                     onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                                    className="w-5 h-5 text-purple-600 focus:ring-purple-500 rounded"
+                                    className="w-5 h-5 text-purple-600 focus:ring-purple-500 rounded bg-gray-800 border-gray-600"
                                 />
-                                <span className="text-gray-700">Mark as featured</span>
+                                <span className="text-gray-300">Mark as featured</span>
                             </label>
                         </div>
                     </div>
 
-                    <div className="border-t border-gray-200 pt-6 mt-6">
-                        <h3 className="text-lg font-medium text-gray-900 mb-4">Registration Settings</h3>
+                    <div className="border-t border-gray-800 pt-6 mt-6">
+                        <h3 className="text-lg font-medium text-white mb-4">Registration Settings</h3>
 
                         <div className="mb-4">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Registration Status</label>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">Registration Status</label>
                             <label className="flex items-center gap-3 cursor-pointer">
                                 <input
                                     type="checkbox"
                                     checked={formData.registrations_open}
                                     onChange={(e) => setFormData({ ...formData, registrations_open: e.target.checked })}
-                                    className="w-5 h-5 text-purple-600 focus:ring-purple-500 rounded"
+                                    className="w-5 h-5 text-purple-600 focus:ring-purple-500 rounded bg-gray-800 border-gray-600"
                                 />
-                                <span className="text-gray-700">Registrations Open</span>
+                                <span className="text-gray-300">Registrations Open</span>
                             </label>
                             <p className="text-sm text-gray-500 mt-1">
                                 Uncheck to close registrations for this event.
@@ -359,9 +359,9 @@ export default function EditESummitEvent() {
                                     type="checkbox"
                                     checked={formData.is_team_event}
                                     onChange={(e) => setFormData({ ...formData, is_team_event: e.target.checked })}
-                                    className="w-5 h-5 text-purple-600 focus:ring-purple-500 rounded"
+                                    className="w-5 h-5 text-purple-600 focus:ring-purple-500 rounded bg-gray-800 border-gray-600"
                                 />
-                                <span className="text-gray-700 font-medium">This is a Team Event</span>
+                                <span className="text-gray-300 font-medium">This is a Team Event</span>
                             </label>
                             <p className="text-sm text-gray-500 mt-1 ml-8">
                                 Users will register as teams instead of individuals.
@@ -371,7 +371,7 @@ export default function EditESummitEvent() {
                         {formData.is_team_event && (
                             <div className="grid md:grid-cols-2 gap-4 ml-8">
                                 <div>
-                                    <label htmlFor="min_team_size" className="block text-sm font-medium text-gray-700 mb-2">Minimum Team Size</label>
+                                    <label htmlFor="min_team_size" className="block text-sm font-medium text-gray-300 mb-2">Minimum Team Size</label>
                                     <input
                                         id="min_team_size"
                                         type="number"
@@ -379,11 +379,11 @@ export default function EditESummitEvent() {
                                         required={formData.is_team_event}
                                         value={formData.min_team_size}
                                         onChange={(e) => setFormData({ ...formData, min_team_size: parseInt(e.target.value) })}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="max_team_size" className="block text-sm font-medium text-gray-700 mb-2">Maximum Team Size</label>
+                                    <label htmlFor="max_team_size" className="block text-sm font-medium text-gray-300 mb-2">Maximum Team Size</label>
                                     <input
                                         id="max_team_size"
                                         type="number"
@@ -391,15 +391,15 @@ export default function EditESummitEvent() {
                                         required={formData.is_team_event}
                                         value={formData.max_team_size}
                                         onChange={(e) => setFormData({ ...formData, max_team_size: parseInt(e.target.value) })}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                                     />
                                 </div>
                             </div>
                         )}
                     </div>
 
-                    <div className="border-t border-gray-200 pt-8 mt-8 space-y-8">
-                        <h2 className="text-2xl font-bold text-gray-800">Comprehensive Details</h2>
+                    <div className="border-t border-gray-800 pt-8 mt-8 space-y-8">
+                        <h2 className="text-2xl font-bold text-white">Comprehensive Details</h2>
 
                         <AgendaEditor
                             agenda={eventDetails.agenda || []}
@@ -428,7 +428,7 @@ export default function EditESummitEvent() {
                         <button
                             type="button"
                             onClick={() => router.back()}
-                            className="px-6 py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-gray-700"
+                            className="px-6 py-3 border-2 border-gray-600 rounded-lg hover:bg-gray-800 transition-colors text-gray-300"
                         >
                             Cancel
                         </button>
