@@ -85,8 +85,19 @@ export default function QRScannerPage() {
     const handleScan = async (detectedCodes: any[]) => {
         if (!detectedCodes || detectedCodes.length === 0) return;
 
-        const result = detectedCodes[0].rawValue.trim();
+        let result = detectedCodes[0].rawValue.trim();
         if (!result || result === lastScanned) return;
+
+        // Try to parse JSON first (for Profile QR codes)
+        try {
+            const jsonResult = JSON.parse(result);
+            if (jsonResult.userId) {
+                result = jsonResult.userId;
+                console.log('Parsed JSON QR:', jsonResult);
+            }
+        } catch (e) {
+            // Not JSON, assume raw UUID
+        }
 
         setLastScanned(result);
         setScannedResult(result);
@@ -101,7 +112,7 @@ export default function QRScannerPage() {
             console.log('Invalid UUID format:', result);
             setVerificationStatus('error');
             setVerificationMessage(`Invalid Format: ${result.substring(0, 15)}...`);
-            toast.error(`Invalid QR Format: ${result}`);
+            toast.error(`Invalid QR Format`);
             setTimeout(() => setLastScanned(null), 3000);
             return;
         }
