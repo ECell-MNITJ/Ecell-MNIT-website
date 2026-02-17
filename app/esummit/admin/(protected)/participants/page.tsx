@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { FiDownload, FiSearch, FiRefreshCw, FiExternalLink } from 'react-icons/fi';
+import { FiDownload, FiSearch, FiRefreshCw, FiExternalLink, FiCheckCircle, FiXCircle } from 'react-icons/fi';
 import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
 
@@ -14,6 +14,38 @@ export default function ParticipantsPage() {
 
     useEffect(() => {
         fetchParticipants();
+
+        // Real-time subscription
+        const channel = supabase
+            .channel('participants_changes')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'profiles'
+                },
+                (payload) => {
+                    console.log('Real-time update:', payload);
+                    if (payload.eventType === 'INSERT') {
+                        setParticipants((prev) => [payload.new, ...prev]);
+                    } else if (payload.eventType === 'UPDATE') {
+                        setParticipants((prev) =>
+                            prev.map((p) => (p.id === payload.new.id ? payload.new : p))
+                        );
+                        if (payload.new.esummit_checked_in) {
+                            toast.success(`Check-in: ${payload.new.full_name || 'User'}`);
+                        }
+                    } else if (payload.eventType === 'DELETE') {
+                        setParticipants((prev) => prev.filter((p) => p.id !== payload.old.id));
+                    }
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, []);
 
     const fetchParticipants = async () => {
@@ -40,14 +72,12 @@ export default function ParticipantsPage() {
             const dataToExport = participants.map(p => ({
                 ID: p.id,
                 'Full Name': p.full_name,
-                Email: p.email, // Note: Email might not be in profiles if not synced, usually in auth.users. 
-                // But typically we query profiles. If email is needed, we might need a join or it might be in profile if added.
-                // Checking types.ts, profile has no email. 
-                // We might need to fetch emails from auth or if they are in profile.
-                // For now, let's export what is in profile.
+                Email: p.email,
                 Phone: p.phone,
                 Gender: p.gender,
                 Age: p.age,
+                'Checked In': p.esummit_checked_in ? 'Yes' : 'No',
+                'Check-in Time': p.esummit_checked_in_at ? new Date(p.esummit_checked_in_at).toLocaleString() : '-',
                 'QR Code URL': p.qr_code_url,
                 Role: p.role,
                 'Last Updated': new Date(p.updated_at || '').toLocaleDateString()
@@ -72,10 +102,17 @@ export default function ParticipantsPage() {
         p.id?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const checkedInCount = participants.filter(p => p.esummit_checked_in).length;
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                <h1 className="text-3xl font-bold text-white">Participants ({participants.length})</h1>
+                <div>
+                    <h1 className="text-3xl font-bold text-white">Participants ({participants.length})</h1>
+                    <p className="text-esummit-primary font-medium mt-1">
+                        Live Checked In: <span className="text-white text-lg font-bold">{checkedInCount}</span>
+                    </p>
+                </div>
                 <div className="flex gap-3 w-full md:w-auto">
                     <div className="relative flex-1 md:w-64">
                         <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -110,6 +147,7 @@ export default function ParticipantsPage() {
                         <thead>
                             <tr className="bg-gray-800/50 border-b border-gray-700">
                                 <th className="p-4 text-gray-400 font-medium text-xs uppercase tracking-wider">User</th>
+                                <th className="p-4 text-gray-400 font-medium text-xs uppercase tracking-wider">Status</th>
                                 <th className="p-4 text-gray-400 font-medium text-xs uppercase tracking-wider">Contact</th>
                                 <th className="p-4 text-gray-400 font-medium text-xs uppercase tracking-wider">Details</th>
                                 <th className="p-4 text-gray-400 font-medium text-xs uppercase tracking-wider">Role</th>
@@ -119,7 +157,7 @@ export default function ParticipantsPage() {
                         <tbody className="divide-y divide-gray-800">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={5} className="p-8 text-center text-gray-500">
+                                    <td colSpan={6} className="p-8 text-center text-gray-500">
                                         <div className="flex justify-center mb-2">
                                             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-esummit-primary"></div>
                                         </div>
@@ -128,13 +166,13 @@ export default function ParticipantsPage() {
                                 </tr>
                             ) : filteredParticipants.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="p-8 text-center text-gray-500">
+                                    <td colSpan={6} className="p-8 text-center text-gray-500">
                                         No participants found matching "{searchTerm}"
                                     </td>
                                 </tr>
                             ) : (
                                 filteredParticipants.map((participant) => (
-                                    <tr key={participant.id} className="hover:bg-gray-800/30 transition-colors group">
+                                    <tr key={participant.id} className={`hover:bg-gray-800/30 transition-colors group ${participant.esummit_checked_in ? 'bg-green-900/10' : ''}`}>
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-full bg-gray-800 border border-gray-700 overflow-hidden flex items-center justify-center text-esummit-primary font-bold">
@@ -153,8 +191,26 @@ export default function ParticipantsPage() {
                                             </div>
                                         </td>
                                         <td className="p-4">
+                                            {participant.esummit_checked_in ? (
+                                                <div className="flex flex-col">
+                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/30 w-fit">
+                                                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                                        Checked In
+                                                    </span>
+                                                    {participant.esummit_checked_in_at && (
+                                                        <span className="text-[10px] text-gray-500 mt-1 ml-1">
+                                                            {new Date(participant.esummit_checked_in_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-gray-700/50 text-gray-400 border border-gray-600/30">
+                                                    Pending
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td className="p-4">
                                             <div className="text-sm text-gray-300">{participant.phone || '-'}</div>
-                                            {/* Email not in profile usually, omit for now */}
                                         </td>
                                         <td className="p-4">
                                             <div className="text-sm text-gray-300">
