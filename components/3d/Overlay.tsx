@@ -34,10 +34,10 @@ export default function Overlay({ events, startups, stats }: OverlayProps) {
                         Fostering Innovation, Entrepreneurship, and Leadership.
                     </p>
                     <div className="mt-8 flex gap-4 justify-center">
-                        <Link href="/events" className="btn btn-primary bg-primary-golden hover:bg-yellow-600 text-black border-none px-8 py-3 rounded-full font-bold">
+                        <Link href="/events" className="btn btn-primary bg-primary-golden hover:bg-yellow-600 text-black border-none px-6 py-2 md:px-6 md:py-2.5 rounded-full font-bold text-sm md:text-base">
                             Explore Events
                         </Link>
-                        <Link href="/startups" className="btn btn-outline border-white text-white hover:bg-white/10 px-8 py-3 rounded-full font-bold">
+                        <Link href="/startups" className="btn btn-outline border-white text-white hover:bg-white/10 px-6 py-2 md:px-6 md:py-2.5 rounded-full font-bold text-sm md:text-base">
                             Our Startups
                         </Link>
                     </div>
@@ -218,7 +218,7 @@ export default function Overlay({ events, startups, stats }: OverlayProps) {
 
             {/* Section 5: Startups Link */}
             <section className="w-full h-screen flex flex-col justify-center items-center px-4 md:px-10 text-center pointer-events-none pb-20">
-                <div className="bg-gradient-to-b from-gray-900/95 to-black/95 backdrop-blur-xl p-8 md:p-14 rounded-3xl border border-gray-800 max-w-5xl w-full pointer-events-auto shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+                <div className="bg-gradient-to-b from-gray-900/95 to-black/95 backdrop-blur-xl p-4 md:p-14 rounded-3xl border border-gray-800 max-w-5xl w-full pointer-events-auto shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
                     <h2 className="text-3xl md:text-5xl font-heading text-white mb-10">
                         Startups
                     </h2>

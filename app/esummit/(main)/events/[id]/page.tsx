@@ -158,7 +158,7 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                         {/* Left Column: Details */}
                         <div className="lg:col-span-2 space-y-12">
                             {/* Detailed Description */}
-                            <div className="bg-esummit-card/30 p-8 rounded-3xl border border-white/5 backdrop-blur-sm">
+                            <div className="bg-esummit-card/30 p-5 md:p-8 rounded-3xl border border-white/5 backdrop-blur-sm">
                                 <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-wide flex items-center gap-3">
                                     <span className="w-2 h-8 bg-esummit-accent rounded-full" />
                                     About The Event
@@ -179,7 +179,7 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                                     </h2>
                                     <div className="space-y-4">
                                         {event.event_details.agenda.map((item) => (
-                                            <div key={item.id} className="flex flex-col md:flex-row gap-4 md:gap-8 p-6 bg-esummit-card/30 rounded-2xl border border-white/5 hover:border-esummit-primary/30 transition-all duration-300 hover:bg-esummit-card/50 group">
+                                            <div key={item.id} className="flex flex-col md:flex-row gap-4 md:gap-8 p-4 md:p-6 bg-esummit-card/30 rounded-2xl border border-white/5 hover:border-esummit-primary/30 transition-all duration-300 hover:bg-esummit-card/50 group">
                                                 <div className="shrink-0 flex flex-col items-center justify-center min-w-[100px] bg-esummit-bg/50 rounded-xl p-4 border border-white/5 group-hover:border-esummit-primary/30 transition-colors">
                                                     <div className="font-bold text-esummit-accent text-xl">
                                                         {item.time}
@@ -204,7 +204,7 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                                     </h2>
                                     <div className="grid md:grid-cols-2 gap-6">
                                         {event.event_details.speakers.map((speaker) => (
-                                            <div key={speaker.id} className="bg-esummit-card/30 p-6 rounded-2xl border border-white/5 hover:border-esummit-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(157,78,221,0.2)] group">
+                                            <div key={speaker.id} className="bg-esummit-card/30 p-4 md:p-6 rounded-2xl border border-white/5 hover:border-esummit-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(157,78,221,0.2)] group">
                                                 <div className="flex items-center gap-5 mb-4">
                                                     <div className="w-20 h-20 rounded-full overflow-hidden shrink-0 border-2 border-esummit-primary/30 group-hover:border-esummit-accent transition-colors duration-300 shadow-[0_0_15px_rgba(157,78,221,0.2)]">
                                                         {speaker.image_url ? (

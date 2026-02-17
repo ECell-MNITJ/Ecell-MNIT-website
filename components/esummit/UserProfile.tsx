@@ -387,22 +387,22 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                                         </h1>
                                         <p className="text-esummit-primary font-medium">{user.email}</p>
                                     </div>
-                                    <div className="flex gap-2 self-center md:self-start">
+                                    <div className="flex flex-col md:flex-row gap-3 self-stretch md:self-start w-full md:w-auto mt-4 md:mt-0">
                                         <button
                                             onClick={() => setEditing(true)}
-                                            className="bg-white/5 text-gray-300 hover:bg-esummit-primary hover:text-white px-6 py-2.5 rounded-full transition-all flex items-center gap-2 border border-white/10 hover:border-esummit-primary font-bold uppercase tracking-wide text-sm"
+                                            className="bg-white/5 text-gray-300 hover:bg-esummit-primary hover:text-white px-6 py-2.5 rounded-full transition-all flex items-center justify-center gap-2 border border-white/10 hover:border-esummit-primary font-bold uppercase tracking-wide text-sm w-full md:w-auto"
                                         >
                                             <FiEdit2 /> Edit Profile
                                         </button>
                                         <button
                                             onClick={handleLogout}
-                                            className="bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white px-6 py-2.5 rounded-full transition-all flex items-center gap-2 border border-red-500/20 hover:border-red-500 font-bold uppercase tracking-wide text-sm"
+                                            className="bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white px-6 py-2.5 rounded-full transition-all flex items-center justify-center gap-2 border border-red-500/20 hover:border-red-500 font-bold uppercase tracking-wide text-sm w-full md:w-auto"
                                         >
                                             <FiPower /> Log Out
                                         </button>
                                         <button
                                             onClick={handleDeleteAccount}
-                                            className="bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white px-6 py-2.5 rounded-full transition-all flex items-center gap-2 border border-red-600/20 hover:border-red-600 font-bold uppercase tracking-wide text-sm"
+                                            className="bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white px-6 py-2.5 rounded-full transition-all flex items-center justify-center gap-2 border border-red-600/20 hover:border-red-600 font-bold uppercase tracking-wide text-sm w-full md:w-auto"
                                         >
                                             <FiTrash2 /> Delete Profile
                                         </button>

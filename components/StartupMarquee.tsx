@@ -30,7 +30,7 @@ export default function StartupMarquee({ startups }: StartupMarqueeProps) {
                 {marqueeItems.map((startup, index) => (
                     <div
                         key={`${startup.id}-${index}`}
-                        className="flex-shrink-0 w-72 h-80 bg-[#1f2937] rounded-2xl border border-gray-700 p-6 flex flex-col items-center text-center hover:border-primary-golden hover:-translate-y-2 transition-all duration-300 relative group shadow-xl"
+                        className="flex-shrink-0 w-60 md:w-72 h-72 md:h-80 bg-[#1f2937] rounded-2xl border border-gray-700 p-4 md:p-6 flex flex-col items-center text-center hover:border-primary-golden hover:-translate-y-2 transition-all duration-300 relative group shadow-xl"
                     >
                         {/* Logo */}
                         <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-4 p-2 shadow-lg z-10 group-hover:scale-110 transition-transform duration-300 border-4 border-[#1f2937]">
@@ -73,7 +73,7 @@ export default function StartupMarquee({ startups }: StartupMarqueeProps) {
                     100% { transform: translateX(-50%); }
                 }
                 .animate-marquee {
-                    animation: marquee 8s linear infinite;
+                    animation: marquee 25s linear infinite;
                 }
             `}</style>
         </div>

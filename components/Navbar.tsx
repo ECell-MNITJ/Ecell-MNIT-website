@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { FiUser } from 'react-icons/fi';
+import { FiUser, FiMenu, FiX } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -46,17 +47,26 @@ export default function Navbar() {
     ];
 
     return (
-        <nav className="fixed top-0 left-0 w-full z-[200] px-4 pt-4">
-            <div
-                className={`mx-auto max-w-7xl rounded-2xl transition-all duration-300 ${isScrolled || isMenuOpen
+        <motion.nav
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+            transition={{ duration: 0.8, ease: "circOut" }}
+            className="fixed top-0 left-0 w-full z-[200] px-4 pt-4"
+        >
+            <motion.div
+                animate={{
+                    borderRadius: isMenuOpen ? 24 : 16, // Matching existing rounded-2xl (16px) or similar
+                }}
+                transition={{ duration: 0.5, ease: "circOut" }}
+                className={`mx-auto max-w-7xl transition-all duration-300 ${isScrolled || isMenuOpen
                     ? 'bg-primary-green/90 backdrop-blur-xl shadow-2xl border border-white/10'
                     : 'bg-primary-green/60 backdrop-blur-lg shadow-xl border border-white/5'
                     }`}
             >
-                <div className="px-6 lg:px-8">
-                    <div className="flex items-center justify-between h-20">
+                <div className="px-6 lg:px-8 py-3 md:py-0"> {/* Modified padding for consistency */}
+                    <div className="flex items-center justify-between h-14 md:h-20 relative z-50">
                         {/* Logo */}
-                        <Link href="/" className="text-2xl font-heading text-white tracking-wider">
+                        <Link href="/" className="text-xl md:text-2xl font-heading text-white tracking-wider">
                             E-CELL <span className="text-primary-golden">MNIT</span>
                         </Link>
 
@@ -99,72 +109,81 @@ export default function Navbar() {
                             )}
                         </div>
 
-
-                        {/* Mobile Menu Button */}
+                        {/* Mobile Menu Button - Using explicit icons instead of CSS shapes for easier clicking */}
                         <button
-                            className="md:hidden flex flex-col gap-1.5 p-2"
+                            className="md:hidden flex items-center justify-center p-2 text-white"
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                             aria-label="Toggle menu"
                         >
-                            <span
-                                className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''
-                                    }`}
-                            />
-                            <span
-                                className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''
-                                    }`}
-                            />
-                            <span
-                                className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''
-                                    }`}
-                            />
+                            <motion.div
+                                animate={isMenuOpen ? "open" : "closed"}
+                                className="flex flex-col gap-1.5"
+                            >
+                                <span
+                                    className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`}
+                                />
+                                <span
+                                    className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`}
+                                />
+                                <span
+                                    className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}
+                                />
+                            </motion.div>
                         </button>
                     </div>
 
-                    <div
-                        className={`md:hidden overflow-y-auto transition-all duration-300 fixed inset-0 z-40 bg-zinc-900/95 backdrop-blur-xl pt-24 ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
-                            }`}
-                    >
-                        <ul className="py-4 space-y-2">
-                            {navLinks.map((link) => (
-                                <li key={link.name}>
-                                    <Link
-                                        href={link.href}
-                                        className={`block py-3 px-4 text-white font-medium rounded-lg transition-colors ${pathname === link.href
-                                            ? 'bg-primary-golden/20 text-primary-golden'
-                                            : 'hover:bg-white/10'
-                                            }`}
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
-                                        {link.name}
-                                    </Link>
-                                </li>
-                            ))}
-                            {/* Mobile Auth Buttons */}
-                            <li className="pt-4 mt-4 border-t border-white/10">
-                                {user ? (
-                                    <Link
-                                        href="/profile"
-                                        className="flex items-center gap-2 py-3 px-4 text-white font-medium hover:bg-white/10 rounded-lg transition-colors"
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
-                                        <FiUser className="text-primary-golden" />
-                                        Profile
-                                    </Link>
-                                ) : (
-                                    <Link
-                                        href="/login"
-                                        className="block py-3 px-4 text-center bg-primary-golden text-white font-medium rounded-lg hover:bg-white hover:text-primary-golden transition-all duration-300"
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
-                                        Login
-                                    </Link>
-                                )}
-                            </li>
-                        </ul>
-                    </div>
+                    {/* Mobile Menu - Expand Down */}
+                    <AnimatePresence>
+                        {isMenuOpen && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.5, ease: "circOut" }}
+                                className="md:hidden overflow-hidden"
+                            >
+                                <ul className="py-4 space-y-2 border-t border-white/10 mt-2">
+                                    {navLinks.map((link) => (
+                                        <li key={link.name}>
+                                            <Link
+                                                href={link.href}
+                                                className={`block py-3 px-4 text-white font-medium rounded-lg transition-colors ${pathname === link.href
+                                                    ? 'bg-primary-golden/20 text-primary-golden'
+                                                    : 'hover:bg-white/10'
+                                                    }`}
+                                                onClick={() => setIsMenuOpen(false)}
+                                            >
+                                                {link.name}
+                                            </Link>
+                                        </li>
+                                    ))}
+                                    {/* Mobile Auth Buttons */}
+                                    <li className="pt-2 mt-2">
+                                        {user ? (
+                                            <Link
+                                                href="/profile"
+                                                className="flex items-center justify-center gap-2 py-3 px-4 bg-primary-golden text-white font-medium rounded-lg hover:bg-white/90 hover:text-primary-golden transition-colors"
+                                                onClick={() => setIsMenuOpen(false)}
+                                            >
+                                                <FiUser />
+                                                Profile
+                                            </Link>
+                                        ) : (
+                                            <Link
+                                                href="/login"
+                                                className="block py-3 px-4 text-center bg-primary-golden text-white font-medium rounded-lg hover:bg-white hover:text-primary-golden transition-all duration-300"
+                                                onClick={() => setIsMenuOpen(false)}
+                                            >
+                                                Login
+                                            </Link>
+                                        )}
+                                    </li>
+                                </ul>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
-            </div>
-        </nav>
+            </motion.div>
+        </motion.nav>
     );
 }
