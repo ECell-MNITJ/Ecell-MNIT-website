@@ -22,6 +22,8 @@ export default function ESummitUserProfile({ user }: { user: any }) {
         bio: '',
         website: '',
         phone: '',
+        gender: '',
+        age: '',
         avatar_url: '',
     });
 
@@ -57,6 +59,8 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                     bio: data.bio || '',
                     website: data.website || '',
                     phone: data.phone || '',
+                    gender: data.gender || '',
+                    age: data.age ? String(data.age) : '',
                     avatar_url: data.avatar_url || '',
                 });
             } else {
@@ -73,6 +77,8 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                     bio: '',
                     website: '',
                     phone: '',
+                    gender: '',
+                    age: '',
                     avatar_url: user.user_metadata?.avatar_url || '',
                 });
             }
@@ -122,6 +128,7 @@ export default function ESummitUserProfile({ user }: { user: any }) {
             const updates = {
                 id: user.id,
                 ...formData,
+                age: formData.age ? parseInt(String(formData.age)) : null,
                 updated_at: new Date().toISOString(),
             };
 
@@ -199,6 +206,29 @@ export default function ESummitUserProfile({ user }: { user: any }) {
         toast.success("Logged out successfully");
         router.push("/esummit"); // Redirect to E-Summit home
         router.refresh();
+    };
+
+    // Import deleteAccount action
+    const handleDeleteAccount = async () => {
+        if (!confirm('Are you sure you want to delete your account? This action is irreversible and will delete all your data including registrations.')) {
+            return;
+        }
+
+        const confirmName = prompt(`Please type "${user.user_metadata?.full_name || profile?.full_name || 'DELETE'}" to confirm deletion:`);
+        if (confirmName !== (user.user_metadata?.full_name || profile?.full_name || 'DELETE')) {
+            toast.error('Confirmation failed. Account deletion cancelled.');
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const { deleteAccount } = await import('@/app/actions');
+            await deleteAccount();
+        } catch (error: any) {
+            console.error('Error deleting account:', error);
+            toast.error(error.message || 'Failed to delete account');
+            setLoading(false);
+        }
     };
 
     if (loading && !profile && !editing) {
@@ -285,6 +315,32 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                                             placeholder="+91..."
                                         />
                                     </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-gray-400 text-xs uppercase tracking-wider font-bold mb-2 text-left">Gender</label>
+                                        <select
+                                            value={formData.gender}
+                                            onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                                            className="w-full bg-esummit-bg/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-esummit-primary focus:ring-1 focus:ring-esummit-primary transition-all appearance-none"
+                                        >
+                                            <option value="" disabled className="bg-esummit-bg">Select Gender</option>
+                                            <option value="Male" className="bg-esummit-bg">Male</option>
+                                            <option value="Female" className="bg-esummit-bg">Female</option>
+                                            <option value="Other" className="bg-esummit-bg">Other</option>
+                                            <option value="Prefer not to say" className="bg-esummit-bg">Prefer not to say</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-400 text-xs uppercase tracking-wider font-bold mb-2 text-left">Age</label>
+                                        <input
+                                            type="number"
+                                            min="10"
+                                            max="100"
+                                            value={formData.age}
+                                            onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+                                            className="w-full bg-esummit-bg/50 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-esummit-primary focus:ring-1 focus:ring-esummit-primary transition-all"
+                                            placeholder="20"
+                                        />
+                                    </div>
                                 </div>
                                 <div>
                                     <label className="block text-gray-400 text-xs uppercase tracking-wider font-bold mb-2 text-left">Bio</label>
@@ -311,6 +367,8 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                                                 bio: profile?.bio || '',
                                                 website: profile?.website || '',
                                                 phone: profile?.phone || '',
+                                                gender: profile?.gender || '',
+                                                age: profile?.age ? String(profile.age) : '',
                                                 avatar_url: profile?.avatar_url || '',
                                             });
                                         }}
@@ -342,6 +400,12 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                                         >
                                             <FiPower /> Log Out
                                         </button>
+                                        <button
+                                            onClick={handleDeleteAccount}
+                                            className="bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white px-6 py-2.5 rounded-full transition-all flex items-center gap-2 border border-red-600/20 hover:border-red-600 font-bold uppercase tracking-wide text-sm"
+                                        >
+                                            <FiTrash2 /> Delete Profile
+                                        </button>
                                     </div>
                                 </div>
 
@@ -363,6 +427,16 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                                         <a href={profile.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg hover:text-esummit-accent transition-colors hover:bg-white/10">
                                             <FiGlobe className="text-esummit-accent" /> {profile.website}
                                         </a>
+                                    )}
+                                    {profile?.gender && (
+                                        <span className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg">
+                                            <FiUser className="text-esummit-accent" /> {profile.gender}
+                                        </span>
+                                    )}
+                                    {profile?.age && (
+                                        <span className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg">
+                                            <FiUser className="text-esummit-accent" /> {profile.age} Years
+                                        </span>
                                     )}
                                 </div>
                             </div>

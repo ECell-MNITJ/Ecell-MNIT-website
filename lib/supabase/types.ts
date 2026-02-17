@@ -339,6 +339,9 @@ export interface Database {
                     qr_code_url: string | null;
                     role: string;
                     age: number | null;
+                    gender: string | null;
+                    esummit_checked_in: boolean;
+                    esummit_checked_in_at: string | null;
                 };
                 Insert: {
                     id: string;
@@ -351,6 +354,9 @@ export interface Database {
                     qr_code_url?: string | null;
                     role?: string;
                     age?: number | null;
+                    gender?: string | null;
+                    esummit_checked_in?: boolean;
+                    esummit_checked_in_at?: string | null;
                 };
                 Update: {
                     id?: string;
@@ -361,6 +367,8 @@ export interface Database {
                     website?: string | null;
                     phone?: string | null;
                     qr_code_url?: string | null;
+                    esummit_checked_in?: boolean;
+                    esummit_checked_in_at?: string | null;
                 };
                 Relationships: [];
             };

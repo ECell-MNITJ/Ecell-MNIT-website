@@ -14,6 +14,9 @@ export default function EsNavbar() {
     const pathname = usePathname();
     const supabase = createClient();
 
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [isMember, setIsMember] = useState(false);
+
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 20);
@@ -22,6 +25,42 @@ export default function EsNavbar() {
         const getUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             setUser(user);
+
+            if (user) {
+                checkRole(user);
+            }
+        };
+
+        const checkRole = async (user: any) => {
+            let adminRole = false;
+            let memberRole = false;
+
+            // Check profile role
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', user.id)
+                .single();
+
+            if (profile?.role === 'member') {
+                memberRole = true;
+            }
+
+            // Check admin whitelist
+            if (user.email) {
+                const { data: admin } = await supabase
+                    .from('admin_whitelist')
+                    .select('role')
+                    .eq('email', user.email)
+                    .single();
+
+                if (admin?.role === 'admin' || admin?.role === 'super_admin') {
+                    adminRole = true;
+                }
+            }
+
+            setIsAdmin(adminRole);
+            setIsMember(memberRole);
         };
 
         window.addEventListener('scroll', handleScroll);
@@ -29,6 +68,12 @@ export default function EsNavbar() {
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setUser(session?.user ?? null);
+            if (session?.user) {
+                checkRole(session.user);
+            } else {
+                setIsAdmin(false);
+                setIsMember(false);
+            }
         });
 
         return () => {
@@ -87,7 +132,23 @@ export default function EsNavbar() {
                     </ul>
 
                     {/* Auth Buttons (Desktop) */}
-                    <div className="hidden md:flex items-center">
+                    <div className="hidden md:flex items-center gap-4">
+                        {(isAdmin || isMember) && (
+                            <Link
+                                href="/esummit/scan"
+                                className="text-gray-300 hover:text-white font-bold uppercase text-sm tracking-wide transition-colors"
+                            >
+                                Scanner
+                            </Link>
+                        )}
+                        {isAdmin && (
+                            <Link
+                                href="/esummit/admin"
+                                className="text-esummit-primary hover:text-white font-bold uppercase text-sm tracking-wide transition-colors"
+                            >
+                                Admin
+                            </Link>
+                        )}
                         {user ? (
                             <Link
                                 href="/esummit/profile"
@@ -154,7 +215,25 @@ export default function EsNavbar() {
                                         </Link>
                                     </li>
                                 ))}
-                                <li className="pt-2">
+                                <li className="pt-2 flex flex-col gap-2">
+                                    {(isAdmin || isMember) && (
+                                        <Link
+                                            href="/esummit/scan"
+                                            className="block py-3 px-4 text-center border border-white/10 text-gray-300 font-bold uppercase tracking-wider rounded-xl hover:bg-white/10 hover:text-white transition-all"
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            Scanner
+                                        </Link>
+                                    )}
+                                    {isAdmin && (
+                                        <Link
+                                            href="/esummit/admin"
+                                            className="block py-3 px-4 text-center border border-esummit-primary/50 text-esummit-primary font-bold uppercase tracking-wider rounded-xl hover:bg-esummit-primary/10 transition-all"
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            Admin Panel
+                                        </Link>
+                                    )}
                                     {user ? (
                                         <Link
                                             href="/esummit/profile"

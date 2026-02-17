@@ -31,7 +31,8 @@ export default function RegistrationDetailsModal({ isOpen, onClose, onComplete, 
         first_name: initialNames.first,
         last_name: initialNames.last,
         phone: user?.phone || '',
-        age: ''
+        age: '',
+        gender: ''
     });
 
     if (!isOpen) return null;
@@ -39,7 +40,7 @@ export default function RegistrationDetailsModal({ isOpen, onClose, onComplete, 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!formData.first_name || !formData.last_name || !formData.phone || !formData.age) {
+        if (!formData.first_name || !formData.last_name || !formData.phone || !formData.age || !formData.gender) {
             toast.error('Please fill in all details');
             return;
         }
@@ -60,6 +61,7 @@ export default function RegistrationDetailsModal({ isOpen, onClose, onComplete, 
                     full_name: fullName,
                     phone: formData.phone,
                     age: parseInt(formData.age),
+                    gender: formData.gender,
                     qr_code_url: qrCodeUrl,
                     updated_at: new Date().toISOString()
                 })
@@ -160,6 +162,27 @@ export default function RegistrationDetailsModal({ isOpen, onClose, onComplete, 
                                     className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none transition-all placeholder:text-gray-600"
                                     placeholder="20"
                                 />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-400 mb-1.5 ml-1">Gender</label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                    <FiUser />
+                                </div>
+                                <select
+                                    required
+                                    value={formData.gender}
+                                    onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                                    className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none transition-all placeholder:text-gray-600 appearance-none"
+                                >
+                                    <option value="" disabled>Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                    <option value="Prefer not to say">Prefer not to say</option>
+                                </select>
                             </div>
                         </div>
 

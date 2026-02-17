@@ -25,7 +25,8 @@ export default function ESummitAdminSidebar() {
         { name: 'Dashboard', path: '/esummit/admin/dashboard', icon: FiHome },
         { name: 'E-Summit Events', path: '/esummit/admin/events', icon: FiCalendar },
         { name: 'Registrations', path: '/esummit/admin/registrations', icon: FiUsers },
-        { name: 'Gallery', path: '/esummit/admin/gallery', icon: FiCalendar }, // Using FiCalendar as placeholder or import FiImage
+        { name: 'Participants', path: '/esummit/admin/participants', icon: FiUsers },
+        { name: 'Gallery', path: '/esummit/admin/gallery', icon: FiImage },
         { name: 'Landing Page', path: '/esummit/admin/landing', icon: FiSettings },
         { name: 'Live Attendance', path: '/esummit/admin/attendance', icon: FiUsers },
         { name: 'Queries', path: '/esummit/admin/queries', icon: FiUsers },

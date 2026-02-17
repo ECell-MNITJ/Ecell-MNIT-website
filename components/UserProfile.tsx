@@ -180,6 +180,28 @@ export default function UserProfile({ user }: { user: any }) {
         }
     }
 
+    const handleDeleteAccount = async () => {
+        if (!confirm('Are you sure you want to delete your account? This action is irreversible and will delete all your data including registrations.')) {
+            return;
+        }
+
+        const confirmName = prompt(`Please type "${user.user_metadata?.full_name || profile?.full_name || 'DELETE'}" to confirm deletion:`);
+        if (confirmName !== (user.user_metadata?.full_name || profile?.full_name || 'DELETE')) {
+            toast.error('Confirmation failed. Account deletion cancelled.');
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const { deleteAccount } = await import('@/app/actions');
+            await deleteAccount();
+        } catch (error: any) {
+            console.error('Error deleting account:', error);
+            toast.error(error.message || 'Failed to delete account');
+            setLoading(false);
+        }
+    };
+
     if (loading && !profile && !editing) {
         return <div className="text-center py-10 text-white">Loading profile...</div>;
     }
@@ -334,6 +356,14 @@ export default function UserProfile({ user }: { user: any }) {
                                     <FiPhone /> {profile.phone}
                                 </span>
                             )}
+                        </div>
+                        <div className="mt-6 flex justify-center md:justify-start">
+                            <button
+                                onClick={handleDeleteAccount}
+                                className="text-red-400 hover:text-red-300 transition-colors flex items-center gap-2 text-sm border border-red-400/30 px-4 py-2 rounded-lg hover:bg-red-400/10"
+                            >
+                                <FiTrash2 /> Delete Account
+                            </button>
                         </div>
                     </div>
                 )}
