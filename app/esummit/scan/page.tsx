@@ -85,7 +85,7 @@ export default function QRScannerPage() {
     const handleScan = async (detectedCodes: any[]) => {
         if (!detectedCodes || detectedCodes.length === 0) return;
 
-        const result = detectedCodes[0].rawValue;
+        const result = detectedCodes[0].rawValue.trim();
         if (!result || result === lastScanned) return;
 
         setLastScanned(result);
@@ -98,10 +98,11 @@ export default function QRScannerPage() {
         const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
         if (!uuidRegex.test(result)) {
+            console.log('Invalid UUID format:', result);
             setVerificationStatus('error');
-            setVerificationMessage('Invalid QR Code');
-            toast.error('Invalid Format');
-            setTimeout(() => setLastScanned(null), 2000);
+            setVerificationMessage(`Invalid Format: ${result.substring(0, 15)}...`);
+            toast.error(`Invalid QR Format: ${result}`);
+            setTimeout(() => setLastScanned(null), 3000);
             return;
         }
 
