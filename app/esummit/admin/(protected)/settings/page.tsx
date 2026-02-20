@@ -9,6 +9,9 @@ export default function AdminSettingsPage() {
     const supabase = createClient();
     const [loading, setLoading] = useState(false);
     const [scannerPassword, setScannerPassword] = useState('');
+    const [contactEmail, setContactEmail] = useState('');
+    const [contactPhone, setContactPhone] = useState('');
+    const [contactAddress, setContactAddress] = useState('');
 
     useEffect(() => {
         fetchSettings();
@@ -18,12 +21,16 @@ export default function AdminSettingsPage() {
         try {
             const { data, error } = await supabase
                 .from('esummit_settings')
-                .select('scanner_password')
+                .select('scanner_password, contact_email, contact_phone, contact_address')
                 .single();
 
             if (error) throw error;
             if (data) {
-                setScannerPassword(data.scanner_password || '');
+                const settings = data as any;
+                setScannerPassword(settings.scanner_password || '');
+                setContactEmail(settings.contact_email || '');
+                setContactPhone(settings.contact_phone || '');
+                setContactAddress(settings.contact_address || '');
             }
         } catch (error) {
             console.error('Error fetching settings:', error);
@@ -31,7 +38,7 @@ export default function AdminSettingsPage() {
         }
     };
 
-    const handleUpdatePassword = async (e: React.FormEvent) => {
+    const handleUpdateSettings = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
@@ -46,6 +53,9 @@ export default function AdminSettingsPage() {
                     .from('esummit_settings')
                     .insert({
                         scanner_password: scannerPassword,
+                        contact_email: contactEmail,
+                        contact_phone: contactPhone,
+                        contact_address: contactAddress,
                         show_stats: true,
                         show_blueprint: true
                     });
@@ -63,14 +73,20 @@ export default function AdminSettingsPage() {
                 if (settings) {
                     const { error: updateError } = await supabase
                         .from('esummit_settings')
-                        .update({ scanner_password: scannerPassword, updated_at: new Date().toISOString() })
+                        .update({
+                            scanner_password: scannerPassword,
+                            contact_email: contactEmail,
+                            contact_phone: contactPhone,
+                            contact_address: contactAddress,
+                            updated_at: new Date().toISOString()
+                        })
                         .eq('id', settings.id);
                     error = updateError;
                 }
             }
 
             if (error) throw error;
-            toast.success('Scanner password updated successfully');
+            toast.success('Settings updated successfully');
         } catch (error: any) {
             console.error('Update error:', error);
             toast.error(error.message || 'Failed to update password');
@@ -93,7 +109,7 @@ export default function AdminSettingsPage() {
                     Share this only with authorized volunteers.
                 </p>
 
-                <form onSubmit={handleUpdatePassword} className="space-y-4">
+                <form onSubmit={handleUpdateSettings} className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Scanner Access Password</label>
                         <input
@@ -106,17 +122,57 @@ export default function AdminSettingsPage() {
                         />
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="flex items-center gap-2 px-6 py-2 bg-primary-golden text-white font-bold rounded-lg hover:bg-yellow-600 transition-colors disabled:opacity-50"
-                    >
-                        {loading ? 'Saving...' : (
-                            <>
-                                <FiSave /> Save Password
-                            </>
-                        )}
-                    </button>
+                    <div className="pt-4 border-t border-gray-100">
+                        <h3 className="text-md font-bold mb-4">Contact Information</h3>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
+                                <input
+                                    type="email"
+                                    value={contactEmail}
+                                    onChange={(e) => setContactEmail(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none transition-all"
+                                    placeholder="esummit@mnit.ac.in"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Contact Phone</label>
+                                <input
+                                    type="text"
+                                    value={contactPhone}
+                                    onChange={(e) => setContactPhone(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none transition-all"
+                                    placeholder="+91 98765 43210"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Physical Address</label>
+                                <textarea
+                                    value={contactAddress}
+                                    onChange={(e) => setContactAddress(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none transition-all min-h-[100px]"
+                                    placeholder="Enter physical address"
+                                    required
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="pt-4">
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="flex items-center gap-2 px-6 py-2 bg-primary-golden text-white font-bold rounded-lg hover:bg-yellow-600 transition-colors disabled:opacity-50"
+                        >
+                            {loading ? 'Saving...' : (
+                                <>
+                                    <FiSave /> Save Settings
+                                </>
+                            )}
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

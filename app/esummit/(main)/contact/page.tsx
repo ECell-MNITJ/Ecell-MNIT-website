@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiMail, FiPhone, FiMapPin, FiSend } from 'react-icons/fi';
 import toast, { Toaster } from 'react-hot-toast';
@@ -14,6 +14,36 @@ export default function ContactPage() {
         message: ''
     });
     const [loading, setLoading] = useState(false);
+    const [contactInfo, setContactInfo] = useState({
+        email: 'esummit@mnit.ac.in',
+        phone: '+91 98765 43210',
+        address: 'Malaviya National Institute of Technology,\nJLN Marg, Jaipur, Rajasthan - 302017'
+    });
+
+    useEffect(() => {
+        const fetchContactInfo = async () => {
+            try {
+                const supabase = createClient();
+                const { data, error } = await supabase
+                    .from('esummit_settings')
+                    .select('contact_email, contact_phone, contact_address')
+                    .single();
+
+                if (data) {
+                    const settings = data as any;
+                    setContactInfo({
+                        email: settings.contact_email || 'esummit@mnit.ac.in',
+                        phone: settings.contact_phone || '+91 98765 43210',
+                        address: settings.contact_address || 'Malaviya National Institute of Technology,\nJLN Marg, Jaipur, Rajasthan - 302017'
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching contact info:', error);
+            }
+        };
+
+        fetchContactInfo();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -93,8 +123,8 @@ export default function ContactPage() {
                             </div>
                             <h3 className="text-2xl font-bold mb-2">Email Us</h3>
                             <p className="text-gray-400 mb-4">For general queries and support</p>
-                            <a href="mailto:esummit@mnit.ac.in" className="text-lg font-medium text-white hover:text-esummit-primary transition-colors">
-                                esummit@mnit.ac.in
+                            <a href={`mailto:${contactInfo.email}`} className="text-lg font-medium text-white hover:text-esummit-primary transition-colors">
+                                {contactInfo.email}
                             </a>
                         </div>
 
@@ -104,8 +134,8 @@ export default function ContactPage() {
                             </div>
                             <h3 className="text-2xl font-bold mb-2">Call Us</h3>
                             <p className="text-gray-400 mb-4">Mon-Fri from 9am to 6pm</p>
-                            <a href="tel:+919876543210" className="text-lg font-medium text-white hover:text-esummit-primary transition-colors block">
-                                +91 98765 43210
+                            <a href={`tel:${contactInfo.phone.replace(/\s/g, '')}`} className="text-lg font-medium text-white hover:text-esummit-primary transition-colors block">
+                                {contactInfo.phone}
                             </a>
                         </div>
 
@@ -114,9 +144,8 @@ export default function ContactPage() {
                                 <FiMapPin />
                             </div>
                             <h3 className="text-2xl font-bold mb-2">Visit Us</h3>
-                            <p className="text-gray-400">
-                                Malaviya National Institute of Technology,<br />
-                                JLN Marg, Jaipur, Rajasthan - 302017
+                            <p className="text-gray-400 whitespace-pre-line">
+                                {contactInfo.address}
                             </p>
                         </div>
                     </motion.div>
