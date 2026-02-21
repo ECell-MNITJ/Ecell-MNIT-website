@@ -4,6 +4,9 @@ import { createClient } from '@/lib/supabase/client';
 import { FiDownload, FiSearch, FiRefreshCw, FiExternalLink, FiCheckCircle, FiXCircle } from 'react-icons/fi';
 import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
+import { updateProfileRole } from '@/app/actions/registrations';
+import { useTransition } from 'react';
+import { FiLoader } from 'react-icons/fi';
 
 export default function ParticipantsPage() {
     const supabase = createClient();
@@ -11,6 +14,8 @@ export default function ParticipantsPage() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [exporting, setExporting] = useState(false);
+    const [updatingRoleId, setUpdatingRoleId] = useState<string | null>(null);
+    const [isPending, startTransition] = useTransition();
 
     useEffect(() => {
         fetchParticipants();
@@ -114,6 +119,21 @@ export default function ParticipantsPage() {
         }
     };
 
+    const handleRoleChange = (profileId: string, newRole: string) => {
+        setUpdatingRoleId(profileId);
+        startTransition(async () => {
+            const result = await updateProfileRole(profileId, newRole);
+            if (result.success) {
+                toast.success('Role updated!');
+                // Update local state to reflect change immediately
+                setParticipants(prev => prev.map(p => p.id === profileId ? { ...p, role: newRole } : p));
+            } else {
+                toast.error('Failed to update role: ' + result.error);
+            }
+            setUpdatingRoleId(null);
+        });
+    };
+
     const filteredParticipants = participants.filter(p =>
         p.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         p.phone?.includes(searchTerm) ||
@@ -202,6 +222,7 @@ export default function ParticipantsPage() {
                                                 </div>
                                                 <div>
                                                     <div className="font-bold text-white">{participant.full_name || 'N/A'}</div>
+                                                    <div className="text-xs text-gray-400">{participant.email || 'N/A'}</div>
                                                     <div className="text-xs text-gray-500 font-mono" title={participant.id}>
                                                         ID: {participant.id.split('-')[0]}...
                                                     </div>
@@ -239,12 +260,24 @@ export default function ParticipantsPage() {
                                             </div>
                                         </td>
                                         <td className="p-4">
-                                            <span className={`px-2 py-1 rounded text-xs font-bold uppercase tracking-wide ${participant.role === 'admin' ? 'bg-purple-500/20 text-purple-400' :
-                                                participant.role === 'member' ? 'bg-blue-500/20 text-blue-400' :
-                                                    'bg-gray-700 text-gray-400'
-                                                }`}>
-                                                {participant.role || 'user'}
-                                            </span>
+                                            <div className="relative group/role">
+                                                <select
+                                                    value={participant.role || 'user'}
+                                                    onChange={(e) => handleRoleChange(participant.id, e.target.value)}
+                                                    disabled={updatingRoleId === participant.id}
+                                                    className={`appearance-none px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide cursor-pointer focus:outline-none focus:ring-2 focus:ring-esummit-primary/50 transition-all ${participant.role === 'admin' ? 'bg-purple-500/20 text-purple-400' :
+                                                        participant.role === 'member' ? 'bg-blue-500/20 text-blue-400' :
+                                                            'bg-gray-700 text-gray-400'
+                                                        } hover:bg-gray-600`}
+                                                >
+                                                    <option value="user" className="bg-gray-900">User</option>
+                                                    <option value="member" className="bg-gray-900">Member</option>
+                                                    <option value="admin" className="bg-gray-900">Admin</option>
+                                                </select>
+                                                {updatingRoleId === participant.id && (
+                                                    <FiLoader className="absolute top-1/2 -right-5 -translate-y-1/2 w-3 h-3 text-esummit-primary animate-spin" />
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="p-4">
                                             {participant.qr_code_url ? (

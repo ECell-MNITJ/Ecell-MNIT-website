@@ -6,6 +6,7 @@ import { FiCalendar, FiMapPin, FiClock, FiShare2, FiMonitor, FiUser, FiInfo, FiA
 import Image from 'next/image';
 import EventRegistration from '@/components/EventRegistration';
 import EventGallery from '@/components/esummit/EventGallery';
+import QuillViewer from '@/components/esummit/QuillViewer';
 
 interface Event {
     id: string;
@@ -163,10 +164,8 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                                     <span className="w-2 h-8 bg-esummit-accent rounded-full" />
                                     About The Event
                                 </h2>
-                                <div className="prose prose-lg prose-invert max-w-none text-gray-300">
-                                    <p className="whitespace-pre-line leading-relaxed">
-                                        {event.detailed_description || event.description}
-                                    </p>
+                                <div className="text-gray-300">
+                                    <QuillViewer html={event.detailed_description || ''} />
                                 </div>
                             </div>
 

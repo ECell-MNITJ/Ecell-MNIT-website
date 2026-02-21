@@ -12,13 +12,14 @@ interface Event {
     status: 'upcoming' | 'ongoing' | 'past';
     featured: boolean;
     is_esummit: boolean;
+    registrations_open: boolean;
 }
 
 async function getEsummitEvents(): Promise<Event[]> {
     const supabase = await createServerClient();
     const { data, error } = await supabase
         .from('events')
-        .select('*')
+        .select('id, title, description, date, category, location, image_url, status, featured, is_esummit, registrations_open')
         .eq('is_esummit', true)
         .order('date', { ascending: false });
 
@@ -76,9 +77,16 @@ export default async function ESummitEventsPage() {
                         </div>
 
                         {/* Category Badge */}
-                        <span className="absolute top-4 right-4 bg-black/50 text-white text-xs font-medium px-3 py-1.5 rounded-full border border-white/10 backdrop-blur-sm">
-                            {event.category}
-                        </span>
+                        <div className="absolute top-4 right-4 flex flex-col items-end gap-2">
+                            <span className="bg-black/50 text-white text-xs font-medium px-3 py-1.5 rounded-full border border-white/10 backdrop-blur-sm transition-all hover:bg-black/70">
+                                {event.category}
+                            </span>
+                            {!event.registrations_open && event.status === 'upcoming' && (
+                                <span className="bg-red-900/80 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-tighter border border-red-500/30 backdrop-blur-sm shadow-[0_0_10px_rgba(239,68,68,0.2)]">
+                                    Registration Closed
+                                </span>
+                            )}
+                        </div>
                     </div>
                 ) : (
                     <div className="relative h-60 bg-gradient-to-br from-esummit-card to-black flex items-center justify-center border-b border-esummit-primary/10">

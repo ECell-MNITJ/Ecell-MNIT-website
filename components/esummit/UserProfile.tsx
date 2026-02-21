@@ -491,8 +491,8 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                                     </div>
                                     {reg.team_id && (
                                         <div className="flex justify-between">
-                                            <span>Team ID:</span>
-                                            <span className="text-esummit-primary font-mono font-bold tracking-wider">{reg.team_id}</span>
+                                            <span>Team Code:</span>
+                                            <span className="text-esummit-primary font-mono font-bold tracking-wider uppercase">{reg.team_id.slice(0, 8)}</span>
                                         </div>
                                     )}
                                 </div>

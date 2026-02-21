@@ -9,6 +9,7 @@ import { FiUpload, FiX } from 'react-icons/fi';
 import AgendaEditor from '@/components/admin/AgendaEditor';
 import SpeakerEditor from '@/components/admin/SpeakerEditor';
 import GalleryEditor from '@/components/admin/GalleryEditor';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 
 export default function EditESummitEvent() {
     const router = useRouter();
@@ -97,8 +98,7 @@ export default function EditESummitEvent() {
                 details_url: data.details_url || '',
                 status: data.status,
                 featured: data.featured,
-                registrations_open: true, // DB column missing, defaulting to true
-                // registrations_open: data.registrations_open ?? true,
+                registrations_open: data.registrations_open ?? true,
 
                 image_url: data.image_url || '',
                 is_team_event: data.is_team_event || false,
@@ -134,6 +134,11 @@ export default function EditESummitEvent() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!formData.detailed_description.replace(/<[^>]*>/g, '').trim()) {
+            toast.error('Detailed description is required');
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -156,7 +161,7 @@ export default function EditESummitEvent() {
                 details_url: formData.details_url,
                 status: formData.status,
                 featured: formData.featured,
-                // registrations_open: formData.registrations_open,
+                registrations_open: formData.registrations_open,
                 image_url: imageUrl,
                 is_team_event: formData.is_team_event,
                 min_team_size: formData.min_team_size,
@@ -251,27 +256,27 @@ export default function EditESummitEvent() {
                     </div>
 
                     <div>
-                        <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">Description *</label>
+                        <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">Short Description (Optional - for event cards)</label>
                         <textarea
                             id="description"
                             rows={4}
-                            required
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                             className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500"
+                            placeholder="A brief summary for the events list page"
                         />
                     </div>
 
                     <div>
-                        <label htmlFor="detailed_description" className="block text-sm font-medium text-gray-300 mb-2">Detailed Description (Optional)</label>
-                        <textarea
-                            id="detailed_description"
-                            rows={8}
+                        <label htmlFor="detailed_description" className="block text-sm font-medium text-gray-300 mb-2">Detailed Description (Required)</label>
+                        <RichTextEditor
                             value={formData.detailed_description}
-                            onChange={(e) => setFormData({ ...formData, detailed_description: e.target.value })}
-                            className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500"
+                            onChange={(value) => setFormData({ ...formData, detailed_description: value })}
                             placeholder="Add a comprehensive description, agenda, requirements, etc."
                         />
+                        {formData.detailed_description.replace(/<[^>]*>/g, '').trim().length === 0 && (
+                            <p className="mt-1 text-sm text-red-500">Detailed description is required</p>
+                        )}
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4">
@@ -369,21 +374,6 @@ export default function EditESummitEvent() {
                             </label>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">Registration Status</label>
-                            <label className="flex items-center gap-3 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={formData.registrations_open}
-                                    onChange={(e) => setFormData({ ...formData, registrations_open: e.target.checked })}
-                                    className="w-5 h-5 text-primary-golden focus:ring-primary-golden rounded bg-gray-800 border-gray-600"
-                                />
-                                <span className="text-gray-300">Registrations Open</span>
-                            </label>
-                            <p className="text-sm text-gray-500 mt-1">
-                                Uncheck to close registrations for this event.
-                            </p>
-                        </div>
                     </div>
 
                     <div className="border-t border-gray-800 pt-6 mt-6">
@@ -401,6 +391,21 @@ export default function EditESummitEvent() {
                             </label>
                             <p className="text-sm text-gray-500 mt-1 ml-8">
                                 Users will register as teams instead of individuals.
+                            </p>
+                        </div>
+
+                        <div className="mb-4">
+                            <label className="flex items-center gap-3 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={formData.registrations_open}
+                                    onChange={(e) => setFormData({ ...formData, registrations_open: e.target.checked })}
+                                    className="w-5 h-5 text-purple-600 focus:ring-purple-500 rounded bg-gray-800 border-gray-600"
+                                />
+                                <span className="text-gray-300 font-medium">Registrations Open</span>
+                            </label>
+                            <p className="text-sm text-gray-500 mt-1 ml-8">
+                                Enable or disable new registrations for this event.
                             </p>
                         </div>
 
@@ -470,7 +475,7 @@ export default function EditESummitEvent() {
                         </button>
                     </div>
                 </form>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
