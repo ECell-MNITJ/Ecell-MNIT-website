@@ -21,6 +21,9 @@ export const metadata: Metadata = {
     title: "E-Cell MNIT Jaipur",
     description: "Entrepreneurship Cell at Malaviya National Institute of Technology, Jaipur. Fostering innovation and entrepreneurship among students.",
     keywords: ["E-Cell", "MNIT Jaipur", "Entrepreneurship", "Startups", "Innovation", "Events"],
+    icons: {
+        icon: "/favicon.png",
+    },
 };
 
 import { SiteSettingsProvider } from "@/context/SiteSettingsContext";

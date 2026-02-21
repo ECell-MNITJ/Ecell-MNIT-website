@@ -4,6 +4,9 @@ import BackgroundCanvas from '@/components/esummit/BackgroundCanvas';
 export const metadata: Metadata = {
     title: 'E-Summit MNIT Jaipur',
     description: 'E-Summit 2026 by E-Cell MNIT. Where ideas take flight and innovation knows no bounds.',
+    icons: {
+        icon: "/favicon.png",
+    },
 };
 
 export default function ESummitLayout({
