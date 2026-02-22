@@ -26,6 +26,7 @@ export default function Signup() {
                     data: {
                         name: name,
                     },
+                    emailRedirectTo: `${window.location.origin}/auth/callback?next=/auth/confirmed`,
                 },
             });
 

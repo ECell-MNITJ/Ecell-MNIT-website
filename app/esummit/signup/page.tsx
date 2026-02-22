@@ -28,6 +28,7 @@ export default function ESummitSignup() {
                     data: {
                         name: name,
                     },
+                    emailRedirectTo: `${window.location.origin}/auth/callback?next=/auth/confirmed`,
                 },
             });
 
