@@ -26,13 +26,12 @@ export default function Signup() {
                     data: {
                         name: name,
                     },
-                    emailRedirectTo: `${window.location.origin}/auth/callback?next=/auth/confirmed`,
                 },
             });
 
             if (error) throw error;
 
-            toast.success('Please verify your email to sign in.');
+            toast.success('Account created! Please verify your Email to sign in.');
             router.push('/login');
         } catch (error: any) {
             toast.error(error.message || 'Signup failed');

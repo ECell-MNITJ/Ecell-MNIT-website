@@ -28,13 +28,12 @@ export default function ESummitSignup() {
                     data: {
                         name: name,
                     },
-                    emailRedirectTo: `${window.location.origin}/auth/callback?next=/auth/confirmed`,
                 },
             });
 
             if (error) throw error;
 
-            toast.success('Please verify your email to sign in.');
+            toast.success('Account created! Please sign in.');
             router.push('/esummit/login');
         } catch (error: any) {
             toast.error(error.message || 'Signup failed');

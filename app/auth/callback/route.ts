@@ -6,43 +6,21 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const token_hash = searchParams.get('token_hash')
     const type = searchParams.get('type') as EmailOtpType | null
-    const code = searchParams.get('code')
-    const next = searchParams.get('next') ?? '/auth/confirmed'
-
-    console.log('Auth Callback initiated:', { token_hash: !!token_hash, type, code: !!code, next });
+    const next = searchParams.get('next') ?? '/auth/confirmed' // Redirect to confirmed page
 
     if (token_hash && type) {
         const supabase = await createServerClient()
+
         const { error } = await supabase.auth.verifyOtp({
             type,
             token_hash,
         })
         if (!error) {
+            // successful verification
             return NextResponse.redirect(new URL(next, request.url))
         }
-        console.error('OTP Verification Error:', error);
-        return NextResponse.redirect(new URL(`/auth/auth-code-error?error=${encodeURIComponent(error.message)}`, request.url))
     }
 
-    if (code) {
-        const supabase = await createServerClient()
-        const { error } = await supabase.auth.exchangeCodeForSession(code)
-        if (!error) {
-            return NextResponse.redirect(new URL(next, request.url))
-        }
-
-        // Handle cross-device verification (PKCE verifier missing)
-        if (error.message.includes('code verifier not found')) {
-            const successUrl = new URL('/auth/confirmed', request.url)
-            successUrl.searchParams.set('message', 'Email verified! Since you switched devices, please sign in manually.')
-            return NextResponse.redirect(successUrl)
-        }
-
-        console.error('Code Exchange Error:', error);
-        return NextResponse.redirect(new URL(`/auth/auth-code-error?error=${encodeURIComponent(error.message)}`, request.url))
-    }
-
-    console.warn('Auth Callback: No token_hash or code provided');
     // return the user to an error page with some instructions
-    return NextResponse.redirect(new URL('/auth/auth-code-error?error=No+authentication+code+found', request.url))
+    return NextResponse.redirect(new URL('/auth/auth-code-error', request.url))
 }
