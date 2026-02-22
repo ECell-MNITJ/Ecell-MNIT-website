@@ -1,101 +1,91 @@
-import { createServerClient } from '@supabase/auth-helpers-nextjs';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
+import { NextResponse, type NextRequest } from 'next/server';
 
-export async function middleware(req: NextRequest) {
-    const res = NextResponse.next();
+export async function middleware(request: NextRequest) {
+    let response = NextResponse.next({
+        request: {
+            headers: request.headers,
+        },
+    });
 
     const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         {
             cookies: {
-                get(name: string) {
-                    return req.cookies.get(name)?.value;
+                getAll() {
+                    return request.cookies.getAll();
                 },
-                set(name: string, value: string, options: any) {
-                    res.cookies.set({
-                        name,
-                        value,
-                        ...options,
+                setAll(cookiesToSet) {
+                    cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value));
+                    response = NextResponse.next({
+                        request: {
+                            headers: request.headers,
+                        },
                     });
-                },
-                remove(name: string, options: any) {
-                    res.cookies.set({
-                        name,
-                        value: '',
-                        ...options,
-                    });
+                    cookiesToSet.forEach(({ name, value, options }) =>
+                        response.cookies.set(name, value, options)
+                    );
                 },
             },
         }
     );
 
     const {
-        data: { session },
-    } = await supabase.auth.getSession();
+        data: { user },
+    } = await supabase.auth.getUser();
 
     // Protect /admin routes (except login and verify)
-    if (req.nextUrl.pathname.startsWith('/admin')) {
-        const isAuthPage = req.nextUrl.pathname.startsWith('/admin/login') ||
-            req.nextUrl.pathname.startsWith('/admin/verify');
+    if (request.nextUrl.pathname.startsWith('/admin')) {
+        const isAuthPage = request.nextUrl.pathname.startsWith('/admin/login') ||
+            request.nextUrl.pathname.startsWith('/admin/verify');
 
-        // Check for admin verification cookie
-        const isVerified = req.cookies.get('admin-verified')?.value === 'true';
+        const isVerified = request.cookies.get('admin-verified')?.value === 'true';
 
-        if (!session && !isAuthPage) {
-            // Not logged in - redirect to login
-            return NextResponse.redirect(new URL('/admin/login', req.url));
+        if (!user && !isAuthPage) {
+            return NextResponse.redirect(new URL('/admin/login', request.url));
         }
 
-        if (session && req.nextUrl.pathname.startsWith('/admin/login')) {
-            // Already logged in, redirect to verify or dashboard
-            return NextResponse.redirect(new URL(isVerified ? '/admin/dashboard' : '/admin/verify', req.url));
+        if (user && request.nextUrl.pathname.startsWith('/admin/login')) {
+            return NextResponse.redirect(new URL(isVerified ? '/admin/dashboard' : '/admin/verify', request.url));
         }
 
-        if (session && !isVerified && !req.nextUrl.pathname.startsWith('/admin/verify')) {
-            // Logged in but not verified - redirect to verify
-            return NextResponse.redirect(new URL('/admin/verify', req.url));
+        if (user && !isVerified && !request.nextUrl.pathname.startsWith('/admin/verify')) {
+            return NextResponse.redirect(new URL('/admin/verify', request.url));
         }
 
-        if (session && isVerified && req.nextUrl.pathname.startsWith('/admin/verify')) {
-            // Already verified - redirect to dashboard
-            return NextResponse.redirect(new URL('/admin/dashboard', req.url));
+        if (user && isVerified && request.nextUrl.pathname.startsWith('/admin/verify')) {
+            return NextResponse.redirect(new URL('/admin/dashboard', request.url));
         }
     }
 
     // Protect /esummit/admin routes (except login and verify)
-    if (req.nextUrl.pathname.startsWith('/esummit/admin')) {
-        const isAuthPage = req.nextUrl.pathname.startsWith('/esummit/admin/login') ||
-            req.nextUrl.pathname.startsWith('/esummit/admin/verify');
+    if (request.nextUrl.pathname.startsWith('/esummit/admin')) {
+        const isAuthPage = request.nextUrl.pathname.startsWith('/esummit/admin/login') ||
+            request.nextUrl.pathname.startsWith('/esummit/admin/verify');
 
-        // Check for admin verification cookie
-        const isVerified = req.cookies.get('esummit-admin-verified')?.value === 'true';
+        const isVerified = request.cookies.get('esummit-admin-verified')?.value === 'true';
 
-        if (!session && !isAuthPage) {
-            // Not logged in - redirect to login
-            return NextResponse.redirect(new URL('/esummit/admin/login', req.url));
+        if (!user && !isAuthPage) {
+            return NextResponse.redirect(new URL('/esummit/admin/login', request.url));
         }
 
-        if (session && req.nextUrl.pathname.startsWith('/esummit/admin/login')) {
-            // Already logged in, redirect to verify or dashboard
-            return NextResponse.redirect(new URL(isVerified ? '/esummit/admin/dashboard' : '/esummit/admin/verify', req.url));
+        if (user && request.nextUrl.pathname.startsWith('/esummit/admin/login')) {
+            return NextResponse.redirect(new URL(isVerified ? '/esummit/admin/dashboard' : '/esummit/admin/verify', request.url));
         }
 
-        if (session && !isVerified && !req.nextUrl.pathname.startsWith('/esummit/admin/verify')) {
-            // Logged in but not verified - redirect to verify
-            return NextResponse.redirect(new URL('/esummit/admin/verify', req.url));
+        if (user && !isVerified && !request.nextUrl.pathname.startsWith('/esummit/admin/verify')) {
+            return NextResponse.redirect(new URL('/esummit/admin/verify', request.url));
         }
 
-        if (session && isVerified && req.nextUrl.pathname.startsWith('/esummit/admin/verify')) {
-            // Already verified - redirect to dashboard
-            return NextResponse.redirect(new URL('/esummit/admin/dashboard', req.url));
+        if (user && isVerified && request.nextUrl.pathname.startsWith('/esummit/admin/verify')) {
+            return NextResponse.redirect(new URL('/esummit/admin/dashboard', request.url));
         }
     }
 
-    return res;
+    return response;
 }
 
 export const config = {
-    matcher: ['/admin/:path*', '/esummit/admin/:path*'],
+    matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

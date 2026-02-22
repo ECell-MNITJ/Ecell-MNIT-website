@@ -34,7 +34,7 @@ export default function ESummitSignup() {
 
             if (error) throw error;
 
-            toast.success('Account created! Please sign in.');
+            toast.success('Please verify your email to sign in.');
             router.push('/esummit/login');
         } catch (error: any) {
             toast.error(error.message || 'Signup failed');

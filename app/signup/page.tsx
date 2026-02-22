@@ -32,7 +32,7 @@ export default function Signup() {
 
             if (error) throw error;
 
-            toast.success('Account created! Please verify your Email to sign in.');
+            toast.success('Please verify your email to sign in.');
             router.push('/login');
         } catch (error: any) {
             toast.error(error.message || 'Signup failed');

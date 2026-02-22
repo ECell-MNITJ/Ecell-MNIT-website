@@ -30,6 +30,14 @@ export async function GET(request: NextRequest) {
         if (!error) {
             return NextResponse.redirect(new URL(next, request.url))
         }
+
+        // Handle cross-device verification (PKCE verifier missing)
+        if (error.message.includes('code verifier not found')) {
+            const successUrl = new URL('/auth/confirmed', request.url)
+            successUrl.searchParams.set('message', 'Email verified! Since you switched devices, please sign in manually.')
+            return NextResponse.redirect(successUrl)
+        }
+
         console.error('Code Exchange Error:', error);
         return NextResponse.redirect(new URL(`/auth/auth-code-error?error=${encodeURIComponent(error.message)}`, request.url))
     }
