@@ -9,6 +9,8 @@ export async function GET(request: NextRequest) {
     const code = searchParams.get('code')
     const next = searchParams.get('next') ?? '/auth/confirmed'
 
+    console.log('Auth Callback initiated:', { token_hash: !!token_hash, type, code: !!code, next });
+
     if (token_hash && type) {
         const supabase = await createServerClient()
         const { error } = await supabase.auth.verifyOtp({
@@ -18,6 +20,8 @@ export async function GET(request: NextRequest) {
         if (!error) {
             return NextResponse.redirect(new URL(next, request.url))
         }
+        console.error('OTP Verification Error:', error);
+        return NextResponse.redirect(new URL(`/auth/auth-code-error?error=${encodeURIComponent(error.message)}`, request.url))
     }
 
     if (code) {
@@ -26,8 +30,11 @@ export async function GET(request: NextRequest) {
         if (!error) {
             return NextResponse.redirect(new URL(next, request.url))
         }
+        console.error('Code Exchange Error:', error);
+        return NextResponse.redirect(new URL(`/auth/auth-code-error?error=${encodeURIComponent(error.message)}`, request.url))
     }
 
+    console.warn('Auth Callback: No token_hash or code provided');
     // return the user to an error page with some instructions
-    return NextResponse.redirect(new URL('/auth/auth-code-error', request.url))
+    return NextResponse.redirect(new URL('/auth/auth-code-error?error=No+authentication+code+found', request.url))
 }
