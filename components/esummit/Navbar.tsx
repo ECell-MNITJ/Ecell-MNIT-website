@@ -95,14 +95,14 @@ export default function EsNavbar() {
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             transition={{ duration: 0.8, ease: "circOut" }}
-            className="fixed top-0 left-0 w-full z-50 px-10 pt-2 md:pt-4"
+            className="fixed top-0 left-0 w-full z-50 px-4 md:px-0 pt-4"
         >
             <motion.div
                 animate={{
                     borderRadius: isMenuOpen ? 24 : 50,
                 }}
                 transition={{ duration: 0.5, ease: "circOut" }}
-                className="mx-auto max-w-7xl bg-esummit-card/80 backdrop-blur-xl shadow-[0_0_30px_rgba(0,0,0,0.5)] border border-esummit-primary/20 py-2 md:py-3 px-6"
+                className="w-full bg-esummit-card/90 md:bg-esummit-card/80 backdrop-blur-xl shadow-[0_0_30px_rgba(0,0,0,0.5)] border border-esummit-primary/20 py-3 pl-0 pr-4 md:pr-10"
             >
                 <div className="flex items-center justify-between">
                     <Link href="/" className="group" suppressHydrationWarning>
