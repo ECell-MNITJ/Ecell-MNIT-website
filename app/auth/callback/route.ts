@@ -18,7 +18,11 @@ export async function GET(request: NextRequest) {
         if (!error) {
             // successful verification
             return NextResponse.redirect(new URL(next, request.url))
+        } else {
+            console.error('Verify OTP Error:', error);
         }
+    } else {
+        console.error('Missing token_hash or type. token_hash:', token_hash, 'type:', type);
     }
 
     // return the user to an error page with some instructions
