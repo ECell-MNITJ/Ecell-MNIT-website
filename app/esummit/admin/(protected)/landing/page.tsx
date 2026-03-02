@@ -19,7 +19,7 @@ interface ESummitBlueprint {
     icon: string;
     align: 'left' | 'right';
     display_order: number;
-    image_url?: string;
+    image_url?: string | null;
 }
 
 // Map of available icons

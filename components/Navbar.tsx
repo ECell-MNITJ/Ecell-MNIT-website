@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { FiUser, FiMenu, FiX } from 'react-icons/fi';
@@ -66,8 +67,17 @@ export default function Navbar() {
                 <div className="px-6 lg:px-8 py-3 md:py-0"> {/* Modified padding for consistency */}
                     <div className="flex items-center justify-between h-14 md:h-20 relative z-50">
                         {/* Logo */}
-                        <Link href="/" className="text-xl md:text-2xl font-heading text-white tracking-wider">
-                            E-CELL <span className="text-primary-golden">MNIT</span>
+                        <Link href="/" className="group flex items-center h-full" suppressHydrationWarning>
+                            <div className="relative h-8 md:h-10 w-32 md:w-36 flex items-center justify-center overflow-hidden transform group-hover:scale-110 transition-transform duration-300">
+                                <Image
+                                    src="/images/esummit-logo.png"
+                                    alt="E-Summit Logo"
+                                    fill
+                                    sizes="(max-width: 768px) 128px, 144px"
+                                    className="object-cover object-center scale-[1.2]"
+                                    priority
+                                />
+                            </div>
                         </Link>
 
                         {/* Desktop Navigation */}

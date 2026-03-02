@@ -40,9 +40,16 @@ export interface EventDetails {
     faq?: FAQItem[];
 }
 
+let browserClient: ReturnType<typeof createBrowserClient<Database>> | undefined;
+
 // Create a single supabase client for interacting with your database
-export const createClient = () =>
-    createBrowserClient<Database>(
+export const createClient = () => {
+    if (browserClient) return browserClient;
+
+    browserClient = createBrowserClient<Database>(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
+
+    return browserClient;
+};

@@ -14,11 +14,11 @@ const config: Config = {
                     golden: '#BD9F67',
                 },
                 esummit: {
-                    bg: '#050A14',      // Deep Midnight Blue
-                    card: '#0A1124',    // Darker Blue for cards
-                    primary: '#FFB800', // Electric Amber/Gold
-                    accent: '#94A3B8',  // Metallic Slate Blue (Replacing Neon Cyan)
-                    secondary: '#E2E8F0' // Platinum Silver
+                    bg: '#0b132b',      // Deep Blue Background
+                    card: '#132247',    // Lighter shade for cards
+                    primary: '#2563eb', // Base color theme
+                    accent: '#60a5fa',  // Light Blue Accent
+                    secondary: '#FFFFFF' // White
                 }
             },
             fontFamily: {

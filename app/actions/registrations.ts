@@ -1,6 +1,7 @@
 'use server';
 
 import { createServerClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 
 export async function updateAttendanceStatus(registrationId: string, currentStatus: boolean) {
@@ -26,7 +27,7 @@ export async function updateAttendanceStatus(registrationId: string, currentStat
 }
 
 export async function updateRegistrationRole(registrationId: string, newRole: string) {
-    const supabase = await createServerClient();
+    const supabase = createAdminClient();
 
     try {
         const { error } = await supabase
@@ -45,7 +46,7 @@ export async function updateRegistrationRole(registrationId: string, newRole: st
 }
 
 export async function updateProfileRole(profileId: string, newRole: string) {
-    const supabase = await createServerClient();
+    const supabase = createAdminClient();
 
     try {
         const { error } = await supabase
@@ -59,6 +60,25 @@ export async function updateProfileRole(profileId: string, newRole: string) {
         return { success: true };
     } catch (error: any) {
         console.error('Error updating profile role:', error);
+        return { success: false, error: error.message };
+    }
+}
+
+export async function deleteRegistration(registrationId: string) {
+    const supabase = await createServerClient();
+
+    try {
+        const { error } = await supabase
+            .from('event_registrations')
+            .delete()
+            .eq('id', registrationId);
+
+        if (error) throw error;
+
+        revalidatePath('/esummit/admin/registrations');
+        return { success: true };
+    } catch (error: any) {
+        console.error('Error deleting registration:', error);
         return { success: false, error: error.message };
     }
 }

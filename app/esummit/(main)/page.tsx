@@ -4,8 +4,44 @@ import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { FiArrowRight, FiTarget, FiTrendingUp, FiActivity, FiCpu, FiGlobe, FiLayers } from 'react-icons/fi';
-import GallerySection from '@/components/GallerySection';
 import { createClient } from '@/lib/supabase/client';
+import { SponsorsMarquee } from '@/components/esummit/SponsorsMarquee';
+import { SpeakersMarquee } from '@/components/esummit/SpeakersMarquee';
+import GallerySection from '@/components/GallerySection';
+
+interface ESummitStat {
+    id: string;
+    value: string;
+    label: string;
+    display_order: number;
+}
+
+interface ESummitBlueprint {
+    id: string;
+    title: string;
+    description: string;
+    icon: string;
+    align: 'left' | 'right';
+    image_url: string | null;
+    display_order: number;
+}
+
+interface ESummitSponsor {
+    id: string;
+    name: string;
+    logo_url: string | null;
+    website_url: string | null;
+    display_order: number;
+}
+
+interface ESummitSpeaker {
+    id: string;
+    name: string;
+    image_url: string | null;
+    designation: string | null;
+    linkedin_url: string | null;
+    display_order: number;
+}
 
 const ParallaxText = ({ children, baseVelocity = 100 }: { children: string; baseVelocity: number }) => {
     // Simplified marquee for now to reduce complexity in this file, 
@@ -88,15 +124,24 @@ const FeatureRow = ({ title, desc, icon: Icon, align = 'left', delay, image_url 
     </motion.div>
 );
 
-export default function ESummitPage() {
+export default function ESummitLandingDataLayer() {
     const containerRef = useRef(null);
     const { scrollYProgress } = useScroll({ target: containerRef });
     const [registerLink, setRegisterLink] = useState('/esummit/login'); // Default to login
 
     // Dynamic Data States
-    const [stats, setStats] = useState<any[]>([]);
-    const [blueprints, setBlueprints] = useState<any[]>([]);
-    const [settings, setSettings] = useState({ show_stats: true, show_blueprint: true });
+    const [stats, setStats] = useState<ESummitStat[]>([]);
+    const [blueprints, setBlueprints] = useState<ESummitBlueprint[]>([]);
+    const [sponsors, setSponsors] = useState<ESummitSponsor[]>([]);
+    const [speakers, setSpeakers] = useState<ESummitSpeaker[]>([]);
+    const [settings, setSettings] = useState({
+        show_stats: true,
+        show_blueprint: true,
+        show_sponsors: true,
+        sponsors_heading: 'Our Sponsors',
+        show_speakers: true,
+        speakers_heading: 'Eminent Speakers'
+    });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -127,6 +172,22 @@ export default function ESummitPage() {
 
             if (bpData) setBlueprints(bpData);
 
+            // Fetch Sponsors
+            const { data: sponsorsData } = await supabase
+                .from('esummit_sponsors')
+                .select('*')
+                .order('display_order', { ascending: true });
+
+            if (sponsorsData) setSponsors(sponsorsData);
+
+            // Fetch Speakers
+            const { data: speakersData } = await supabase
+                .from('esummit_speakers')
+                .select('*')
+                .order('display_order', { ascending: true });
+
+            if (speakersData) setSpeakers(speakersData);
+
             // Fetch Settings
             const { data: settingsData } = await supabase
                 .from('esummit_settings')
@@ -134,9 +195,14 @@ export default function ESummitPage() {
                 .single();
 
             if (settingsData) {
+                const typedSettings = settingsData as any;
                 setSettings({
-                    show_stats: settingsData.show_stats,
-                    show_blueprint: settingsData.show_blueprint
+                    show_stats: typedSettings.show_stats,
+                    show_blueprint: typedSettings.show_blueprint,
+                    show_sponsors: typedSettings.show_sponsors !== undefined ? typedSettings.show_sponsors : true,
+                    sponsors_heading: typedSettings.sponsors_heading || 'Our Sponsors',
+                    show_speakers: typedSettings.show_speakers !== undefined ? typedSettings.show_speakers : true,
+                    speakers_heading: typedSettings.speakers_heading || 'Eminent Speakers'
                 });
             }
 
@@ -173,10 +239,10 @@ export default function ESummitPage() {
 
                     <div className="relative mb-8">
                         <h1 className="text-6xl sm:text-7xl md:text-[150px] font-black leading-[0.9] md:leading-[0.85] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-esummit-secondary to-esummit-secondary/50">
-                            VISIONARY
+                            E-SUMMIT
                             <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-esummit-primary via-yellow-500 to-esummit-primary block mt-2">
-                                ASCENT
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-esummit-primary via-esummit-accent to-esummit-primary block mt-2">
+                                2026
                             </span>
                         </h1>
                         <motion.div
@@ -194,7 +260,7 @@ export default function ESummitPage() {
                     <div className="flex flex-col sm:flex-row justify-center gap-4 md:gap-6 px-4">
                         <Link
                             href="/esummit/events"
-                            className="group relative px-8 py-4 md:px-10 md:py-5 bg-esummit-primary text-esummit-bg font-black uppercase tracking-widest text-xs md:text-sm hover:bg-yellow-400 transition-colors clip-path-slant flex justify-center"
+                            className="group relative px-8 py-4 md:px-10 md:py-5 bg-esummit-primary text-esummit-bg font-black uppercase tracking-widest text-xs md:text-sm hover:bg-esummit-accent transition-colors clip-path-slant flex justify-center"
                         >
                             <span className="relative z-10 flex items-center gap-2">
                                 Explore Events <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
@@ -283,7 +349,7 @@ export default function ESummitPage() {
                                         icon={IconComponent}
                                         align={item.align}
                                         delay={0.1 * (index + 1)}
-                                        image_url={item.image_url}
+                                        image_url={item.image_url || undefined}
                                     />
                                 );
                             })
@@ -323,14 +389,25 @@ export default function ESummitPage() {
                 </section>
             )}
 
+            {/* Sponsors Section */}
+            <SponsorsMarquee
+                sponsors={sponsors}
+                heading={settings.sponsors_heading}
+                isVisible={settings.show_sponsors}
+            />
+
+            {/* Speakers Section */}
+            <SpeakersMarquee
+                speakers={speakers}
+                heading={settings.speakers_heading}
+                isVisible={settings.show_speakers}
+            />
+
             {/* Gallery Preview */}
             <GallerySection source="esummit" className="py-16 md:py-20 relative z-10 bg-gradient-to-b from-esummit-bg to-esummit-card/20" />
 
             {/* CTA Section */}
             <section className="py-24 md:py-40 relative overflow-hidden flex items-center justify-center">
-                {/* Warp Speed Effect Background (simulated with radial gradient for now) */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-esummit-primary/10 via-esummit-bg to-esummit-bg" />
-
                 <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     whileInView={{ opacity: 1, scale: 1 }}
@@ -339,14 +416,14 @@ export default function ESummitPage() {
                 >
                     <h2 className="text-4xl md:text-8xl font-black mb-6 md:mb-8 leading-tight tracking-tighter">
                         EXPERIENCE THE <br />
-                        <span className="text-esummit-primary drop-shadow-[0_0_20px_rgba(255,184,0,0.5)]">FUTURE</span>
+                        <span className="text-esummit-primary drop-shadow-[0_0_20px_rgba(37,99,235,0.5)]">FUTURE</span>
                     </h2>
                     <p className="text-lg md:text-xl text-esummit-secondary/70 mb-8 md:mb-12">
                         Join us at E-Summit 2026. Your journey starts here.
                     </p>
                     <Link
                         href={registerLink}
-                        className="inline-flex h-14 md:h-16 animate-shimmer items-center justify-center rounded-full border border-esummit-primary/30 bg-[linear-gradient(110deg,#000103,45%,#FFB800,55%,#000103)] bg-[length:200%_100%] px-8 md:px-12 font-bold text-white transition-colors focus:outline-none focus:ring-2 focus:ring-esummit-primary focus:ring-offset-2 focus:ring-offset-esummit-bg text-lg md:text-xl uppercase tracking-widest"
+                        className="inline-flex h-14 md:h-16 animate-shimmer items-center justify-center rounded-full border border-esummit-primary/30 bg-[linear-gradient(110deg,#000103,45%,#2563eb,55%,#000103)] bg-[length:200%_100%] px-8 md:px-12 font-bold text-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-esummit-primary focus:ring-offset-2 focus:ring-offset-esummit-bg text-lg md:text-xl uppercase tracking-widest hover:scale-105 hover:shadow-[0_0_30px_rgba(37,99,235,0.6)] hover:border-esummit-primary"
                     >
                         Register Now
                     </Link>

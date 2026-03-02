@@ -2,7 +2,7 @@
 
 import SafeScrollHtml from './SafeScrollHtml';
 import Link from 'next/link';
-import { FiCalendar, FiMapPin } from 'react-icons/fi';
+import { FiCalendar, FiMapPin, FiArrowRight } from 'react-icons/fi';
 import StartupMarquee from '@/components/StartupMarquee';
 import GallerySection from '@/components/GallerySection';
 
@@ -10,9 +10,10 @@ interface OverlayProps {
     events: any[];
     startups: any[];
     stats?: any[];
+    settings?: any;
 }
 
-export default function Overlay({ events, startups, stats }: OverlayProps) {
+export default function Overlay({ events, startups, stats, settings }: OverlayProps) {
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', {
@@ -26,20 +27,28 @@ export default function Overlay({ events, startups, stats }: OverlayProps) {
         <SafeScrollHtml style={{ width: '100%', height: '100%', zIndex: 100, position: 'relative' }}>
             {/* Section 1: Hero (Welcome) */}
             <section className="w-full h-screen flex flex-col justify-center items-center px-6 md:px-10 text-center pointer-events-none">
-                <div className="bg-black/60 backdrop-blur-md p-8 md:p-12 rounded-2xl border border-white/10 max-w-4xl pointer-events-auto shadow-2xl transition-transform hover:scale-[1.01]">
-                    <h1 className="text-4xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg tracking-tight">
+                <div className="bg-black/60 backdrop-blur-md p-6 md:p-12 rounded-2xl border border-white/10 max-w-4xl pointer-events-auto shadow-2xl transition-transform hover:scale-[1.01]">
+                    <h1 className="text-3xl sm:text-4xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg tracking-tight">
                         Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-golden to-yellow-300">E-Cell MNIT</span>
                     </h1>
                     <p className="text-lg md:text-2xl text-gray-200 font-light drop-shadow-md leading-relaxed">
                         Fostering Innovation, Entrepreneurship, and Leadership.
                     </p>
-                    <div className="mt-8 flex gap-4 justify-center">
-                        <Link href="/events" className="btn btn-primary bg-primary-golden hover:bg-yellow-600 text-black border-none px-6 py-2 md:px-6 md:py-2.5 rounded-full font-bold text-sm md:text-base">
-                            Explore Events
-                        </Link>
-                        <Link href="/startups" className="btn btn-outline border-white text-white hover:bg-white/10 px-6 py-2 md:px-6 md:py-2.5 rounded-full font-bold text-sm md:text-base">
-                            Our Startups
-                        </Link>
+                    <div className="mt-8 flex flex-col items-center gap-4 w-full md:w-auto">
+                        <div className="flex gap-4 justify-center w-full">
+                            <Link href="/events" className="btn btn-primary bg-primary-golden hover:bg-yellow-600 text-black border-none px-6 py-2 md:px-6 md:py-2.5 rounded-full font-bold text-sm md:text-base flex-1 text-center">
+                                Explore Events
+                            </Link>
+                            <Link href="/startups" className="btn btn-outline border-white text-white hover:bg-white/10 px-6 py-2 md:px-6 md:py-2.5 rounded-full font-bold text-sm md:text-base flex-1 text-center">
+                                Our Startups
+                            </Link>
+                        </div>
+                        {settings?.show_esummit_button && (
+                            <Link href="/esummit" className="w-full justify-center group inline-flex items-center btn btn-primary bg-gradient-to-r from-primary-golden to-yellow-400 hover:from-yellow-400 hover:to-primary-golden text-black border-none px-8 py-3 md:px-10 md:py-3.5 rounded-full font-bold text-base md:text-lg shadow-lg transform hover:scale-105 transition-all duration-300 animate-pulse">
+                                {settings?.esummit_button_text || 'E-Summit 2026'}
+                                <FiArrowRight className="ml-2 w-5 h-5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                            </Link>
+                        )}
                     </div>
                 </div>
             </section>
@@ -84,8 +93,8 @@ export default function Overlay({ events, startups, stats }: OverlayProps) {
                         </p>
 
                         <div className="flex flex-col md:flex-row gap-4">
-                            <Link href="/register" className="btn bg-white text-black hover:bg-gray-200 px-8 py-3 rounded-full font-bold transition-all transform hover:scale-105">
-                                Join Now
+                            <Link href="/contact" className="btn bg-white text-black hover:bg-gray-200 px-8 py-3 rounded-full font-bold transition-all transform hover:scale-105">
+                                Join Us
                             </Link>
                             <Link href="/about" className="btn border border-white text-white hover:bg-white/10 px-8 py-3 rounded-full font-bold transition-all">
                                 Learn More
@@ -113,15 +122,15 @@ export default function Overlay({ events, startups, stats }: OverlayProps) {
                         <p className="text-gray-400 text-sm">
                             We believe in the power of student-led innovation to drive social and economic change.
                         </p>
-                        <Link href="/esummit/vision" className="inline-flex items-center text-primary-golden hover:text-white transition-colors font-medium mt-auto group">
+                        <Link href="/about" className="inline-flex items-center text-primary-golden hover:text-white transition-colors font-medium mt-auto group">
                             Read Our Full Vision <i className="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </div>
 
                     {/* Dynamic Stats Grid */}
-                    <div className="bg-black/70 backdrop-blur-xl p-8 rounded-2xl border border-primary-golden/40 pointer-events-auto shadow-[0_0_30px_rgba(251,191,36,0.1)] flex flex-col justify-center">
-                        <h2 className="text-3xl md:text-5xl font-heading text-white mb-8 text-right">Our Impact</h2>
-                        <div className="grid grid-cols-2 gap-8 md:gap-y-12">
+                    <div className="bg-black/70 backdrop-blur-xl p-6 md:p-8 rounded-2xl border border-primary-golden/40 pointer-events-auto shadow-[0_0_30px_rgba(251,191,36,0.1)] flex flex-col justify-center">
+                        <h2 className="text-3xl md:text-5xl font-heading text-white mb-6 md:mb-8 text-right">Our Impact</h2>
+                        <div className="grid grid-cols-2 gap-6 md:gap-8 md:gap-y-12">
                             {stats && stats.length > 0 ? (
                                 stats.map((stat: any) => (
                                     <div key={stat.id} className="text-right">
@@ -156,7 +165,7 @@ export default function Overlay({ events, startups, stats }: OverlayProps) {
             </section>
 
             {/* Section 4: Recent Events */}
-            <section className="w-full min-h-screen flex flex-col justify-center items-center px-4 md:px-10 pointer-events-none py-20 mb-20">
+            <section className="w-full min-h-screen flex flex-col justify-center items-center px-4 md:px-10 pointer-events-none py-20 mb-40">
                 <div className="w-full max-w-7xl pointer-events-auto">
                     <div className="text-center mb-16 bg-black/60 backdrop-blur-md px-8 py-6 rounded-2xl inline-block mx-auto border border-white/5">
                         <h2 className="text-3xl md:text-5xl font-heading text-primary-green mb-2">Recent Events</h2>
@@ -171,7 +180,7 @@ export default function Overlay({ events, startups, stats }: OverlayProps) {
                                     href={`/events/${event.id}`}
                                     className="group bg-zinc-900/90 backdrop-blur-md rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col h-full border border-zinc-700 hover:border-primary-golden/50"
                                 >
-                                    <div className="relative h-48 bg-gradient-to-br from-gray-800 to-black overflow-hidden">
+                                    <div className="relative h-32 sm:h-40 bg-gradient-to-br from-gray-800 to-black overflow-hidden">
                                         {event.image_url ? (
                                             <img
                                                 src={event.image_url}
@@ -189,20 +198,20 @@ export default function Overlay({ events, startups, stats }: OverlayProps) {
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="p-6 flex flex-col flex-1">
-                                        <div className="flex items-center gap-3 text-xs text-gray-400 mb-3">
+                                    <div className="p-4 sm:p-5 flex flex-col flex-1">
+                                        <div className="flex items-center gap-3 text-xs text-gray-400 mb-2">
                                             <span className="flex items-center gap-2">
                                                 <FiCalendar className="text-primary-golden text-sm" />
                                                 {formatDate(event.date)}
                                             </span>
                                         </div>
-                                        <h3 className="text-xl font-heading text-white mb-3 group-hover:text-primary-golden transition-colors line-clamp-1">
+                                        <h3 className="text-lg sm:text-xl font-heading text-white mb-2 group-hover:text-primary-golden transition-colors line-clamp-2">
                                             {event.title}
                                         </h3>
-                                        <p className="text-gray-400 text-sm mb-4 line-clamp-2 flex-1 leading-relaxed">
+                                        <p className="text-xs sm:text-sm text-gray-400 mb-3 line-clamp-2 flex-1 leading-relaxed">
                                             {event.description}
                                         </p>
-                                        <div className="mt-auto text-primary-golden text-sm font-semibold group-hover:translate-x-1 transition-transform flex items-center">
+                                        <div className="mt-auto text-primary-golden text-xs sm:text-sm font-semibold group-hover:translate-x-1 transition-transform flex items-center">
                                             View Details <i className="fas fa-arrow-right ml-2" />
                                         </div>
                                     </div>
@@ -220,8 +229,8 @@ export default function Overlay({ events, startups, stats }: OverlayProps) {
 
 
             {/* Section 5: Startups Link */}
-            <section className="w-full h-screen flex flex-col justify-center items-center px-4 md:px-10 text-center pointer-events-none pb-20">
-                <div className="bg-gradient-to-b from-gray-900/95 to-black/95 backdrop-blur-xl p-4 md:p-14 rounded-3xl border border-gray-800 max-w-5xl w-full pointer-events-auto shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+            <section className="w-full h-screen flex flex-col justify-center items-center px-4 md:px-10 text-center pointer-events-none pb-20 mt-10">
+                <div className="bg-gradient-to-b from-gray-900/95 to-black/95 backdrop-blur-xl p-4 md:p-14 rounded-3xl border border-gray-800 max-w-7xl w-full pointer-events-auto shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
                     <h2 className="text-3xl md:text-5xl font-heading text-white mb-10">
                         Startups
                     </h2>

@@ -23,7 +23,7 @@ export default function Footer() {
 
     return (
         <footer className="bg-gradient-to-br from-primary-green to-gray-900 text-white">
-            <div className="container-custom py-16">
+            <div className="container-custom py-10 md:py-16">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
                     {/* About Section */}
                     <div>

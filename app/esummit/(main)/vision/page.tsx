@@ -29,7 +29,7 @@ export default function VisionPage() {
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-500 mr-4">
                         OUR
                     </span>
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-esummit-primary via-yellow-400 to-esummit-primary">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-esummit-primary via-esummit-accent to-esummit-primary">
                         VISION
                     </span>
                 </motion.h1>

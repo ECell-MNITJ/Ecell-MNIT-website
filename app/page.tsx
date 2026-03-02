@@ -4,6 +4,7 @@ import { createServerClient } from '@/lib/supabase/server';
 import { FiCalendar, FiMapPin } from 'react-icons/fi';
 import StartupMarquee from '@/components/StartupMarquee';
 import ScrollSceneWrapper from '@/components/3d/ScrollSceneWrapper';
+import { getSiteSettings } from '@/lib/site-settings';
 
 export const revalidate = 0; // Ensure fresh data
 
@@ -41,6 +42,9 @@ export default async function Home() {
         .select('*')
         .order('display_order', { ascending: true });
 
+    // Fetch site settings
+    const settings = await getSiteSettings(supabase);
+
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', {
@@ -53,7 +57,7 @@ export default async function Home() {
     return (
         <main className="w-full h-screen overflow-hidden">
             <Suspense fallback={<div className="w-full h-full bg-black/20" />}>
-                <ScrollSceneWrapper events={displayEvents} startups={startups || []} stats={stats || []} />
+                <ScrollSceneWrapper events={displayEvents} startups={startups || []} stats={stats || []} settings={settings} />
             </Suspense>
         </main>
     );

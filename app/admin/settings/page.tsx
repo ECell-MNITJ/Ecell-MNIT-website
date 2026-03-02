@@ -92,6 +92,41 @@ export default function SettingsPage() {
                         </div>
                     </div>
 
+                    {/* Homepage Features */}
+                    <div className="border-t border-gray-700 pt-6">
+                        <h2 className="text-xl font-semibold text-primary-golden mb-4">Homepage Features</h2>
+                        <div className="grid md:grid-cols-2 gap-6">
+                            <div className="flex items-center space-x-3 bg-gray-900 border border-gray-700 rounded-lg px-4 py-3">
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        name="show_esummit_button"
+                                        checked={formData.show_esummit_button ?? settings?.show_esummit_button ?? true}
+                                        onChange={(e) => setFormData(prev => ({ ...prev, show_esummit_button: e.target.checked }))}
+                                        className="sr-only peer"
+                                    />
+                                    <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-golden"></div>
+                                </label>
+                                <span className="text-sm font-medium text-white">Show E-Summit Button</span>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-2">
+                                    E-Summit Button Text
+                                </label>
+                                <input
+                                    type="text"
+                                    name="esummit_button_text"
+                                    value={formData.esummit_button_text ?? settings?.esummit_button_text ?? ''}
+                                    onChange={handleChange}
+                                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary-golden disabled:opacity-50"
+                                    placeholder="E-Summit 2026"
+                                    disabled={!(formData.show_esummit_button ?? settings?.show_esummit_button ?? true)}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Social Media Links */}
                     <div className="border-t border-gray-700 pt-6">
                         <h2 className="text-xl font-semibold text-primary-golden mb-4">Social Media Links</h2>

@@ -15,7 +15,8 @@ interface Event {
     status: 'upcoming' | 'ongoing' | 'past';
     featured: boolean;
     is_esummit: boolean;
-    registrations_open: boolean; // New field
+    registrations_open: boolean;
+    show_on_ecell?: boolean;
 }
 
 async function getEvents(): Promise<{ events: Event[], error?: string }> {
@@ -24,6 +25,7 @@ async function getEvents(): Promise<{ events: Event[], error?: string }> {
         const { data, error } = await supabase
             .from('events')
             .select('*')
+            .or('is_esummit.eq.false,and(is_esummit.eq.true,show_on_ecell.eq.true)')
             .order('date', { ascending: false });
 
         if (error) {
@@ -79,7 +81,7 @@ export default async function Events() {
             <div className="group bg-zinc-900/80 backdrop-blur-md rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col h-full border border-white/5 hover:border-primary-golden/30">
                 <Link href={eventLink} {...(isExternalLink && { target: "_blank", rel: "noopener noreferrer" })}>
                     {event.image_url ? (
-                        <div className="relative h-48 overflow-hidden">
+                        <div className="relative h-32 sm:h-40 overflow-hidden">
                             <img
                                 src={event.image_url}
                                 alt={event.title}
@@ -112,7 +114,7 @@ export default async function Events() {
                             )}
                         </div>
                     ) : (
-                        <div className="relative h-48 bg-gradient-to-br from-primary-green to-gray-800 flex items-center justify-center">
+                        <div className="relative h-32 sm:h-40 bg-gradient-to-br from-primary-green to-gray-800 flex items-center justify-center">
                             {event.featured && (
                                 <span className="absolute top-4 right-4 bg-primary-golden text-white text-xs font-bold px-3 py-1 rounded-full uppercase z-10">
                                     Featured
@@ -137,7 +139,7 @@ export default async function Events() {
                         </div>
                     )}
                 </Link>
-                <div className="p-6 flex flex-col flex-1">
+                <div className="p-4 sm:p-5 flex flex-col flex-1">
                     <div className="flex items-center gap-2 mb-2">
                         <span className="text-primary-golden font-semibold text-sm">
                             {formatDate(event.date)}
@@ -147,19 +149,19 @@ export default async function Events() {
                         </span>
                     </div>
                     <Link href={eventLink} {...(isExternalLink && { target: "_blank", rel: "noopener noreferrer" })}>
-                        <h3 className="text-2xl font-heading text-white mb-3 group-hover:text-primary-golden transition-colors">
+                        <h3 className="text-lg sm:text-xl font-heading text-white mb-2 group-hover:text-primary-golden transition-colors line-clamp-2">
                             {event.title}
                         </h3>
                     </Link>
-                    <p className="text-gray-400 leading-relaxed mb-4 line-clamp-3">{event.description}</p>
+                    <p className="text-xs sm:text-sm text-gray-400 leading-relaxed mb-3 line-clamp-2">{event.description}</p>
                     {event.location && (
-                        <p className="text-sm text-gray-500 mb-4">📍 {event.location}</p>
+                        <p className="text-xs text-gray-500 mb-3 line-clamp-1">📍 {event.location}</p>
                     )}
                     <div className="flex gap-3 mt-auto">
                         <Link
                             href={eventLink}
                             {...(isExternalLink && { target: "_blank", rel: "noopener noreferrer" })}
-                            className="flex-1 inline-flex items-center justify-center gap-2 bg-primary-green text-white px-4 py-2 rounded-lg hover:shadow-lg hover:bg-green-700 transition-all text-sm font-semibold"
+                            className="flex-1 inline-flex items-center justify-center gap-2 bg-primary-green text-white px-3 py-1.5 rounded-lg hover:shadow-lg hover:bg-green-700 transition-all text-xs sm:text-sm font-semibold"
                         >
                             View Details
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -197,7 +199,7 @@ export default async function Events() {
                                 <div className="w-20 h-1 bg-gradient-to-r from-primary-golden to-yellow-700 mx-auto rounded-full" />
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                                 {upcomingEvents.map((event) => (
                                     <EventCard key={event.id} event={event} />
                                 ))}
@@ -218,7 +220,7 @@ export default async function Events() {
                                 <p className="text-gray-300 mt-4">Events happening right now!</p>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                                 {ongoingEvents.map((event) => (
                                     <EventCard key={event.id} event={event} />
                                 ))}
@@ -238,7 +240,7 @@ export default async function Events() {
                                 <div className="w-20 h-1 bg-gradient-to-r from-primary-golden to-yellow-700 mx-auto rounded-full" />
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-8">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                                 {pastEvents.map((event) => (
                                     <EventCard key={event.id} event={event} />
                                 ))}

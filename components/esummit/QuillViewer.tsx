@@ -45,6 +45,14 @@ export default function QuillViewer({ html, className = '' }: QuillViewerProps) 
                     padding-left: 1.5rem !important;
                 }
                 /* Match common block spacing if needed, but the user wants it "as is" */
+                .ql-editor img {
+                    max-width: 100% !important;
+                    height: auto !important;
+                    object-fit: contain;
+                }
+                .ql-editor iframe {
+                    max-width: 100% !important;
+                }
             `}</style>
             <div
                 className="ql-editor"

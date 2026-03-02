@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
     | string
     | number
     | boolean
@@ -39,7 +39,6 @@ export interface Database {
                     id?: string;
                     name?: string;
                     role?: string;
-                    position?: string | null;
                     email?: string | null;
                     bio?: string | null;
                     image_url?: string | null;
@@ -71,6 +70,8 @@ export interface Database {
                     max_team_size: number;
                     is_esummit: boolean;
                     registrations_open: boolean;
+                    display_order?: number;
+                    show_on_ecell?: boolean;
                 };
                 Insert: {
                     id?: string;
@@ -92,6 +93,8 @@ export interface Database {
                     max_team_size?: number;
                     is_esummit?: boolean;
                     registrations_open?: boolean;
+                    display_order?: number;
+                    show_on_ecell?: boolean;
                 };
                 Update: {
                     id?: string;
@@ -113,6 +116,8 @@ export interface Database {
                     max_team_size?: number;
                     is_esummit?: boolean;
                     registrations_open?: boolean;
+                    display_order?: number;
+                    show_on_ecell?: boolean;
                 };
                 Relationships: [];
             };
@@ -369,8 +374,6 @@ export interface Database {
                     phone?: string | null;
                     qr_code_url?: string | null;
                     role?: string;
-                    age?: number | null;
-                    gender?: string | null;
                     esummit_checked_in?: boolean;
                     esummit_checked_in_at?: string | null;
                 };
@@ -495,6 +498,8 @@ export interface Database {
                     instagram_url: string | null;
                     linkedin_url: string | null;
                     youtube_url: string | null;
+                    show_esummit_button: boolean;
+                    esummit_button_text: string;
                     created_at: string;
                     updated_at: string;
                 };
@@ -508,6 +513,8 @@ export interface Database {
                     instagram_url?: string | null;
                     linkedin_url?: string | null;
                     youtube_url?: string | null;
+                    show_esummit_button?: boolean;
+                    esummit_button_text?: string;
                     created_at?: string;
                     updated_at?: string;
                 };
@@ -521,6 +528,8 @@ export interface Database {
                     instagram_url?: string | null;
                     linkedin_url?: string | null;
                     youtube_url?: string | null;
+                    show_esummit_button?: boolean;
+                    esummit_button_text?: string;
                     created_at?: string;
                     updated_at?: string;
                 };
@@ -556,6 +565,7 @@ export interface Database {
                     title: string;
                     description: string;
                     icon: string;
+                    image_url: string | null;
                     align: 'left' | 'right';
                     display_order: number;
                     created_at: string;
@@ -565,6 +575,7 @@ export interface Database {
                     title: string;
                     description: string;
                     icon: string;
+                    image_url?: string | null;
                     align?: 'left' | 'right';
                     display_order?: number;
                     created_at?: string;
@@ -574,6 +585,7 @@ export interface Database {
                     title?: string;
                     description?: string;
                     icon?: string;
+                    image_url?: string | null;
                     align?: 'left' | 'right';
                     display_order?: number;
                     created_at?: string;
@@ -585,6 +597,10 @@ export interface Database {
                     id: number;
                     show_stats: boolean;
                     show_blueprint: boolean;
+                    show_sponsors: boolean;
+                    sponsors_heading: string;
+                    show_speakers: boolean;
+                    speakers_heading: string;
                     scanner_password: string;
                     created_at: string;
                     updated_at: string;
@@ -593,6 +609,8 @@ export interface Database {
                     id?: number;
                     show_stats?: boolean;
                     show_blueprint?: boolean;
+                    show_sponsors?: boolean;
+                    sponsors_heading?: string;
                     scanner_password?: string;
                     created_at?: string;
                     updated_at?: string;
@@ -601,7 +619,72 @@ export interface Database {
                     id?: number;
                     show_stats?: boolean;
                     show_blueprint?: boolean;
+                    show_sponsors?: boolean;
+                    sponsors_heading?: string;
                     scanner_password?: string;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Relationships: [];
+            };
+            esummit_sponsors: {
+                Row: {
+                    id: string;
+                    name: string;
+                    logo_url: string | null;
+                    website_url: string | null;
+                    display_order: number;
+                    created_at: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    name: string;
+                    logo_url?: string | null;
+                    website_url?: string | null;
+                    display_order?: number;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    name?: string;
+                    logo_url?: string | null;
+                    website_url?: string | null;
+                    display_order?: number;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Relationships: [];
+            };
+            esummit_speakers: {
+                Row: {
+                    id: string;
+                    name: string;
+                    image_url: string | null;
+                    designation: string | null;
+                    linkedin_url: string | null;
+                    display_order: number;
+                    created_at: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    name: string;
+                    image_url?: string | null;
+                    designation?: string | null;
+                    linkedin_url?: string | null;
+                    display_order?: number;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    name?: string;
+                    image_url?: string | null;
+                    designation?: string | null;
+                    linkedin_url?: string | null;
+                    display_order?: number;
                     created_at?: string;
                     updated_at?: string;
                 };

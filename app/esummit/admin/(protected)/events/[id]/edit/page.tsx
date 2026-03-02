@@ -36,6 +36,7 @@ export default function EditESummitEvent() {
         is_team_event: false,
         min_team_size: 1,
         max_team_size: 1,
+        show_on_ecell: false,
     });
     const [eventDetails, setEventDetails] = useState<EventDetails>({
         agenda: [],
@@ -104,6 +105,7 @@ export default function EditESummitEvent() {
                 is_team_event: data.is_team_event || false,
                 min_team_size: data.min_team_size || 1,
                 max_team_size: data.max_team_size || 1,
+                show_on_ecell: data.show_on_ecell || false,
             });
 
             if (data.event_details) {
@@ -166,6 +168,7 @@ export default function EditESummitEvent() {
                 is_team_event: formData.is_team_event,
                 min_team_size: formData.min_team_size,
                 max_team_size: formData.max_team_size,
+                show_on_ecell: formData.show_on_ecell,
             };
 
             const { error } = await supabase
@@ -371,6 +374,19 @@ export default function EditESummitEvent() {
                                     className="w-5 h-5 text-purple-600 focus:ring-purple-500 rounded bg-gray-800 border-gray-600"
                                 />
                                 <span className="text-gray-300">Mark as featured</span>
+                            </label>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">E-Cell Visibility</label>
+                            <label className="flex items-center gap-3 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={formData.show_on_ecell}
+                                    onChange={(e) => setFormData({ ...formData, show_on_ecell: e.target.checked })}
+                                    className="w-5 h-5 text-purple-600 focus:ring-purple-500 rounded bg-gray-800 border-gray-600"
+                                />
+                                <span className="text-gray-300">Show on main E-Cell Events page</span>
                             </label>
                         </div>
 

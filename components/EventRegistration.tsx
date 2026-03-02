@@ -323,23 +323,23 @@ export default function EventRegistration({ event, user }: EventRegistrationProp
                     <div className="flex border-b border-gray-200">
                         <button
                             onClick={() => setActiveTab('create')}
-                            className={`flex-1 py-4 text-center font-medium transition-colors ${activeTab === 'create'
+                            className={`flex-1 py-3 md:py-4 text-center text-sm md:text-base font-medium transition-colors ${activeTab === 'create'
                                 ? 'bg-white text-primary-golden border-b-2 border-primary-golden'
                                 : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                                 }`}
                         >
-                            <span className="flex items-center justify-center gap-2">
+                            <span className="flex items-center justify-center gap-1 md:gap-2">
                                 <FiUserPlus /> Create Team
                             </span>
                         </button>
                         <button
                             onClick={() => setActiveTab('join')}
-                            className={`flex-1 py-4 text-center font-medium transition-colors ${activeTab === 'join'
+                            className={`flex-1 py-3 md:py-4 text-center text-sm md:text-base font-medium transition-colors ${activeTab === 'join'
                                 ? 'bg-white text-primary-golden border-b-2 border-primary-golden'
                                 : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                                 }`}
                         >
-                            <span className="flex items-center justify-center gap-2">
+                            <span className="flex items-center justify-center gap-1 md:gap-2">
                                 <FiLogIn /> Join Team
                             </span>
                         </button>

@@ -84,7 +84,7 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
     };
 
     return (
-        <div className="bg-esummit-bg min-h-screen text-white selection:bg-esummit-primary selection:text-white">
+        <div className="bg-esummit-bg min-h-screen text-white selection:bg-esummit-primary selection:text-white overflow-x-hidden w-full">
             {/* Hero Section */}
             <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
                 {/* Background Image or Gradient */}
@@ -128,7 +128,7 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                     </div>
 
                     {/* Title */}
-                    <h1 className="font-black text-5xl md:text-7xl lg:text-8xl mb-6 max-w-5xl mx-auto bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-esummit-accent tracking-tighter drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
+                    <h1 className="font-black text-5xl md:text-7xl lg:text-8xl mb-6 max-w-5xl mx-auto bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-esummit-accent tracking-tighter drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] break-words w-full">
                         {event.title}
                     </h1>
 
@@ -157,14 +157,14 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                 <div className="container mx-auto px-4 relative z-10">
                     <div className="grid lg:grid-cols-3 gap-12">
                         {/* Left Column: Details */}
-                        <div className="lg:col-span-2 space-y-12">
+                        <div className="lg:col-span-2 space-y-12 min-w-0 w-full">
                             {/* Detailed Description */}
                             <div className="bg-esummit-card/30 p-5 md:p-8 rounded-3xl border border-white/5 backdrop-blur-sm">
                                 <h2 className="text-3xl font-black text-white mb-6 uppercase tracking-wide flex items-center gap-3">
                                     <span className="w-2 h-8 bg-esummit-accent rounded-full" />
                                     About The Event
                                 </h2>
-                                <div className="text-gray-300">
+                                <div className="text-gray-300 overflow-hidden break-words w-full">
                                     <QuillViewer html={event.detailed_description || ''} />
                                 </div>
                             </div>
@@ -184,7 +184,7 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                                                         {item.time}
                                                     </div>
                                                 </div>
-                                                <div className="flex-1">
+                                                <div className="flex-1 min-w-0">
                                                     <h3 className="text-xl font-bold text-white mb-2 group-hover:text-esummit-primary transition-colors">{item.title}</h3>
                                                     <p className="text-gray-400">{item.description}</p>
                                                 </div>
@@ -212,8 +212,8 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                                                             <div className="w-full h-full bg-esummit-bg flex items-center justify-center text-3xl text-gray-500">👤</div>
                                                         )}
                                                     </div>
-                                                    <div>
-                                                        <h3 className="text-xl font-bold text-white group-hover:text-esummit-accent transition-colors">{speaker.name}</h3>
+                                                    <div className="flex-1 min-w-0">
+                                                        <h3 className="text-xl font-bold text-white group-hover:text-esummit-accent transition-colors truncate">{speaker.name}</h3>
                                                         <p className="text-esummit-primary font-bold text-sm tracking-wide uppercase">{speaker.role}</p>
                                                         <p className="text-xs text-gray-500 mt-1">{speaker.company}</p>
                                                     </div>
@@ -249,7 +249,7 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                         </div>
 
                         {/* Right Column: Registration & Sidebar */}
-                        <div className="lg:col-span-1 space-y-8">
+                        <div className="lg:col-span-1 space-y-8 w-full min-w-0">
                             <div className="sticky top-28">
                                 {/* Registration Card */}
                                 <div className="bg-esummit-card rounded-3xl shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-esummit-primary/30 overflow-hidden mb-8 relative">

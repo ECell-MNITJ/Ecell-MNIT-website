@@ -15,6 +15,8 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     instagram_url: null,
     linkedin_url: null,
     youtube_url: null,
+    show_esummit_button: true,
+    esummit_button_text: 'E-Summit 2026',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
 };

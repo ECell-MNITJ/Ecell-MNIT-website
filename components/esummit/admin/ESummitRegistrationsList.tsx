@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { FiChevronDown, FiChevronUp, FiUsers, FiCheckCircle, FiXCircle, FiUser, FiDownload, FiLoader } from 'react-icons/fi';
+import { FiChevronDown, FiChevronUp, FiUsers, FiCheckCircle, FiXCircle, FiUser, FiDownload, FiLoader, FiTrash2 } from 'react-icons/fi';
 import * as XLSX from 'xlsx';
-import { updateAttendanceStatus } from '@/app/actions/registrations';
+import { updateAttendanceStatus, deleteRegistration } from '@/app/actions/registrations';
 import toast from 'react-hot-toast';
 
 interface Registration {
@@ -62,6 +62,23 @@ export default function ESummitRegistrationsList({
                 toast.success('Attendance updated!');
             } else {
                 toast.error('Failed to update: ' + result.error);
+            }
+            setTogglingId(null);
+        });
+    };
+
+    const handleDeleteRegistration = (regId: string, userName: string) => {
+        if (!window.confirm(`Are you sure you want to delete the registration for ${userName}? This action cannot be undone.`)) {
+            return;
+        }
+
+        setTogglingId(regId);
+        startTransition(async () => {
+            const result = await deleteRegistration(regId);
+            if (result.success) {
+                toast.success('Registration deleted successfully!');
+            } else {
+                toast.error('Failed to delete registration: ' + result.error);
             }
             setTogglingId(null);
         });
@@ -256,6 +273,7 @@ export default function ESummitRegistrationsList({
                                                             <RegistrationTable
                                                                 registrations={team.members}
                                                                 onToggleAttendance={handleToggleAttendance}
+                                                                onDeleteRegistration={handleDeleteRegistration}
                                                                 togglingId={togglingId}
                                                             />
                                                         </div>
@@ -274,6 +292,7 @@ export default function ESummitRegistrationsList({
                                                     <RegistrationTable
                                                         registrations={individuals}
                                                         onToggleAttendance={handleToggleAttendance}
+                                                        onDeleteRegistration={handleDeleteRegistration}
                                                         togglingId={togglingId}
                                                     />
                                                 </div>
@@ -293,10 +312,12 @@ export default function ESummitRegistrationsList({
 function RegistrationTable({
     registrations,
     onToggleAttendance,
+    onDeleteRegistration,
     togglingId,
 }: {
     registrations: Registration[];
     onToggleAttendance: (regId: string, currentStatus: boolean) => void;
+    onDeleteRegistration: (regId: string, userName: string) => void;
     togglingId: string | null;
 }) {
     return (
@@ -308,6 +329,7 @@ function RegistrationTable({
                         <th className="px-6 py-3">Email</th>
                         <th className="px-6 py-3 text-center">Attendance</th>
                         <th className="px-6 py-3 text-right">Registered At</th>
+                        <th className="px-6 py-3 text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-800/50">
@@ -357,6 +379,16 @@ function RegistrationTable({
                                     hour: '2-digit',
                                     minute: '2-digit'
                                 })}
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                                <button
+                                    onClick={() => onDeleteRegistration(reg.id, reg.profile?.full_name || reg.user_id)}
+                                    disabled={togglingId === reg.id}
+                                    title="Delete Registration"
+                                    className="p-2 text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {togglingId === reg.id ? <FiLoader className="w-4 h-4 animate-spin" /> : <FiTrash2 className="w-4 h-4" />}
+                                </button>
                             </td>
                         </tr>
                     ))}

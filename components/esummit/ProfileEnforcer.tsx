@@ -14,47 +14,50 @@ export default function ProfileEnforcer({ user }: { user: any }) {
     useEffect(() => {
         if (!user) return;
 
-        // Skip check on unauthorized or login pages to avoid loops or annoyance
+        let active = true;
+
         if (pathname === '/esummit/login' || pathname === '/esummit/signup' || pathname === '/esummit/unauthorized') {
             return;
         }
 
-        checkProfile();
-    }, [user, pathname]);
+        const runCheck = async () => {
+            try {
+                const { data: profile, error } = await supabase
+                    .from('profiles')
+                    .select('full_name, phone, age, gender, qr_code_url')
+                    .eq('id', user.id)
+                    .single();
 
-    const checkProfile = async () => {
-        try {
-            const { data: profile, error } = await supabase
-                .from('profiles')
-                .select('full_name, phone, age, gender, qr_code_url')
-                .eq('id', user.id)
-                .single();
+                if (!active) return;
 
-            if (error) {
-                // If profile not found (PGRST116), it means user is new/incomplete.
-                if (error.code === 'PGRST116') {
-                    console.log('Profile not found, prompting completion');
-                    setIsModalOpen(true);
+                if (error) {
+                    if (error.code === 'PGRST116') {
+                        setIsModalOpen(true);
+                        return;
+                    }
+                    console.error('Error checking profile:', error);
                     return;
                 }
-                console.error('Error checking profile:', JSON.stringify(error, null, 2));
-                return;
+
+                if (!profile) return;
+
+                const isIncomplete = !profile.full_name || !profile.phone || !profile.age || !profile.gender || !profile.qr_code_url;
+                if (isIncomplete) {
+                    setIsModalOpen(true);
+                }
+            } catch (error) {
+                if (active) console.error('Error in profile enforcer:', error);
+            } finally {
+                if (active) setChecking(false);
             }
+        };
 
-            if (!profile) return;
+        runCheck();
 
-            // Check if any required field is missing
-            const isIncomplete = !profile.full_name || !profile.phone || !profile.age || !profile.gender || !profile.qr_code_url;
-
-            if (isIncomplete) {
-                setIsModalOpen(true);
-            }
-        } catch (error) {
-            console.error('Error in profile enforcer:', error);
-        } finally {
-            setChecking(false);
-        }
-    };
+        return () => {
+            active = false;
+        };
+    }, [user, pathname]);
 
     const handleComplete = () => {
         setIsModalOpen(false);

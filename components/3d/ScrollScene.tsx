@@ -10,9 +10,10 @@ interface ScrollSceneProps {
     events: any[];
     startups: any[];
     stats: any[];
+    settings: any;
 }
 
-export default function ScrollScene({ events, startups, stats }: ScrollSceneProps) {
+export default function ScrollScene({ events, startups, stats, settings }: ScrollSceneProps) {
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
@@ -40,7 +41,7 @@ export default function ScrollScene({ events, startups, stats }: ScrollSceneProp
                     {/* Increased pages to accommodate full home page content */}
                     <ScrollControls pages={isMobile ? 7.5 : 5.2} damping={0.2} style={{ scrollbarWidth: 'none' }}>
                         <Model isMobile={isMobile} />
-                        <Overlay events={events} startups={startups} stats={stats} />
+                        <Overlay events={events} startups={startups} stats={stats} settings={settings} />
                     </ScrollControls>
                 </Suspense>
             </Canvas>

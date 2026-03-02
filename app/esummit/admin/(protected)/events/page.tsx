@@ -9,6 +9,7 @@ async function getEvents() {
         .from('events')
         .select('*')
         .eq('is_esummit', true)
+        .order('display_order', { ascending: true })
         .order('date', { ascending: false });
 
     if (error) {

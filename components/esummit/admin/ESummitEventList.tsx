@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { FiEdit2, FiTrash2, FiEye, FiCheck, FiX } from 'react-icons/fi';
-import { deleteESummitEvent, toggleRegistrationStatus } from '@/app/actions/esummit-events';
+import { deleteESummitEvent, toggleRegistrationStatus, reorderESummitEvent } from '@/app/actions/esummit-events';
 import toast from 'react-hot-toast';
 
 interface Event {
@@ -13,6 +13,7 @@ interface Event {
     category: string;
     status: string;
     registrations_open: boolean;
+    display_order?: number;
 }
 
 interface Props {
@@ -26,7 +27,9 @@ export default function ESummitEventList({ initialEvents }: Props) {
 
     useEffect(() => {
         setMounted(true);
-    }, []);
+        // Ensure events are sorted by display_order initially
+        setEvents([...initialEvents].sort((a, b) => (a.display_order || 999) - (b.display_order || 999)));
+    }, [initialEvents]);
 
     const handleDelete = async (eventId: string, title: string) => {
         if (!confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
@@ -60,6 +63,26 @@ export default function ESummitEventList({ initialEvents }: Props) {
                 toast.success('Registration status updated');
             } else {
                 toast.error(result.error || 'Failed to update status');
+            }
+        } catch (error) {
+            toast.error('An error occurred');
+        } finally {
+            setLoadingId(null);
+        }
+    };
+
+    const handleReorder = async (eventId: string, currentOrder: number | undefined, direction: 'up' | 'down') => {
+        const orderVal = currentOrder || 999;
+        setLoadingId(eventId);
+        try {
+            const result = await reorderESummitEvent(eventId, orderVal, direction);
+            if (result.success) {
+                toast.success('Event order updated');
+                // The revaliatePath will refresh the page, but optimistically we can just reload for now
+                // since swapping display orders locally requires knowing the sibling's order.
+                window.location.reload();
+            } else {
+                toast.error(result.error || 'Cannot move further in this direction');
             }
         } catch (error) {
             toast.error('An error occurred');
@@ -125,10 +148,26 @@ export default function ESummitEventList({ initialEvents }: Props) {
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex items-center justify-end gap-2">
+                                            <button
+                                                onClick={() => handleReorder(event.id, event.display_order, 'up')}
+                                                disabled={loadingId === event.id}
+                                                className="p-1 px-2 text-xs font-bold uppercase tracking-wider bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors disabled:opacity-50 border border-gray-700"
+                                                title="Move Up"
+                                            >
+                                                Up
+                                            </button>
+                                            <button
+                                                onClick={() => handleReorder(event.id, event.display_order, 'down')}
+                                                disabled={loadingId === event.id}
+                                                className="p-1 px-2 text-xs font-bold uppercase tracking-wider bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors disabled:opacity-50 border border-gray-700"
+                                                title="Move Down"
+                                            >
+                                                Down
+                                            </button>
                                             <Link
                                                 href={`/esummit/events/${event.id}`}
                                                 target="_blank"
-                                                className="p-2 text-gray-400 hover:text-purple-600 hover:bg-gray-800 rounded-lg transition-colors"
+                                                className="p-2 text-gray-400 hover:text-purple-600 hover:bg-gray-800 rounded-lg transition-colors ml-2"
                                                 title="View"
                                             >
                                                 <FiEye />

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { FiRefreshCw, FiCheckCircle } from 'react-icons/fi';
+import { FiRefreshCw, FiCheckCircle, FiXCircle } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 interface AttendanceRecord {
@@ -41,6 +41,30 @@ export default function AttendancePage() {
             toast.error('Failed to load attendance records');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleUndoCheckin = async (profileId: string, name: string) => {
+        if (!window.confirm(`Are you sure you want to cancel check-in for ${name}?`)) {
+            return;
+        }
+
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({
+                    esummit_checked_in: false,
+                    esummit_checked_in_at: null as any
+                })
+                .eq('id', profileId);
+
+            if (error) throw error;
+
+            toast.success(`Check-in cancelled for ${name}`);
+            fetchAttendance(); // Refresh list
+        } catch (error: any) {
+            console.error('Error undoing check-in:', error);
+            toast.error('Failed to cancel check-in');
         }
     };
 
@@ -111,7 +135,7 @@ export default function AttendancePage() {
                                     <th className="p-4 font-medium border-b border-gray-700">Time</th>
                                     <th className="p-4 font-medium border-b border-gray-700">Attendee</th>
                                     <th className="p-4 font-medium border-b border-gray-700">Contact</th>
-                                    <th className="p-4 font-medium border-b border-gray-700">Status</th>
+                                    <th className="p-4 font-medium border-b border-gray-700 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-800">
@@ -138,10 +162,19 @@ export default function AttendancePage() {
                                             <div className="text-xs font-mono">{record.phone}</div>
                                         </td>
                                         <td className="p-4">
-                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-900/50 text-green-400 border border-green-500/20">
-                                                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                                                Checked In
-                                            </span>
+                                            <div className="flex items-center justify-between gap-4">
+                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-900/50 text-green-400 border border-green-500/20">
+                                                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                                    Checked In
+                                                </span>
+                                                <button
+                                                    onClick={() => handleUndoCheckin(record.id, record.full_name)}
+                                                    className="p-2 text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
+                                                    title="Cancel Check-in"
+                                                >
+                                                    <FiXCircle className="w-5 h-5" />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
