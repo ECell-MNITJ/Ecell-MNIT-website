@@ -149,6 +149,14 @@ If a user signs up on their laptop but clicks the verification link on their mob
 <a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=signup&next=/esummit/login">Confirm your email</a>
 ```
 3. Do the same thing for the **Magic Link** template, but change `type=signup` to `type=magiclink`.
+4. Do the same thing for the **Reset Password** template, but change `type=signup` to `type=recovery` and change the `next` URL to point to the new password page:
+```html
+<!-- For E-Cell Users: -->
+<a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=recovery&next=/reset-password">Reset your password</a>
+
+<!-- OR For E-Summit Users (Choose one based on where the user usually resets): -->
+<a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=recovery&next=/esummit/reset-password">Reset your password</a>
+```
 This forces the email strictly through your server-side `token_hash` Route Handler, completely bypassing the cross-device cookie restrictions!
 
 ## 🔐 Security Notes

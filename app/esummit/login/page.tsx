@@ -12,6 +12,7 @@ function ESummitLoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isResettingPassword, setIsResettingPassword] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
     const nextUrl = searchParams.get('next') || '/esummit/profile';
@@ -22,18 +23,29 @@ function ESummitLoginForm() {
         setLoading(true);
 
         try {
-            const { error } = await supabase.auth.signInWithPassword({
-                email,
-                password,
-            });
+            if (isResettingPassword) {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: `${window.location.origin}/esummit/reset-password`,
+                });
 
-            if (error) throw error;
+                if (error) throw error;
 
-            toast.success('Login successful!');
-            router.push(nextUrl);
-            router.refresh();
+                toast.success('Password reset link sent to your email!');
+                setIsResettingPassword(false);
+            } else {
+                const { error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password,
+                });
+
+                if (error) throw error;
+
+                toast.success('Login successful!');
+                router.push(nextUrl);
+                router.refresh();
+            }
         } catch (error: any) {
-            toast.error(error.message || 'Login failed');
+            toast.error(error.message || (isResettingPassword ? 'Failed to send reset email' : 'Login failed'));
         } finally {
             setLoading(false);
         }
@@ -52,7 +64,9 @@ function ESummitLoginForm() {
                         E-SUMMIT <span className="text-esummit-primary drop-shadow-[0_0_8px_rgba(157,78,221,0.8)]">26</span>
                     </span>
                 </Link>
-                <h2 className="text-xl font-medium text-gray-300">Welcome Back, Innovator</h2>
+                <h2 className="text-xl font-medium text-gray-300">
+                    {isResettingPassword ? 'Reset Password' : 'Welcome Back, Innovator'}
+                </h2>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-6">
@@ -71,20 +85,31 @@ function ESummitLoginForm() {
                     </div>
                 </div>
 
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-400 ml-1">Password</label>
-                    <div className="relative">
-                        <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg" />
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            className="w-full bg-esummit-bg/50 border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white focus:outline-none focus:border-esummit-primary/50 focus:bg-esummit-bg/80 transition-all placeholder:text-gray-600"
-                            placeholder="••••••••"
-                        />
+                {!isResettingPassword && (
+                    <div className="space-y-2">
+                        <div className="flex justify-between items-center ml-1">
+                            <label className="text-sm font-medium text-gray-400">Password</label>
+                            <button
+                                type="button"
+                                onClick={() => setIsResettingPassword(true)}
+                                className="text-xs text-esummit-accent hover:text-white transition-colors"
+                            >
+                                Forgot Password?
+                            </button>
+                        </div>
+                        <div className="relative">
+                            <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg" />
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required={!isResettingPassword}
+                                className="w-full bg-esummit-bg/50 border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white focus:outline-none focus:border-esummit-primary/50 focus:bg-esummit-bg/80 transition-all placeholder:text-gray-600"
+                                placeholder="••••••••"
+                            />
+                        </div>
                     </div>
-                </div>
+                )}
 
                 <button
                     type="submit"
@@ -95,20 +120,32 @@ function ESummitLoginForm() {
                         <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     ) : (
                         <>
-                            Sign In <FiArrowRight />
+                            {isResettingPassword ? 'Send Reset Link' : 'Sign In'} <FiArrowRight />
                         </>
                     )}
                 </button>
+
+                {isResettingPassword && (
+                    <button
+                        type="button"
+                        onClick={() => setIsResettingPassword(false)}
+                        className="w-full text-sm text-esummit-secondary/50 hover:text-white transition-colors text-center mt-2 pt-2"
+                    >
+                        Back to Login
+                    </button>
+                )}
             </form>
 
-            <div className="mt-8 text-center text-gray-500 text-sm">
-                <p>
-                    New to E-Summit?{' '}
-                    <Link href="/esummit/signup" className="text-esummit-accent font-bold hover:text-white transition-colors">
-                        Create Account
-                    </Link>
-                </p>
-            </div>
+            {!isResettingPassword && (
+                <div className="mt-8 text-center text-gray-500 text-sm">
+                    <p>
+                        New to E-Summit?{' '}
+                        <Link href="/esummit/signup" className="text-esummit-accent font-bold hover:text-white transition-colors">
+                            Create Account
+                        </Link>
+                    </p>
+                </div>
+            )}
         </motion.div>
     );
 }
