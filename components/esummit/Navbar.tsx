@@ -95,7 +95,7 @@ export default function EsNavbar() {
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             transition={{ duration: 0.8, ease: "circOut" }}
-            className="fixed top-0 left-0 w-full z-50 px-4 md:px-0 pt-4"
+            className="fixed top-0 left-0 w-full z-50 px-0 md:px-8 pt-4"
         >
             <motion.div
                 animate={{

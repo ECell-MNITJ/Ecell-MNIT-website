@@ -68,13 +68,13 @@ export default function Navbar() {
                     <div className="flex items-center justify-between h-14 md:h-20 relative z-50">
                         {/* Logo */}
                         <Link href="/" className="group flex items-center h-full" suppressHydrationWarning>
-                            <div className="relative h-8 md:h-10 w-32 md:w-36 flex items-center justify-center overflow-hidden transform group-hover:scale-110 transition-transform duration-300">
+                            <div className="relative h-8 md:h-10 w-32 md:w-36 flex items-center justify-center overflow-hidden transform group-hover:scale-105 transition-transform duration-300">
                                 <Image
                                     src="/images/esummit-logo.png"
-                                    alt="E-Summit Logo"
+                                    alt="E-Cell Logo"
                                     fill
                                     sizes="(max-width: 768px) 128px, 144px"
-                                    className="object-cover object-center scale-[1.2]"
+                                    className="object-contain object-center"
                                     priority
                                 />
                             </div>
