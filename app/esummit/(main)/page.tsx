@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { FiArrowRight, FiTarget, FiTrendingUp, FiActivity, FiCpu, FiGlobe, FiLayers } from 'react-icons/fi';
 import { createClient } from '@/lib/supabase/client';
@@ -237,14 +238,16 @@ export default function ESummitLandingDataLayer() {
                         MNIT JAIPUR
                     </motion.div>
 
-                    <div className="relative mb-8">
-                        <h1 className="text-6xl sm:text-7xl md:text-[150px] font-black leading-[0.9] md:leading-[0.85] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-esummit-secondary to-esummit-secondary/50">
-                            E-SUMMIT
-                            <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-esummit-primary via-esummit-accent to-esummit-primary block mt-2">
-                                2026
-                            </span>
-                        </h1>
+                    <div className="relative mb-8 flex justify-center w-full">
+                        <div className="relative w-[95%] sm:w-[90%] md:w-[80%] lg:w-[70%] aspect-[3/1]">
+                            <Image
+                                src="/images/hero-logo.png"
+                                alt="E-Summit 2026 First Principle of Impact"
+                                fill
+                                className="object-contain"
+                                priority
+                            />
+                        </div>
                         <motion.div
                             initial={{ scaleX: 0 }}
                             animate={{ scaleX: 1 }}

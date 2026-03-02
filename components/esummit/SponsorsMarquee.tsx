@@ -102,6 +102,7 @@ function SponsorImage({ sponsor }: { sponsor: Sponsor }) {
                 src={sponsor.logo_url}
                 alt={`${sponsor.name} logo`}
                 fill
+                unoptimized={true}
                 className="object-cover opacity-70 group-hover/card:opacity-100 transition-opacity duration-300 filter group-hover/card:drop-shadow-[0_0_15px_rgba(37,99,235,0.4)]"
             />
         </div>

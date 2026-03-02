@@ -100,6 +100,7 @@ function SpeakerContent({ speaker }: { speaker: Speaker }) {
                         src={speaker.image_url}
                         alt={speaker.name}
                         fill
+                        unoptimized={true}
                         className="object-cover object-top filter grayscale group-hover/card:grayscale-0 transition-all duration-500"
                         sizes="(max-width: 768px) 192px, 256px"
                     />
