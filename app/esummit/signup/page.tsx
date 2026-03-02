@@ -34,7 +34,7 @@ export default function ESummitSignup() {
             if (error) throw error;
 
             toast.success('Registration successful! Please verify your email.');
-            router.push('/verify-email');
+            router.push('/esummit/verify-email');
         } catch (error: any) {
             toast.error(error.message || 'Signup failed');
         } finally {

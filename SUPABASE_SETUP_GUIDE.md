@@ -140,6 +140,17 @@ The public pages automatically fetch data from Supabase:
 - Displays registration links for upcoming events
 - Automatic categorization
 
+### Email Verification Fails on Mobile (Cross-Device Issue)
+If a user signs up on their laptop but clicks the verification link on their mobile phone, the verification might fail silently or throw a "missing code verifier" error. This is because the default Supabase email template uses the PKCE flow which requires the original browser.
+**To fix this permanent cross-device issue:**
+1. Go to your **Supabase Dashboard** -> **Authentication** -> **Email Templates**
+2. In the **Confirm signup** template, replace `<a href="{{ .ConfirmationURL }}">Confirm your email</a>` with this EXACT code:
+```html
+<a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=signup&next=/esummit/login">Confirm your email</a>
+```
+3. Do the same thing for the **Magic Link** template, but change `type=signup` to `type=magiclink`.
+This forces the email strictly through your server-side `token_hash` Route Handler, completely bypassing the cross-device cookie restrictions!
+
 ## 🔐 Security Notes
 
 1. **Never commit `.env.local`** - It's already in `.gitignore`
