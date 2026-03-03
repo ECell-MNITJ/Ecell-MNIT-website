@@ -10,12 +10,19 @@ export default function Signup() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const supabase = createClient();
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (password !== confirmPassword) {
+            toast.error('Passwords do not match');
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -30,6 +37,12 @@ export default function Signup() {
             });
 
             if (error) throw error;
+
+            // If identities array is empty, it means the user already exists
+            if (data?.user?.identities && data.user.identities.length === 0) {
+                toast.error('An account with this email already exists. Please sign in instead.');
+                return;
+            }
 
             toast.success('Registration successful! Please verify your email.');
             router.push('/verify-email');
@@ -92,6 +105,22 @@ export default function Signup() {
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            required
+                            minLength={6}
+                            className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent transition-all placeholder-gray-500"
+                            placeholder="••••••••"
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
+                            Confirm Password
+                        </label>
+                        <input
+                            id="confirmPassword"
+                            type="password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
                             required
                             minLength={6}
                             className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent transition-all placeholder-gray-500"

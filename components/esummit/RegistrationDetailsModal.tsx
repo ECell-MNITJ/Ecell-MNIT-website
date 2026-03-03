@@ -45,6 +45,11 @@ export default function RegistrationDetailsModal({ isOpen, onClose, onComplete, 
             return;
         }
 
+        if (!/^\d{10}$/.test(formData.phone)) {
+            toast.error('Phone number must be exactly 10 digits');
+            return;
+        }
+
         setLoading(true);
         try {
             // 1. Generate QR Code URL
@@ -139,9 +144,14 @@ export default function RegistrationDetailsModal({ isOpen, onClose, onComplete, 
                                     type="tel"
                                     required
                                     value={formData.phone}
-                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                    onChange={(e) => {
+                                        const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                        setFormData({ ...formData, phone: val })
+                                    }}
+                                    pattern="\d{10}"
+                                    title="Phone number must be exactly 10 digits"
                                     className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none transition-all placeholder:text-gray-600"
-                                    placeholder="+91 98765 43210"
+                                    placeholder="9876543210"
                                 />
                             </div>
                         </div>

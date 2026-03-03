@@ -12,16 +12,23 @@ export default function ESummitSignup() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const supabase = createClient();
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (password !== confirmPassword) {
+            toast.error('Passwords do not match');
+            return;
+        }
+
         setLoading(true);
 
         try {
-            const { error } = await supabase.auth.signUp({
+            const { data, error } = await supabase.auth.signUp({
                 email,
                 password,
                 options: {
@@ -32,6 +39,12 @@ export default function ESummitSignup() {
             });
 
             if (error) throw error;
+
+            // If identities array is empty, it means the user already exists
+            if (data?.user?.identities && data.user.identities.length === 0) {
+                toast.error('An account with this email already exists. Please sign in instead.');
+                return;
+            }
 
             toast.success('Registration successful! Please verify your email.');
             router.push('/esummit/verify-email');
@@ -123,6 +136,22 @@ export default function ESummitSignup() {
                                 type="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                                required
+                                minLength={6}
+                                className="w-full bg-esummit-bg/50 border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white focus:outline-none focus:border-esummit-primary/50 focus:bg-esummit-bg/80 transition-all placeholder:text-gray-600"
+                                placeholder="••••••••"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-gray-400 ml-1">Confirm Password</label>
+                        <div className="relative">
+                            <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg" />
+                            <input
+                                type="password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
                                 required
                                 minLength={6}
                                 className="w-full bg-esummit-bg/50 border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white focus:outline-none focus:border-esummit-primary/50 focus:bg-esummit-bg/80 transition-all placeholder:text-gray-600"
