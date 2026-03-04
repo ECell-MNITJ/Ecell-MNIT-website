@@ -59,18 +59,18 @@ export default function Navbar() {
                     borderRadius: isMenuOpen ? 24 : 16, // Matching existing rounded-2xl (16px) or similar
                 }}
                 transition={{ duration: 0.5, ease: "circOut" }}
-                className={`mx-auto max-w-7xl transition-all duration-300 ${isScrolled || isMenuOpen
+                className={`w-full transition-all duration-300 ${isScrolled || isMenuOpen
                     ? 'bg-primary-green/90 backdrop-blur-xl shadow-2xl border border-white/10'
                     : 'bg-primary-green/60 backdrop-blur-lg shadow-xl border border-white/5'
                     }`}
             >
-                <div className="px-6 lg:px-8 py-3 md:py-0"> {/* Modified padding for consistency */}
-                    <div className="flex items-center justify-between h-14 md:h-20 relative z-50">
+                <div className="px-6 lg:px-8 py-3 md:py-0 w-full"> {/* Added back x padding for better spacing */}
+                    <div className="flex items-center justify-between h-14 md:h-20 relative z-50 w-full pl-0 lg:pl-0 pr-6 lg:pr-8">
                         {/* Logo */}
                         <Link href="/" className="group flex items-center h-full" suppressHydrationWarning>
                             <div className="relative h-8 md:h-10 w-32 md:w-36 flex items-center justify-center overflow-hidden transform group-hover:scale-105 transition-transform duration-300">
                                 <Image
-                                    src="/images/esummit-logo.png"
+                                    src="/images/ecell-logo-updated.png"
                                     alt="E-Cell Logo"
                                     fill
                                     sizes="(max-width: 768px) 128px, 144px"
