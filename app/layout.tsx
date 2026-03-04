@@ -18,7 +18,7 @@ const bebasNeue = Bebas_Neue({
 });
 
 export const metadata: Metadata = {
-    metadataBase: new URL('https://ecellmnit.org'),
+    metadataBase: new URL('https://www.ecellmnit.org'),
     title: "E-Cell MNIT Jaipur",
     description: "Entrepreneurship Cell at Malaviya National Institute of Technology, Jaipur. Fostering innovation and entrepreneurship among students.",
     keywords: ["E-Cell", "MNIT Jaipur", "Entrepreneurship", "Startups", "Innovation", "Events"],
@@ -36,7 +36,7 @@ export default async function RootLayout({
 }>) {
     const supabase = await createServerClient();
     const settings = await getSiteSettings(supabase);
-    const baseUrl = 'https://ecellmnit.org';
+    const baseUrl = 'https://www.ecellmnit.org';
 
     const ecellSchema = getSiteSchema(baseUrl);
     const ecellBreadcrumbs = getBreadcrumbSchema(baseUrl, [

@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { createServerClient } from '@/lib/supabase/server';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ecellmnit.org';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ecellmnit.org';
 
     // Static Routes
     const staticRoutes: MetadataRoute.Sitemap = [

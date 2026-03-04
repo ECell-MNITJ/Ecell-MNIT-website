@@ -21,7 +21,7 @@ export default function ESummitLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const baseUrl = 'https://ecellmnit.org';
+    const baseUrl = 'https://www.ecellmnit.org';
     const esummitBreadcrumbs = getBreadcrumbSchema(baseUrl, [
         { name: 'Home', item: '/' },
         { name: 'E-Summit', item: '/esummit' },
