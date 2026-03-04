@@ -1,6 +1,4 @@
-'use client';
 
-import Head from 'next/head';
 
 interface StructuredDataProps {
     data: any;
