@@ -21,7 +21,14 @@ export const metadata: Metadata = {
     metadataBase: new URL('https://www.ecellmnit.org'),
     title: "E-Cell MNIT Jaipur",
     description: "Entrepreneurship Cell at Malaviya National Institute of Technology, Jaipur. Fostering innovation and entrepreneurship among students.",
-    keywords: ["E-Cell", "MNIT Jaipur", "Entrepreneurship", "Startups", "Innovation", "Events"],
+    keywords: [
+        "E-Cell", "Ecell", "MNIT Jaipur", "Malaviya National Institute of Technology",
+        "Entrepreneurship", "Startups", "Innovation", "Events", "Business",
+        "Student Startup", "Incubation", "E-Cell MNIT Jaipur", "ecell", "e-cell",
+        "ecellmnit", "e-cellmnit", "ecellmnitjaipur", "e-cellmnitjaipur",
+        "esummit", "e-summit", "esummitmnit", "e-summitmnit", "esummitmnitjaipur", "e-summitmnitjaipur",
+        "esummit2026", "e-summit2026", "esummit2026mnit", "e-summit2026mnit", "esummit2026mnitjaipur", "e-summit2026mnitjaipur"
+    ],
 };
 
 import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
