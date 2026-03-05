@@ -4,6 +4,9 @@ import BackgroundCanvas from '@/components/esummit/BackgroundCanvas';
 export const metadata: Metadata = {
     title: 'E-Summit MNIT Jaipur',
     description: 'E-Summit 2026 by E-Cell MNIT. Where ideas take flight and innovation knows no bounds.',
+    alternates: {
+        canonical: '/esummit',
+    },
     keywords: [
         "ecell mnit esummit", "Ecell Mnit Esummit", "E-Summit", "E-Summit 2026", "E-Summit MNIT Jaipur", "Entrepreneurship Summit",
         "Startup Event", "Business Conclave", "MNIT Jaipur", "E-Cell MNIT",

@@ -1,7 +1,14 @@
 import { createServerClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { FiLinkedin, FiTwitter } from 'react-icons/fi';
+import { Metadata } from 'next';
 import PageLayout3DWrapper from '@/components/3d/PageLayout3DWrapper';
+
+export const metadata: Metadata = {
+    title: 'About Us | E-Cell MNIT Jaipur',
+    description: 'Learn about the Entrepreneurship Cell at MNIT Jaipur, our mission, vision, and the team fostering innovation and startup culture.',
+    keywords: ['About E-Cell MNIT', 'Ecell MNIT Team', 'Entrepreneurship MNIT', 'Startup Culture Jaipur'],
+};
 
 interface TeamMember {
     id: string;

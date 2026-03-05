@@ -6,6 +6,14 @@ import StartupMarquee from '@/components/StartupMarquee';
 import ScrollSceneWrapper from '@/components/3d/ScrollSceneWrapper';
 import { getSiteSettings } from '@/lib/site-settings';
 
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'E-Cell MNIT Jaipur | Home',
+    description: 'Welcome to the Entrepreneurship Cell of MNIT Jaipur. Explore our initiatives, startups, and events fostering a culture of innovation.',
+    keywords: ['Entrepreneurship Cell MNIT', 'E-Cell Home', 'MNIT Jaipur Startups', 'Ecell MNIT Jaipur'],
+};
+
 export const revalidate = 0; // Ensure fresh data
 
 export default async function Home() {

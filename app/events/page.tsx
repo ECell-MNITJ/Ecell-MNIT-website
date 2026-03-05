@@ -1,6 +1,13 @@
 import { createServerClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import PageLayout3DWrapper from '@/components/3d/PageLayout3DWrapper';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Events & Workshops | E-Cell MNIT Jaipur',
+    description: 'Discover upcoming and past events, workshops, and competitions organized by the Entrepreneurship Cell at MNIT Jaipur.',
+    keywords: ['E-Cell Events', 'MNIT Jaipur Workshops', 'Startup Competitions', 'Entrepreneurship Events', 'Ecell MNIT Events'],
+};
 
 interface Event {
     id: string;
