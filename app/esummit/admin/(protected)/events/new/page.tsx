@@ -157,8 +157,9 @@ export default function NewESummitEvent() {
                 <p className="text-gray-400">Create a new event for E-Summit</p>
             </div>
 
-            <div className="bg-gray-900 rounded-xl p-8 shadow-lg max-w-2xl border border-gray-800">
-                <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row gap-8 max-w-7xl mx-auto">
+                {/* Left Column - Main Content */}
+                <div className="flex-1 bg-gray-900 rounded-xl p-8 shadow-lg border border-gray-800 space-y-6">
                     <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">Event Image</label>
                         <div className="flex items-center gap-6">
@@ -233,46 +234,89 @@ export default function NewESummitEvent() {
                         )}
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-4">
-                        <div>
-                            <label htmlFor="date" className="block text-sm font-medium text-gray-300 mb-2">Date & Time *</label>
-                            <input
-                                id="date"
-                                type="datetime-local"
+                    <div className="border-t border-gray-800 pt-8 mt-8 space-y-8">
+                        <h2 className="text-2xl font-bold text-white">Comprehensive Details</h2>
+
+                        <AgendaEditor
+                            agenda={eventDetails.agenda || []}
+                            onChange={(agenda) => setEventDetails({ ...eventDetails, agenda })}
+                        />
+
+                        <SpeakerEditor
+                            speakers={eventDetails.speakers || []}
+                            onChange={(speakers) => setEventDetails({ ...eventDetails, speakers })}
+                        />
+
+                        <GalleryEditor
+                            gallery={eventDetails.gallery || []}
+                            onChange={(gallery) => setEventDetails({ ...eventDetails, gallery })}
+                        />
+                    </div>
+                </div>
+
+                {/* Right Column - Settings */}
+                <div className="w-full lg:w-96 bg-gray-900 rounded-xl p-6 shadow-lg border border-gray-800 flex flex-col space-y-6 h-fit sticky top-6">
+                    <h3 className="text-lg font-medium text-white border-b border-gray-800 pb-2">Event Settings</h3>
+
+                    <div>
+                        <label htmlFor="status" className="block text-sm font-medium text-gray-300 mb-2">Status *</label>
+                        <select
+                            id="status"
+                            value={formData.status}
+                            onChange={(e) => {
+                                const newStatus = e.target.value as any;
+                                setFormData({
+                                    ...formData,
+                                    status: newStatus,
+                                    ...(newStatus === 'past' ? { registrations_open: false } : {})
+                                });
+                            }}
+                            className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        >
+                            <option value="upcoming">Upcoming</option>
+                            <option value="ongoing">Ongoing</option>
+                            <option value="past">Past</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label htmlFor="date" className="block text-sm font-medium text-gray-300 mb-2">Date & Time *</label>
+                        <input
+                            id="date"
+                            type="datetime-local"
+                            required
+                            value={formData.date}
+                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                            className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent [color-scheme:dark]"
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="category" className="block text-sm font-medium text-gray-300 mb-2">Category *</label>
+                        <div className="space-y-2">
+                            <select
+                                id="category"
                                 required
-                                value={formData.date}
-                                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500"
-                            />
-                        </div>
+                                value={showCustomCategory ? 'Other' : (CATEGORIES.some(c => c.value === formData.category) ? formData.category : 'Other')}
+                                onChange={handleCategoryChange}
+                                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            >
+                                {CATEGORIES.map(cat => (
+                                    <option key={cat.value} value={cat.value}>{cat.label}</option>
+                                ))}
+                                <option value="Other">Other (Custom)</option>
+                            </select>
 
-                        <div>
-                            <label htmlFor="category" className="block text-sm font-medium text-gray-300 mb-2">Category *</label>
-                            <div className="space-y-2">
-                                <select
-                                    id="category"
+                            {showCustomCategory && (
+                                <input
+                                    type="text"
                                     required
-                                    value={showCustomCategory ? 'Other' : (CATEGORIES.some(c => c.value === formData.category) ? formData.category : 'Other')}
-                                    onChange={handleCategoryChange}
-                                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                >
-                                    {CATEGORIES.map(cat => (
-                                        <option key={cat.value} value={cat.value}>{cat.label}</option>
-                                    ))}
-                                    <option value="Other">Other (Custom)</option>
-                                </select>
-
-                                {showCustomCategory && (
-                                    <input
-                                        type="text"
-                                        required
-                                        value={formData.category}
-                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                        placeholder="Enter custom category"
-                                        className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500"
-                                    />
-                                )}
-                            </div>
+                                    value={formData.category}
+                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                    placeholder="Enter custom category"
+                                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent placeholder-gray-500"
+                                />
+                            )}
                         </div>
                     </div>
 
@@ -301,47 +345,29 @@ export default function NewESummitEvent() {
                         <p className="text-sm text-gray-500 mt-1">If provided, users will be redirected to this URL when clicking "View Details"</p>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-4">
-                        <div>
-                            <label htmlFor="status" className="block text-sm font-medium text-gray-300 mb-2">Status *</label>
-                            <select
-                                id="status"
-                                value={formData.status}
-                                onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-                                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                            >
-                                <option value="upcoming">Upcoming</option>
-                                <option value="ongoing">Ongoing</option>
-                                <option value="past">Past</option>
-                            </select>
-                        </div>
+                    <div className="space-y-4 pt-2">
+                        <label className="flex items-center gap-3 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={formData.featured}
+                                onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                                className="w-5 h-5 text-purple-600 focus:ring-purple-500 rounded bg-gray-800 border-gray-600"
+                            />
+                            <span className="text-gray-300">Mark as featured</span>
+                        </label>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">Featured Event</label>
-                            <label className="flex items-center gap-3 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={formData.featured}
-                                    onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                                    className="w-5 h-5 text-purple-600 focus:ring-purple-500 rounded bg-gray-800 border-gray-600"
-                                />
-                                <span className="text-gray-300">Mark as featured</span>
-                            </label>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">E-Cell Visibility</label>
-                            <label className="flex items-center gap-3 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={formData.show_on_ecell}
-                                    onChange={(e) => setFormData({ ...formData, show_on_ecell: e.target.checked })}
-                                    className="w-5 h-5 text-purple-600 focus:ring-purple-500 rounded bg-gray-800 border-gray-600"
-                                />
-                                <span className="text-gray-300">Show on main E-Cell Events page</span>
-                            </label>
-                        </div>
-
+                        <label className="flex items-center gap-3 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={formData.show_on_ecell}
+                                onChange={(e) => setFormData({ ...formData, show_on_ecell: e.target.checked })}
+                                className="w-5 h-5 text-purple-600 focus:ring-purple-500 rounded bg-gray-800 border-gray-600"
+                            />
+                            <span className="text-gray-300">Show on main E-Cell Events page</span>
+                        </label>
+                        <p className="text-xs text-gray-500 pl-8 -mt-2">
+                            Enable this to display this E-Summit event on the main E-Cell home and events pages.
+                        </p>
                     </div>
 
                     <div className="border-t border-gray-800 pt-6 mt-6">
@@ -363,22 +389,25 @@ export default function NewESummitEvent() {
                         </div>
 
                         <div className="mb-4">
-                            <label className="flex items-center gap-3 cursor-pointer">
+                            <label className={`flex items-center gap-3 ${formData.status === 'past' ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}>
                                 <input
                                     type="checkbox"
                                     checked={formData.registrations_open}
                                     onChange={(e) => setFormData({ ...formData, registrations_open: e.target.checked })}
-                                    className="w-5 h-5 text-purple-600 focus:ring-purple-500 rounded bg-gray-800 border-gray-600"
+                                    disabled={formData.status === 'past'}
+                                    className="w-5 h-5 text-purple-600 focus:ring-purple-500 rounded bg-gray-800 border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                                 />
-                                <span className="text-gray-300 font-medium">Registrations Open</span>
+                                <span className={`${formData.status === 'past' ? 'text-gray-500' : 'text-gray-300'} font-medium`}>
+                                    Registrations Open
+                                </span>
                             </label>
                             <p className="text-sm text-gray-500 mt-1 ml-8">
-                                Enable or disable new registrations for this event.
+                                {formData.status === 'past' ? '(Disabled for past events)' : 'Enable or disable new registrations for this event.'}
                             </p>
                         </div>
 
                         {formData.is_team_event && (
-                            <div className="grid md:grid-cols-2 gap-4 ml-8">
+                            <div className="grid grid-cols-2 gap-4 ml-8">
                                 <div>
                                     <label htmlFor="min_team_size" className="block text-sm font-medium text-gray-300 mb-2">Minimum Team Size</label>
                                     <input
@@ -407,43 +436,24 @@ export default function NewESummitEvent() {
                         )}
                     </div>
 
-                    <div className="border-t border-gray-800 pt-8 mt-8 space-y-8">
-                        <h2 className="text-2xl font-bold text-white">Comprehensive Details</h2>
-
-                        <AgendaEditor
-                            agenda={eventDetails.agenda || []}
-                            onChange={(agenda) => setEventDetails({ ...eventDetails, agenda })}
-                        />
-
-                        <SpeakerEditor
-                            speakers={eventDetails.speakers || []}
-                            onChange={(speakers) => setEventDetails({ ...eventDetails, speakers })}
-                        />
-
-                        <GalleryEditor
-                            gallery={eventDetails.gallery || []}
-                            onChange={(gallery) => setEventDetails({ ...eventDetails, gallery })}
-                        />
-                    </div>
-
-                    <div className="flex gap-4 pt-4">
+                    <div className="flex flex-col gap-3 pt-6 border-t border-gray-800">
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 bg-purple-600 text-white font-semibold py-3 rounded-lg hover:bg-purple-500 transition-all disabled:opacity-50 hover:shadow-lg"
+                            className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 rounded-lg hover:shadow-lg transition-all disabled:opacity-50"
                         >
                             {loading ? 'Creating...' : 'Create E-Summit Event'}
                         </button>
                         <button
                             type="button"
                             onClick={() => router.back()}
-                            className="px-6 py-3 border-2 border-gray-600 rounded-lg hover:bg-gray-800 transition-colors text-gray-300"
+                            className="w-full px-6 py-3 border-2 border-gray-600 rounded-lg hover:bg-gray-800 transition-colors text-gray-300 font-medium"
                         >
                             Cancel
                         </button>
                     </div>
-                </form>
-            </div >
+                </div>
+            </form>
         </div >
     );
 }

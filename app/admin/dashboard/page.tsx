@@ -36,13 +36,15 @@ export default function AdminDashboard() {
             // Get total events count
             const { count: eventsCount } = await supabase
                 .from('events')
-                .select('*', { count: 'exact', head: true });
+                .select('*', { count: 'exact', head: true })
+                .eq('is_esummit', false);
 
             // Get upcoming events count
             const { count: upcomingCount } = await supabase
                 .from('events')
                 .select('*', { count: 'exact', head: true })
-                .eq('status', 'upcoming');
+                .eq('status', 'upcoming')
+                .eq('is_esummit', false);
 
             // Get gallery images count
             const { count: galleryCount } = await supabase

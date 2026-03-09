@@ -23,6 +23,7 @@ export default async function Home() {
     const { data: allEvents } = await supabase
         .from('events')
         .select('*')
+        .or('is_esummit.eq.false,and(is_esummit.eq.true,show_on_ecell.eq.true)')
         .order('date', { ascending: true }); // Get sorted by date initially
 
     // Custom sorting logic: Upcoming > Ongoing > Past

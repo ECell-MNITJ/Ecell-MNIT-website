@@ -32,6 +32,7 @@ export default function EventsManagement() {
             let query = supabase
                 .from('events')
                 .select('*')
+                .eq('is_esummit', false)
                 .order('date', { ascending: false });
 
             if (filter !== 'all') {

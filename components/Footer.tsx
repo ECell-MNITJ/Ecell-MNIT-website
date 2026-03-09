@@ -70,6 +70,21 @@ export default function Footer() {
                                 </li>
                             ))}
                         </ul>
+
+                        <div className="mt-8">
+                            <Link
+                                href="/esummit"
+                                className="inline-block relative overflow-hidden group bg-gradient-to-r from-primary-golden to-yellow-600 px-6 py-2 rounded-full font-bold text-gray-900 shadow-lg hover:shadow-primary-golden/30 transition-shadow transition-transform hover:-translate-y-1"
+                            >
+                                <span className="relative z-10 flex items-center gap-2">
+                                    E-Summit 2026
+                                    <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                </span>
+                                <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] skew-x-12" />
+                            </Link>
+                        </div>
                     </div>
 
                     {/* Contact Info */}

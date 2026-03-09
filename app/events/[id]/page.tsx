@@ -29,6 +29,7 @@ async function getEvent(id: string): Promise<Event | null> {
         .from('events')
         .select('*')
         .eq('id', id)
+        .or('is_esummit.eq.false,and(is_esummit.eq.true,show_on_ecell.eq.true)')
         .single();
 
     if (error) {
@@ -178,7 +179,7 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
             </section>
 
             {/* Main Content */}
-            <section className="section bg-white">
+            <section className="section bg-[#1a1a2e]">
                 <div className="container-custom">
                     <div className="grid lg:grid-cols-3 gap-12">
                         {/* Main Content */}
@@ -188,31 +189,38 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
                                 <h2 className="text-3xl font-heading text-primary-green mb-6">
                                     About This Event
                                 </h2>
-                                <div className="prose prose-lg max-w-none">
-                                    <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                                        {event.detailed_description || event.description}
-                                    </p>
+                                <div className="prose prose-lg prose-invert max-w-none">
+                                    {event.detailed_description ? (
+                                        <div
+                                            className="text-gray-300 leading-relaxed break-words whitespace-pre-wrap"
+                                            dangerouslySetInnerHTML={{ __html: event.detailed_description }}
+                                        />
+                                    ) : (
+                                        <p className="text-gray-300 leading-relaxed break-words whitespace-pre-wrap">
+                                            {event.description}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
                             {/* Agenda Section */}
                             {event.event_details?.agenda && event.event_details.agenda.length > 0 && (
                                 <div id="agenda" className="scroll-mt-24">
-                                    <h2 className="text-3xl font-heading text-primary-green mb-6 flex items-center gap-3">
+                                    <h2 className="text-3xl font-heading text-primary-golden mb-6 flex items-center gap-3">
                                         <span className="text-4xl">📋</span> Event Agenda
                                     </h2>
                                     <div className="space-y-4">
                                         {event.event_details.agenda.map((item) => (
-                                            <div key={item.id} className="flex gap-4 md:gap-6 p-6 bg-gray-50 rounded-xl border border-gray-100 hover:shadow-md transition-shadow">
+                                            <div key={item.id} className="flex gap-4 md:gap-6 p-6 bg-gray-800 rounded-xl border border-gray-700 hover:shadow-md transition-shadow">
                                                 <div className="shrink-0 flex flex-col items-center">
                                                     <div className="font-mono font-bold text-primary-golden text-lg whitespace-nowrap">
                                                         {item.time}
                                                     </div>
-                                                    <div className="w-px h-full bg-gray-200 mt-2"></div>
+                                                    <div className="w-px h-full bg-gray-600 mt-2"></div>
                                                 </div>
                                                 <div>
-                                                    <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
-                                                    <p className="text-gray-600">{item.description}</p>
+                                                    <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
+                                                    <p className="text-gray-300">{item.description}</p>
                                                 </div>
                                             </div>
                                         ))}
@@ -223,27 +231,27 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
                             {/* Speakers Section */}
                             {event.event_details?.speakers && event.event_details.speakers.length > 0 && (
                                 <div id="speakers" className="scroll-mt-24">
-                                    <h2 className="text-3xl font-heading text-primary-green mb-6 flex items-center gap-3">
+                                    <h2 className="text-3xl font-heading text-primary-golden mb-6 flex items-center gap-3">
                                         <span className="text-4xl">🎤</span> Speakers & Guests
                                     </h2>
                                     <div className="grid md:grid-cols-2 gap-6">
                                         {event.event_details.speakers.map((speaker) => (
-                                            <div key={speaker.id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all group">
+                                            <div key={speaker.id} className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-sm hover:shadow-lg transition-all group">
                                                 <div className="flex items-center gap-4 mb-4">
                                                     <div className="w-20 h-20 rounded-full overflow-hidden shrink-0 border-2 border-primary-golden/20">
                                                         {speaker.image_url ? (
                                                             <img src={speaker.image_url} alt={speaker.name} className="w-full h-full object-cover" />
                                                         ) : (
-                                                            <div className="w-full h-full bg-gray-100 flex items-center justify-center text-3xl">👤</div>
+                                                            <div className="w-full h-full bg-gray-700 flex items-center justify-center text-3xl">👤</div>
                                                         )}
                                                     </div>
                                                     <div>
-                                                        <h3 className="text-lg font-bold text-gray-900">{speaker.name}</h3>
+                                                        <h3 className="text-lg font-bold text-white">{speaker.name}</h3>
                                                         <p className="text-primary-golden font-medium">{speaker.role}</p>
-                                                        <p className="text-sm text-gray-500">{speaker.company}</p>
+                                                        <p className="text-sm text-gray-400">{speaker.company}</p>
                                                     </div>
                                                 </div>
-                                                <p className="text-gray-600 text-sm mb-4 line-clamp-3">{speaker.bio}</p>
+                                                <p className="text-gray-300 text-sm mb-4 line-clamp-3">{speaker.bio}</p>
                                                 <div className="flex gap-3">
                                                     {speaker.linkedin_url && (
                                                         <a href={speaker.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#0077b5] transition-colors">
@@ -261,7 +269,7 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
                             {/* Gallery Section */}
                             {event.event_details?.gallery && event.event_details.gallery.length > 0 && (
                                 <div id="gallery" className="scroll-mt-24">
-                                    <h2 className="text-3xl font-heading text-primary-green mb-6 flex items-center gap-3">
+                                    <h2 className="text-3xl font-heading text-primary-golden mb-6 flex items-center gap-3">
                                         <span className="text-4xl">📸</span> Photo Gallery
                                     </h2>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -277,7 +285,7 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
 
                         {/* Event Registration */}
                         {event.registrations_open ? (
-                            <div className="mb-8">
+                            <div className="mb-8 p-6 bg-gray-800 rounded-xl shadow-lg border border-gray-700">
                                 <EventRegistration
                                     event={{
                                         id: event.id,
@@ -291,22 +299,32 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
                                 />
                             </div>
                         ) : (
-                            <div className="mb-8 bg-gray-50 border border-gray-200 rounded-xl p-8 text-center">
-                                <h3 className="text-xl font-heading text-gray-400 mb-2">
-                                    Registrations Closed
-                                </h3>
-                                <p className="text-gray-500">
-                                    Registration for this event is currently closed.
-                                </p>
+                            <div className="mb-8 bg-gray-800 border-2 border-gray-700/50 rounded-xl p-8 text-center shadow-lg transform hover:scale-[1.02] transition-all duration-300 relative overflow-hidden group">
+                                <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500/50 via-red-500/20 to-transparent" />
+
+                                <div className="relative z-10 flex flex-col items-center gap-3">
+                                    <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center border border-red-500/20 mb-2">
+                                        <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                        </svg>
+                                    </div>
+                                    <h3 className="text-2xl font-bold text-gray-200 tracking-tight">
+                                        REGISTRATIONS CLOSED
+                                    </h3>
+                                    <p className="text-gray-400/80 font-medium">
+                                        Registration for this event is currently closed.
+                                    </p>
+                                </div>
                             </div>
                         )}
 
                         {/* Share Card */}
-                        <div className="bg-gray-50 p-6 rounded-xl border-2 border-gray-100">
-                            <h3 className="text-xl font-heading text-primary-green mb-4">
+                        <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-md">
+                            <h3 className="text-xl font-heading text-primary-golden mb-4">
                                 Share This Event
                             </h3>
-                            <p className="text-gray-600 text-sm">
+                            <p className="text-gray-400 text-sm">
                                 Social sharing options will be added here
                             </p>
                         </div>
@@ -315,17 +333,17 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
             </section>
 
             {/* Related Events Placeholder */}
-            <section className="section bg-gray-50">
+            <section className="section bg-[#131324] border-t border-gray-800">
                 <div className="container-custom">
                     <div className="text-center mb-12">
-                        <h2 className="text-4xl font-heading text-primary-green mb-4">
+                        <h2 className="text-4xl font-heading text-primary-golden mb-4">
                             Related Events
                         </h2>
                         <div className="w-20 h-1 bg-gradient-to-r from-primary-golden to-yellow-700 mx-auto rounded-full" />
                     </div>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center">
+                    <div className="border-2 border-dashed border-gray-700 rounded-xl p-12 text-center bg-gray-800/50">
                         <div className="text-6xl mb-4">🎯</div>
-                        <h3 className="text-xl font-heading text-gray-400 mb-2">
+                        <h3 className="text-xl font-heading text-gray-300 mb-2">
                             Related Events
                         </h3>
                         <p className="text-gray-500">

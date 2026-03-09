@@ -26,6 +26,7 @@ export default function RegistrationsPage() {
             const { data: eventsData, error: eventsError } = await supabase
                 .from('events')
                 .select('*')
+                .eq('is_esummit', false)
                 .order('date', { ascending: false });
 
             if (eventsError) throw eventsError;
@@ -182,8 +183,8 @@ export default function RegistrationsPage() {
                             </td>
                             <td className="px-6 py-4">
                                 <span className={`px-2 py-1 text-xs rounded font-medium ${reg.role === 'leader' ? 'bg-purple-100 text-purple-700' :
-                                        reg.role === 'member' ? 'bg-blue-100 text-blue-700' :
-                                            'bg-gray-100 text-gray-700'
+                                    reg.role === 'member' ? 'bg-blue-100 text-blue-700' :
+                                        'bg-gray-100 text-gray-700'
                                     }`}>
                                     {reg.role}
                                 </span>
@@ -244,8 +245,8 @@ export default function RegistrationsPage() {
                                     <h3 className="text-xl font-bold text-gray-800 flex items-center gap-3">
                                         {event.title}
                                         <span className={`px-2 py-1 text-xs rounded-full font-medium ${event.status === 'upcoming' ? 'bg-green-100 text-green-700' :
-                                                event.status === 'ongoing' ? 'bg-orange-100 text-orange-700' :
-                                                    'bg-gray-100 text-gray-600'
+                                            event.status === 'ongoing' ? 'bg-orange-100 text-orange-700' :
+                                                'bg-gray-100 text-gray-600'
                                             }`}>
                                             {event.status}
                                         </span>
