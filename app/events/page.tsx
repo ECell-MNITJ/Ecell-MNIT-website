@@ -75,18 +75,15 @@ export default async function Events() {
     };
 
     const EventCard = ({ event }: { event: Event }) => {
-        const eventLink = event.details_url
-            ? event.details_url
-            : event.is_esummit
-                ? `/esummit/events/${event.id}`
-                : `/events/${event.id}`;
+        const eventLink = event.is_esummit
+            ? `/esummit/events/${event.id}`
+            : `/events/${event.id}`;
 
-        const isExternalLink = event.details_url ? true : false;
         const isRegistrationOpen = event.registrations_open !== false; // Default to true if undefined
 
         return (
             <div className="group bg-zinc-900/80 backdrop-blur-md rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col h-full border border-white/5 hover:border-primary-golden/30">
-                <Link href={eventLink} {...(isExternalLink && { target: "_blank", rel: "noopener noreferrer" })}>
+                <Link href={eventLink}>
                     {event.image_url ? (
                         <div className="relative h-32 sm:h-40 overflow-hidden">
                             <img
@@ -155,7 +152,7 @@ export default async function Events() {
                             {event.category}
                         </span>
                     </div>
-                    <Link href={eventLink} {...(isExternalLink && { target: "_blank", rel: "noopener noreferrer" })}>
+                    <Link href={eventLink}>
                         <h3 className="text-lg sm:text-xl font-heading text-white mb-2 group-hover:text-primary-golden transition-colors line-clamp-2">
                             {event.title}
                         </h3>
@@ -167,7 +164,6 @@ export default async function Events() {
                     <div className="flex gap-3 mt-auto">
                         <Link
                             href={eventLink}
-                            {...(isExternalLink && { target: "_blank", rel: "noopener noreferrer" })}
                             className="flex-1 inline-flex items-center justify-center gap-2 bg-primary-green text-white px-3 py-1.5 rounded-lg hover:shadow-lg hover:bg-green-700 transition-all text-xs sm:text-sm font-semibold"
                         >
                             View Details

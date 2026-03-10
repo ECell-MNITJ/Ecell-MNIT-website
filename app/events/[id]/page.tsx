@@ -2,7 +2,7 @@ import { type EventDetails } from '@/lib/supabase/client';
 import { createServerClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { FiCalendar, FiMapPin, FiClock, FiShare2, FiMonitor, FiUser, FiInfo, FiArrowLeft, FiTag } from 'react-icons/fi';
+import { FiCalendar, FiMapPin, FiClock, FiShare2, FiMonitor, FiUser, FiInfo, FiArrowLeft, FiTag, FiLinkedin } from 'react-icons/fi';
 import Image from 'next/image';
 import EventRegistration from '@/components/EventRegistration';
 
@@ -21,6 +21,7 @@ interface Event {
     featured: boolean;
     event_details: EventDetails | null;
     registrations_open: boolean;
+    registration_link: string | null;
 }
 
 async function getEvent(id: string): Promise<Event | null> {
@@ -276,6 +277,44 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
                                 </div>
                             )}
 
+                            {/* Custom Sections */}
+                            {event.event_details?.custom_sections?.map((section) => (
+                                <div key={section.id} className="scroll-mt-24">
+                                    <h2 className="text-3xl font-heading text-primary-golden mb-6 flex items-center gap-3">
+                                        <span className="text-4xl text-primary-green">◈</span> {section.title}
+                                    </h2>
+                                    <div className="grid md:grid-cols-2 gap-6">
+                                        {section.items.map((item) => (
+                                            <div key={item.id} className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-sm hover:shadow-lg transition-all group">
+                                                <div className="flex items-center gap-4 mb-4">
+                                                    <div className="w-20 h-20 rounded-full overflow-hidden shrink-0 border-2 border-primary-golden/20">
+                                                        {item.image_url ? (
+                                                            <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            <div className="w-full h-full bg-gray-700 flex items-center justify-center text-3xl">👤</div>
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-lg font-bold text-white">{item.name}</h3>
+                                                        <p className="text-primary-golden font-medium">{item.role}</p>
+                                                        <p className="text-sm text-gray-400">{item.company}</p>
+                                                    </div>
+                                                </div>
+                                                {item.bio && <p className="text-gray-300 text-sm mb-4 line-clamp-3">{item.bio}</p>}
+                                                <div className="flex gap-3">
+                                                    {item.linkedin_url && (
+                                                        <a href={item.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#0077b5] transition-colors">
+                                                            <span className="sr-only">LinkedIn</span>
+                                                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" /></svg>
+                                                        </a>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+
                             {/* Gallery Section */}
                             {event.event_details?.gallery && event.event_details.gallery.length > 0 && (
                                 <div id="gallery" className="scroll-mt-24">
@@ -303,7 +342,7 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
                                         is_team_event: (event as any).is_team_event || false,
                                         min_team_size: (event as any).min_team_size || 1,
                                         max_team_size: (event as any).max_team_size || 1,
-                                        registration_link: null
+                                        registration_link: event.registration_link || (event.details_url?.startsWith('http') ? event.details_url : null)
                                     } as any}
                                     user={user}
                                     hasValidPass={hasValidPass}

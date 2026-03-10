@@ -11,6 +11,16 @@ export async function POST(req: Request) {
 
         const supabase = await createServerClient();
 
+        // Check if passes are enabled
+        const { data: settings } = await supabase
+            .from('esummit_settings')
+            .select('passes_enabled')
+            .single();
+
+        if (settings?.passes_enabled === false) {
+            return NextResponse.json({ error: 'Passes are currently disabled' }, { status: 403 });
+        }
+
         // Ensure user is authenticated
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) {

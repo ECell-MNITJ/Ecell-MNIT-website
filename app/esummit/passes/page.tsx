@@ -16,6 +16,8 @@ const PassesPageContent = () => {
     const [passes, setPasses] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [globalFeatures, setGlobalFeatures] = useState<string[]>([]);
+    const [passesEnabled, setPassesEnabled] = useState(true);
+    const [user, setUser] = useState<any>(null);
 
     // Referral Logic
     const [referralInput, setReferralInput] = useState('');
@@ -23,20 +25,32 @@ const PassesPageContent = () => {
     const [verifyingCode, setVerifyingCode] = useState(false);
 
     useEffect(() => {
+        const checkUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            setUser(user);
+        };
+        checkUser();
+
         const fetchData = async () => {
             try {
+                // Fetch global features and settings
+                const { data: settingsData } = await supabase
+                    .from('esummit_settings')
+                    .select('pass_features_list, ca_base_discount_percentage, passes_enabled')
+                    .single();
+
+                if (settingsData?.passes_enabled === false) {
+                    setPassesEnabled(false);
+                    setLoading(false);
+                    return;
+                }
+
                 // Fetch passes
                 const { data: passesData } = await supabase
                     .from('esummit_passes')
                     .select('*')
                     .eq('is_active', true)
                     .order('display_order', { ascending: true });
-
-                // Fetch global features from settings
-                const { data: settingsData } = await supabase
-                    .from('esummit_settings')
-                    .select('pass_features_list, ca_base_discount_percentage')
-                    .single();
 
                 if (passesData) {
                     // Enrich with simulation data for UI
@@ -135,45 +149,54 @@ const PassesPageContent = () => {
                         </p>
                     </div>
 
-                    {/* Referral Input Section */}
-                    <div className="max-w-md mx-auto mb-16 relative">
-                        <div className="bg-[#1a1a1a] p-1 rounded-2xl border border-white/5 shadow-2xl flex items-center">
-                            <input
-                                type="text"
-                                value={referralInput}
-                                onChange={(e) => setReferralInput(e.target.value)}
-                                placeholder="ENTER REFERRAL CODE"
-                                className="flex-grow bg-transparent px-6 py-4 outline-none uppercase font-bold tracking-widest text-sm text-esummit-accent placeholder:text-gray-600"
-                            />
-                            <button
-                                onClick={handleApplyReferral}
-                                disabled={verifyingCode}
-                                className="px-8 py-4 bg-esummit-primary text-white font-black uppercase tracking-widest text-xs rounded-xl hover:bg-esummit-accent transition-all disabled:opacity-50 shadow-[0_10px_20px_rgba(37,99,235,0.2)]"
-                            >
-                                {verifyingCode ? '...' : (appliedDiscount ? 'Update' : 'Apply')}
-                            </button>
-                        </div>
-                        {appliedDiscount && (
-                            <div className="absolute top-full left-0 right-0 mt-3 text-center">
-                                <span className="text-[10px] text-green-500 font-bold uppercase tracking-widest bg-green-500/10 px-3 py-1 rounded-full border border-green-500/20 inline-flex items-center gap-2">
-                                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping" />
-                                    {appliedDiscount.percentage}% Discount Activated with code {appliedDiscount.code}
-                                </span>
+                    {passesEnabled ? (
+                        <>
+                            {/* Referral Input Section */}
+                            <div className="max-w-md mx-auto mb-16 relative">
+                                <div className="bg-[#1a1a1a] p-1 rounded-2xl border border-white/5 shadow-2xl flex items-center">
+                                    <input
+                                        type="text"
+                                        value={referralInput}
+                                        onChange={(e) => setReferralInput(e.target.value)}
+                                        placeholder="ENTER REFERRAL CODE"
+                                        className="flex-grow bg-transparent px-6 py-4 outline-none uppercase font-bold tracking-widest text-sm text-esummit-accent placeholder:text-gray-600"
+                                    />
+                                    <button
+                                        onClick={handleApplyReferral}
+                                        disabled={verifyingCode}
+                                        className="px-8 py-4 bg-esummit-primary text-white font-black uppercase tracking-widest text-xs rounded-xl hover:bg-esummit-accent transition-all disabled:opacity-50 shadow-[0_10px_20px_rgba(37,99,235,0.2)]"
+                                    >
+                                        {verifyingCode ? '...' : (appliedDiscount ? 'Update' : 'Apply')}
+                                    </button>
+                                </div>
+                                {appliedDiscount && (
+                                    <div className="absolute top-full left-0 right-0 mt-3 text-center">
+                                        <span className="text-[10px] text-green-500 font-bold uppercase tracking-widest bg-green-500/10 px-3 py-1 rounded-full border border-green-500/20 inline-flex items-center gap-2">
+                                            <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping" />
+                                            {appliedDiscount.percentage}% Discount Activated with code {appliedDiscount.code}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
-                        )}
-                    </div>
 
-                    {/* Pricing Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-                        {passes.map((pass) => (
-                            <PassCard
-                                key={pass.id}
-                                pass={pass}
-                                allPossibleFeatures={globalFeatures}
-                                appliedDiscount={appliedDiscount || undefined}
-                            />
-                        ))}
-                    </div>
+                            {/* Pricing Grid */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                                {passes.map((pass) => (
+                                    <PassCard
+                                        key={pass.id}
+                                        pass={pass}
+                                        allPossibleFeatures={globalFeatures}
+                                        appliedDiscount={appliedDiscount || undefined}
+                                    />
+                                ))}
+                            </div>
+                        </>
+                    ) : (
+                        <div className="max-w-2xl mx-auto py-20 px-8 bg-esummit-card/30 backdrop-blur-md border border-white/5 rounded-3xl text-center">
+                            <h2 className="text-2xl font-bold mb-4 uppercase tracking-wider text-esummit-accent">Passes are currently unavailable</h2>
+                            <p className="text-gray-400">Please check back later or contact the organizing team for more information.</p>
+                        </div>
+                    )}
 
                     {/* Footer Extra Note */}
                     <div className="mt-24 text-center">
@@ -185,7 +208,7 @@ const PassesPageContent = () => {
                 </div>
             </main>
 
-            <Footer user={null} />
+            <Footer user={user} />
         </div>
     );
 };

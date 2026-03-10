@@ -335,14 +335,29 @@ export default function EventRegistration({ event, user, hasValidPass }: EventRe
             {!event.is_team_event ? (
                 <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
                     <h3 className="text-xl font-heading text-primary-green mb-2">Register for Event</h3>
-                    <p className="text-gray-600 mb-6">Click the button below to confirm your registration.</p>
-                    <button
-                        onClick={() => executeWithProfileCheck(handleDetailedRegistration)}
-                        disabled={loading}
-                        className="w-full bg-primary-golden text-white py-3 rounded-lg font-bold hover:bg-yellow-600 transition-colors disabled:opacity-50"
-                    >
-                        {loading ? 'Registering...' : 'Register Now'}
-                    </button>
+                    <p className="text-gray-600 mb-6">
+                        {event.registration_link
+                            ? "This event requires registration on an external platform."
+                            : "Click the button below to confirm your registration."}
+                    </p>
+                    {event.registration_link ? (
+                        <a
+                            href={event.registration_link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full bg-primary-golden text-center text-white py-3 rounded-lg font-bold hover:bg-yellow-600 transition-colors block"
+                        >
+                            Register on External Platform
+                        </a>
+                    ) : (
+                        <button
+                            onClick={() => executeWithProfileCheck(handleDetailedRegistration)}
+                            disabled={loading}
+                            className="w-full bg-primary-golden text-white py-3 rounded-lg font-bold hover:bg-yellow-600 transition-colors disabled:opacity-50"
+                        >
+                            {loading ? 'Registering...' : 'Register Now'}
+                        </button>
+                    )}
                 </div>
             ) : (
                 <div className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">

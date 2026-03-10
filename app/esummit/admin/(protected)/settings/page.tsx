@@ -20,6 +20,7 @@ export default function AdminSettingsPage() {
     const [caMilestone2Count, setCaMilestone2Count] = useState(0);
     const [caMilestone2Discount, setCaMilestone2Discount] = useState(0);
     const [caRegistrationsOpen, setCaRegistrationsOpen] = useState(true);
+    const [passesEnabled, setPassesEnabled] = useState(true);
 
     // Pass Features Inventory
     const [passFeaturesList, setPassFeaturesList] = useState<string[]>([]);
@@ -49,6 +50,7 @@ export default function AdminSettingsPage() {
                 setCaMilestone2Count(settings.ca_milestone_2_count || 0);
                 setCaMilestone2Discount(settings.ca_milestone_2_discount || 0);
                 setCaRegistrationsOpen(settings.ca_registrations_open !== undefined ? settings.ca_registrations_open : true);
+                setPassesEnabled(settings.passes_enabled !== undefined ? settings.passes_enabled : true);
                 setPassFeaturesList(settings.pass_features_list || []);
             }
         } catch (error) {
@@ -78,6 +80,7 @@ export default function AdminSettingsPage() {
                         ca_milestone_2_count: caMilestone2Count,
                         ca_milestone_2_discount: caMilestone2Discount,
                         ca_registrations_open: caRegistrationsOpen,
+                        passes_enabled: passesEnabled,
                         pass_features_list: passFeaturesList,
                         show_stats: true,
                         show_blueprint: true
@@ -100,6 +103,7 @@ export default function AdminSettingsPage() {
                             ca_milestone_2_count: caMilestone2Count,
                             ca_milestone_2_discount: caMilestone2Discount,
                             ca_registrations_open: caRegistrationsOpen,
+                            passes_enabled: passesEnabled,
                             pass_features_list: passFeaturesList,
                             updated_at: new Date().toISOString()
                         })
@@ -111,13 +115,18 @@ export default function AdminSettingsPage() {
             if (error) throw error;
             toast.success('Settings updated successfully');
         } catch (error: any) {
-            console.error('Update error full details:', {
-                message: error.message,
-                details: error.details,
-                hint: error.hint,
-                code: error.code
-            });
-            toast.error(error.message || 'Failed to update settings');
+            console.error('Update error full object:', error);
+            const errorStr = JSON.stringify(error, null, 2);
+            console.error('Update error stringified:', errorStr);
+
+            const errorMessage = error.message || 'Failed to update settings';
+            const errorDetails = error.details ? ` (${error.details})` : '';
+            const errorCode = error.code ? ` [Code: ${error.code}]` : '';
+            toast.error(`${errorMessage}${errorDetails}${errorCode}`);
+
+            if (error.code === '42703') {
+                toast.error('DATABASE ERROR: column "passes_enabled" is missing. Please run the migration.');
+            }
         } finally {
             setLoading(false);
         }
@@ -201,6 +210,22 @@ export default function AdminSettingsPage() {
                                         className="sr-only peer"
                                     />
                                     <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none ring-0 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                            </div>
+
+                            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-100 mb-4">
+                                <div>
+                                    <h4 className="font-bold text-xs text-blue-900 uppercase tracking-wider">Passes Feature</h4>
+                                    <p className="text-[10px] text-blue-700">Enable/Disable E-Summit Passes</p>
+                                </div>
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={passesEnabled}
+                                        onChange={(e) => setPassesEnabled(e.target.checked)}
+                                        className="sr-only peer"
+                                    />
+                                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none ring-0 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                                 </label>
                             </div>
 

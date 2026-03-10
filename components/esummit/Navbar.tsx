@@ -33,6 +33,7 @@ export default function EsNavbar() {
         };
 
         const checkRole = async (user: any) => {
+            // ... (rest of checkRole)
             let adminRole = false;
             let memberRole = false;
 

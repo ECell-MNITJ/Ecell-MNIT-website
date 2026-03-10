@@ -223,7 +223,7 @@ export default function ESummitLandingDataLayer() {
 
 
             {/* Hero Section */}
-            <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20">
+            <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-24">
                 <motion.div
                     style={{ y: yHero, opacity: opacityHero }}
                     className="container mx-auto px-4 z-30 text-center relative"

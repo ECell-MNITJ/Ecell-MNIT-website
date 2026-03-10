@@ -9,6 +9,7 @@ import { FiUpload, FiX } from 'react-icons/fi';
 import AgendaEditor from '@/components/admin/AgendaEditor';
 import SpeakerEditor from '@/components/admin/SpeakerEditor';
 import GalleryEditor from '@/components/admin/GalleryEditor';
+import CustomSectionEditor from '@/components/admin/CustomSectionEditor';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 
 export default function EditESummitEvent() {
@@ -42,7 +43,8 @@ export default function EditESummitEvent() {
         agenda: [],
         speakers: [],
         gallery: [],
-        faq: []
+        faq: [],
+        custom_sections: []
     });
     const [showCustomCategory, setShowCustomCategory] = useState(false);
 
@@ -300,6 +302,13 @@ export default function EditESummitEvent() {
                             gallery={eventDetails.gallery || []}
                             onChange={(gallery) => setEventDetails({ ...eventDetails, gallery })}
                         />
+
+                        <div className="pt-8 border-t border-gray-800">
+                            <CustomSectionEditor
+                                sections={eventDetails.custom_sections || []}
+                                onChange={(custom_sections) => setEventDetails({ ...eventDetails, custom_sections })}
+                            />
+                        </div>
                     </div>
                 </div>
 

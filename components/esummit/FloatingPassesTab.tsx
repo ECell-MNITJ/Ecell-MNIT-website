@@ -3,14 +3,33 @@
 import Link from 'next/link';
 import { HiTicket } from 'react-icons/hi2';
 
+import { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
+
 export default function FloatingPassesTab() {
+    const [enabled, setEnabled] = useState<boolean | null>(null);
+    const supabase = createClient();
+
+    useEffect(() => {
+        const checkEnabled = async () => {
+            const { data } = await supabase
+                .from('esummit_settings')
+                .select('passes_enabled')
+                .single();
+            setEnabled(data?.passes_enabled ?? true);
+        };
+        checkEnabled();
+    }, []);
+
+    if (enabled === false) return null;
+
     return (
         <Link
             href="/esummit/passes"
             className="fixed right-0 top-1/2 -translate-y-1/2 z-[999] group flex"
         >
-            <div className="bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a] border-y border-l border-yellow-500/50 rounded-l-xl p-3 flex flex-col items-center gap-4 shadow-[0_0_30px_rgba(0,0,0,0.5)] border-yellow-500 hover:shadow-[0_0_30px_rgba(234,179,8,0.3)] hover:border-yellow-400 transition-all duration-300 group-hover:pr-5">
-                <div className="text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.5)] group-hover:scale-110 transition-transform duration-300">
+            <div className="bg-gradient-to-b from-esummit-card/90 to-esummit-bg/90 backdrop-blur-md border-y border-l border-white/10 rounded-l-xl p-3 flex flex-col items-center gap-4 shadow-[0_0_30px_rgba(0,0,0,0.5)] hover:border-esummit-accent/50 hover:shadow-[0_0_30px_rgba(37,99,235,0.2)] transition-all duration-300 group-hover:pr-5">
+                <div className="text-esummit-accent drop-shadow-[0_0_8px_rgba(96,165,250,0.4)] group-hover:scale-110 transition-transform duration-300">
                     <HiTicket className="w-6 h-6 rotate-90" />
                 </div>
                 <div className="flex flex-col items-center">
@@ -20,8 +39,8 @@ export default function FloatingPassesTab() {
                 </div>
 
                 {/* Decorative corner glow */}
-                <div className="absolute top-0 right-0 w-8 h-8 bg-yellow-500/5 blur-xl pointer-events-none"></div>
-                <div className="absolute bottom-0 right-0 w-8 h-8 bg-yellow-500/5 blur-xl pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-8 h-8 bg-esummit-accent/5 blur-xl pointer-events-none"></div>
+                <div className="absolute bottom-0 right-0 w-8 h-8 bg-esummit-accent/5 blur-xl pointer-events-none"></div>
             </div>
         </Link>
     );

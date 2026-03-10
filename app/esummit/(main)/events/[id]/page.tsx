@@ -2,7 +2,7 @@ import { type EventDetails } from '@/lib/supabase/client';
 import { createServerClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { FiCalendar, FiMapPin, FiClock, FiShare2, FiMonitor, FiUser, FiInfo, FiArrowLeft, FiTag } from 'react-icons/fi';
+import { FiCalendar, FiMapPin, FiClock, FiShare2, FiMonitor, FiUser, FiInfo, FiArrowLeft, FiTag, FiLinkedin } from 'react-icons/fi';
 import Image from 'next/image';
 import EventRegistration from '@/components/EventRegistration';
 import EventGallery from '@/components/esummit/EventGallery';
@@ -28,6 +28,7 @@ interface Event {
     min_team_size: number;
     max_team_size: number;
     registrations_open: boolean;
+    registration_link: string | null;
 }
 
 async function getEvent(id: string): Promise<Event | null> {
@@ -219,11 +220,62 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                                                     </div>
                                                 </div>
                                                 <p className="text-gray-400 text-sm line-clamp-3 mb-3 leading-relaxed pl-1 border-l-2 border-esummit-primary/20">{speaker.bio}</p>
+                                                {speaker.linkedin_url && (
+                                                    <a
+                                                        href={speaker.linkedin_url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center gap-2 text-esummit-accent hover:text-white transition-colors text-sm font-bold"
+                                                    >
+                                                        <FiLinkedin className="w-4 h-4" /> LinkedIn Profile
+                                                    </a>
+                                                )}
                                             </div>
                                         ))}
                                     </div>
                                 </div>
                             )}
+
+                            {/* Custom Sections */}
+                            {event.event_details?.custom_sections?.map((section) => (
+                                <div key={section.id}>
+                                    <h2 className="text-3xl font-black text-white mb-8 uppercase tracking-wide flex items-center gap-3">
+                                        <span className="w-2 h-8 bg-esummit-primary rounded-full" />
+                                        {section.title}
+                                    </h2>
+                                    <div className="grid md:grid-cols-2 gap-6">
+                                        {section.items.map((item) => (
+                                            <div key={item.id} className="bg-esummit-card/30 p-4 md:p-6 rounded-2xl border border-white/5 hover:border-esummit-primary/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(157,78,221,0.2)] group">
+                                                <div className="flex items-center gap-5 mb-4">
+                                                    <div className="w-20 h-20 rounded-full overflow-hidden shrink-0 border-2 border-esummit-primary/30 group-hover:border-esummit-accent transition-colors duration-300 shadow-[0_0_15px_rgba(157,78,221,0.2)]">
+                                                        {item.image_url ? (
+                                                            <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            <div className="w-full h-full bg-esummit-bg flex items-center justify-center text-3xl text-gray-500">👤</div>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <h3 className="text-xl font-bold text-white group-hover:text-esummit-accent transition-colors truncate">{item.name}</h3>
+                                                        <p className="text-esummit-primary font-bold text-sm tracking-wide uppercase">{item.role}</p>
+                                                        <p className="text-xs text-gray-500 mt-1">{item.company}</p>
+                                                    </div>
+                                                </div>
+                                                {item.bio && <p className="text-gray-400 text-sm line-clamp-3 mb-3 leading-relaxed pl-1 border-l-2 border-esummit-primary/20">{item.bio}</p>}
+                                                {item.linkedin_url && (
+                                                    <a
+                                                        href={item.linkedin_url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center gap-2 text-esummit-accent hover:text-white transition-colors text-sm font-bold"
+                                                    >
+                                                        <FiLinkedin className="w-4 h-4" /> LinkedIn Profile
+                                                    </a>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
 
                             {/* Gallery Section */}
                             {event.event_details?.gallery && event.event_details.gallery.length > 0 && (
@@ -268,7 +320,7 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                                                     is_team_event: event.is_team_event || false,
                                                     min_team_size: event.min_team_size || 1,
                                                     max_team_size: event.max_team_size || 1,
-                                                    registration_link: null
+                                                    registration_link: event.registration_link || (event.details_url?.startsWith('http') ? event.details_url : null)
                                                 }}
                                                 user={user}
                                             />

@@ -20,7 +20,7 @@ async function getEsummitEvents(): Promise<Event[]> {
     const supabase = await createServerClient();
     const { data, error } = await supabase
         .from('events')
-        .select('id, title, description, date, category, location, image_url, status, featured, is_esummit, registrations_open, display_order')
+        .select('id, title, description, date, category, location, image_url, status, featured, is_esummit, registrations_open, display_order, registration_link, details_url')
         .eq('is_esummit', true)
         .order('display_order', { ascending: true })
         .order('date', { ascending: false });

@@ -74,7 +74,7 @@ export default function Footer() {
                         <div className="mt-8">
                             <Link
                                 href="/esummit"
-                                className="inline-block relative overflow-hidden group bg-gradient-to-r from-primary-golden to-yellow-600 px-6 py-2 rounded-full font-bold text-gray-900 shadow-lg hover:shadow-primary-golden/30 transition-shadow transition-transform hover:-translate-y-1"
+                                className="inline-block relative overflow-hidden group bg-gradient-to-r from-primary-golden to-yellow-600 px-6 py-2 rounded-full font-bold text-gray-900 shadow-lg hover:shadow-primary-golden/30 transition hover:-translate-y-1"
                             >
                                 <span className="relative z-10 flex items-center gap-2">
                                     E-Summit 2026

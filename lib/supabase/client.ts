@@ -33,11 +33,28 @@ export interface FAQItem {
     answer: string;
 }
 
+export interface CustomSectionItem {
+    id: string;
+    name: string;
+    role: string;
+    company: string;
+    bio: string;
+    image_url: string | null;
+    linkedin_url?: string;
+}
+
+export interface CustomSection {
+    id: string;
+    title: string;
+    items: CustomSectionItem[];
+}
+
 export interface EventDetails {
     agenda?: AgendaItem[];
     speakers?: Speaker[];
     gallery?: GalleryImage[];
     faq?: FAQItem[];
+    custom_sections?: CustomSection[];
 }
 
 let browserClient: ReturnType<typeof createBrowserClient<Database>> | undefined;
