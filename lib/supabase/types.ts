@@ -612,6 +612,7 @@ export interface Database {
                     ca_milestone_2_discount: number;
                     ca_registrations_open: boolean;
                     pass_features_list: string[];
+                    passes_enabled: boolean;
                     created_at: string;
                     updated_at: string;
                 };
@@ -632,6 +633,7 @@ export interface Database {
                     ca_milestone_2_discount?: number;
                     ca_registrations_open?: boolean;
                     pass_features_list?: string[];
+                    passes_enabled?: boolean;
                     created_at?: string;
                     updated_at?: string;
                 };
@@ -652,6 +654,7 @@ export interface Database {
                     ca_milestone_2_discount?: number;
                     ca_registrations_open?: boolean;
                     pass_features_list?: string[];
+                    passes_enabled?: boolean;
                     created_at?: string;
                     updated_at?: string;
                 };
