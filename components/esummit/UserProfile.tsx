@@ -14,6 +14,7 @@ export default function ESummitUserProfile({ user }: { user: any }) {
     const [uploading, setUploading] = useState(false);
     const [editing, setEditing] = useState(false);
     const [profile, setProfile] = useState<any>(null);
+    const [caData, setCaData] = useState<any>(null);
     const [registrations, setRegistrations] = useState<any[]>([]);
 
     // Form state
@@ -50,6 +51,21 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                 data = null;
             } else if (error) {
                 console.error('Error fetching profile:', error);
+            }
+
+            // Also fetch CA status and referral counts
+            const { data: caData, error: caError } = await supabase
+                .from('campus_ambassadors')
+                .select(`
+                    *,
+                    user_passes(payment_status)
+                `)
+                .eq('profile_id', user.id)
+                .single();
+
+            if (!caError && caData) {
+                const referralCount = caData.user_passes?.filter((p: any) => p.payment_status === 'success').length || 0;
+                setCaData({ ...caData, referral_count: referralCount });
             }
 
             if (data) {
@@ -439,6 +455,65 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                                         </span>
                                     )}
                                 </div>
+
+                                {/* CA Status Section */}
+                                {caData && (
+                                    <div className="mt-8 border-t border-white/5 pt-8">
+                                        <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+                                            <div className="flex-1">
+                                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-2">Campus Ambassador Program</h3>
+                                                <div className="flex flex-wrap items-center gap-4">
+                                                    <span className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest border shadow-lg ${caData.status === 'approved'
+                                                        ? 'bg-blue-500/20 text-blue-400 border-blue-500/30 shadow-blue-500/10'
+                                                        : caData.status === 'pending'
+                                                            ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
+                                                            : 'bg-red-500/20 text-red-400 border-red-500/30'
+                                                        }`}>
+                                                        {caData.status === 'approved' ? 'Active Ambassador' : caData.status === 'pending' ? 'Waiting List' : 'Application Rejected'}
+                                                    </span>
+
+                                                    {caData.status === 'approved' && (
+                                                        <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-xl border border-white/10 group cursor-pointer hover:border-blue-500/50 transition-all"
+                                                            onClick={() => {
+                                                                navigator.clipboard.writeText(caData.referral_code);
+                                                                toast.success('Referral code copied!');
+                                                            }}
+                                                        >
+                                                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Your Code:</span>
+                                                            <span className="text-lg font-black text-white uppercase tracking-wider group-hover:text-blue-400 transition-colors">
+                                                                {caData.referral_code || 'Generating...'}
+                                                            </span>
+                                                            <FiAward className="text-blue-500 group-hover:scale-125 transition-transform" />
+                                                        </div>
+                                                    )}
+                                                    {caData.status === 'approved' && (
+                                                        <div className="flex items-center gap-2 bg-blue-500/10 px-4 py-2 rounded-xl border border-blue-500/20">
+                                                            <span className="text-[10px] font-black uppercase tracking-widest text-blue-400">Total Referrals:</span>
+                                                            <span className="text-lg font-black text-white">{caData.referral_count || 0}</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {caData.status === 'approved' && (
+                                                <div className="bg-[#0b132b] px-6 py-4 rounded-2xl border border-white/10 flex flex-col items-center">
+                                                    <span className="text-[9px] font-black uppercase tracking-widest text-gray-500 mb-1">Referral Link</span>
+                                                    <button
+                                                        onClick={() => {
+                                                            const link = `${window.location.origin}/esummit/passes?ref=${caData.referral_code}`;
+                                                            navigator.clipboard.writeText(link);
+                                                            toast.success('Referral link copied!');
+                                                        }}
+                                                        className="text-white hover:text-blue-400 transition-colors flex items-center gap-2 group"
+                                                    >
+                                                        <FiGlobe size={14} className="group-hover:rotate-12 transition-transform" />
+                                                        <span className="text-xs font-bold font-mono">Copy Link</span>
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>

@@ -602,6 +602,16 @@ export interface Database {
                     show_speakers: boolean;
                     speakers_heading: string;
                     scanner_password: string;
+                    contact_email: string;
+                    contact_phone: string;
+                    contact_address: string;
+                    ca_base_discount_percentage: number;
+                    ca_milestone_1_count: number;
+                    ca_milestone_1_discount: number;
+                    ca_milestone_2_count: number;
+                    ca_milestone_2_discount: number;
+                    ca_registrations_open: boolean;
+                    pass_features_list: string[];
                     created_at: string;
                     updated_at: string;
                 };
@@ -612,6 +622,16 @@ export interface Database {
                     show_sponsors?: boolean;
                     sponsors_heading?: string;
                     scanner_password?: string;
+                    contact_email?: string;
+                    contact_phone?: string;
+                    contact_address?: string;
+                    ca_base_discount_percentage?: number;
+                    ca_milestone_1_count?: number;
+                    ca_milestone_1_discount?: number;
+                    ca_milestone_2_count?: number;
+                    ca_milestone_2_discount?: number;
+                    ca_registrations_open?: boolean;
+                    pass_features_list?: string[];
                     created_at?: string;
                     updated_at?: string;
                 };
@@ -622,6 +642,16 @@ export interface Database {
                     show_sponsors?: boolean;
                     sponsors_heading?: string;
                     scanner_password?: string;
+                    contact_email?: string;
+                    contact_phone?: string;
+                    contact_address?: string;
+                    ca_base_discount_percentage?: number;
+                    ca_milestone_1_count?: number;
+                    ca_milestone_1_discount?: number;
+                    ca_milestone_2_count?: number;
+                    ca_milestone_2_discount?: number;
+                    ca_registrations_open?: boolean;
+                    pass_features_list?: string[];
                     created_at?: string;
                     updated_at?: string;
                 };
@@ -689,6 +719,151 @@ export interface Database {
                     updated_at?: string;
                 };
                 Relationships: [];
+            };
+            esummit_passes: {
+                Row: {
+                    id: string;
+                    name: string;
+                    price: number;
+                    description: string | null;
+                    features: string[] | null;
+                    is_active: boolean;
+                    display_order: number;
+                    is_popular: boolean;
+                    created_at: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    name: string;
+                    price: number;
+                    description?: string | null;
+                    features?: string[] | null;
+                    is_active?: boolean;
+                    display_order?: number;
+                    is_popular?: boolean;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    name?: string;
+                    price?: number;
+                    description?: string | null;
+                    features?: string[] | null;
+                    is_active?: boolean;
+                    display_order?: number;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Relationships: [];
+            };
+            campus_ambassadors: {
+                Row: {
+                    id: string;
+                    profile_id: string | null;
+                    referral_code: string;
+                    college: string | null;
+                    year_of_study: string | null;
+                    phone_number: string | null;
+                    is_active: boolean | null;
+                    status: 'pending' | 'approved' | 'rejected' | null;
+                    discount_override: number | null;
+                    label: string | null;
+                    usage_limit: number | null;
+                    created_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    profile_id?: string | null;
+                    referral_code?: string | null;
+                    college?: string | null;
+                    year_of_study?: string | null;
+                    phone_number?: string | null;
+                    is_active?: boolean | null;
+                    status?: 'pending' | 'approved' | 'rejected' | null;
+                    discount_override?: number | null;
+                    label?: string | null;
+                    usage_limit?: number | null;
+                    created_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    profile_id?: string | null;
+                    referral_code?: string | null;
+                    college?: string | null;
+                    year_of_study?: string | null;
+                    phone_number?: string | null;
+                    is_active?: boolean | null;
+                    status?: 'pending' | 'approved' | 'rejected' | null;
+                    discount_override?: number | null;
+                    label?: string | null;
+                    usage_limit?: number | null;
+                    created_at?: string;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: "campus_ambassadors_profile_id_fkey";
+                        columns: ["profile_id"];
+                        referencedRelation: "profiles";
+                        referencedColumns: ["id"];
+                    }
+                ];
+            };
+            user_passes: {
+                Row: {
+                    id: string;
+                    user_id: string;
+                    pass_id: string;
+                    razorpay_order_id: string | null;
+                    razorpay_payment_id: string | null;
+                    payment_status: 'pending' | 'success' | 'failed';
+                    amount_paid: number;
+                    applied_referral_code: string | null;
+                    created_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    user_id: string;
+                    pass_id: string;
+                    razorpay_order_id?: string | null;
+                    razorpay_payment_id?: string | null;
+                    payment_status: 'pending' | 'success' | 'failed';
+                    amount_paid: number;
+                    applied_referral_code?: string | null;
+                    created_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    user_id?: string;
+                    pass_id?: string;
+                    razorpay_order_id?: string | null;
+                    razorpay_payment_id?: string | null;
+                    payment_status?: 'pending' | 'success' | 'failed';
+                    amount_paid?: number;
+                    applied_referral_code?: string | null;
+                    created_at?: string;
+                };
+                Relationships: [
+                    {
+                        foreignKeyName: "user_passes_user_id_fkey";
+                        columns: ["user_id"];
+                        referencedRelation: "profiles";
+                        referencedColumns: ["id"];
+                    },
+                    {
+                        foreignKeyName: "user_passes_pass_id_fkey";
+                        columns: ["pass_id"];
+                        referencedRelation: "esummit_passes";
+                        referencedColumns: ["id"];
+                    },
+                    {
+                        foreignKeyName: "user_passes_applied_referral_code_fkey";
+                        columns: ["applied_referral_code"];
+                        referencedRelation: "campus_ambassadors";
+                        referencedColumns: ["referral_code"];
+                    }
+                ];
             };
         };
         Views: {

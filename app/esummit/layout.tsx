@@ -26,6 +26,7 @@ export const metadata: Metadata = {
 };
 
 import StructuredData, { getBreadcrumbSchema, getNavigationSchema } from "@/components/SEO/StructuredData";
+import FloatingPassesTab from '@/components/esummit/FloatingPassesTab';
 
 export default function ESummitLayout({
     children,
@@ -51,6 +52,7 @@ export default function ESummitLayout({
             <StructuredData data={esummitBreadcrumbs} />
             <StructuredData data={esummitNavigation} />
             <BackgroundCanvas />
+            <FloatingPassesTab />
             {children}
         </>
     );

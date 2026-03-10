@@ -11,7 +11,7 @@ const config: Config = {
             colors: {
                 primary: {
                     green: '#243137',
-                    golden: '#BD9F67',
+                    golden: '#D4AF37', // Kept as brand legacy but bypassed for passes
                 },
                 esummit: {
                     bg: '#0b132b',      // Deep Blue Background

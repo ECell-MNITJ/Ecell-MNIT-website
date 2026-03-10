@@ -68,6 +68,7 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
     const { data: { user } } = await supabase.auth.getUser();
 
     let isRegistered = false;
+    let hasValidPass = false;
     if (user) {
         const { data } = await supabase
             .from('event_registrations')
@@ -76,6 +77,15 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
             .eq('event_id', event.id)
             .single();
         isRegistered = !!data;
+
+        // Check if user has an E-Summit pass
+        const { data: passData } = await supabase
+            .from('user_passes')
+            .select('id')
+            .eq('user_id', user.id)
+            .eq('payment_status', 'success')
+            .limit(1);
+        hasValidPass = (passData && passData.length > 0) ? true : false;
     }
 
     const formatDate = (dateString: string) => {
@@ -294,8 +304,9 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
                                         min_team_size: (event as any).min_team_size || 1,
                                         max_team_size: (event as any).max_team_size || 1,
                                         registration_link: null
-                                    }}
+                                    } as any}
                                     user={user}
+                                    hasValidPass={hasValidPass}
                                 />
                             </div>
                         ) : (

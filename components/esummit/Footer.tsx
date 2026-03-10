@@ -67,14 +67,15 @@ export default function EsFooter({ user }: { user: any }) {
                     </div>
 
                     {/* Quick Links */}
-                    <div className="flex flex-wrap justify-center md:justify-end gap-6 md:gap-8 text-sm font-medium tracking-wide text-gray-400">
-                        <Link href="/esummit" className="hover:text-esummit-primary transition-colors">Home</Link>
-                        <Link href="/esummit/events" className="hover:text-esummit-primary transition-colors">Events</Link>
-                        <Link href="/esummit/contact" className="hover:text-esummit-primary transition-colors">Contact</Link>
+                    <div className="flex flex-wrap justify-center md:justify-end gap-6 md:gap-8 text-sm font-medium tracking-wide">
+                        <Link href="/esummit" className="text-gray-400 hover:text-esummit-primary transition-colors">Home</Link>
+                        <Link href="/esummit/events" className="text-gray-400 hover:text-esummit-primary transition-colors">Events</Link>
+                        <Link href="/esummit/speakers" className="text-gray-400 hover:text-esummit-primary transition-colors">Speakers</Link>
+                        <Link href="/esummit/campus-ambassador" className="text-esummit-primary hover:text-white transition-colors">Campus Ambassador</Link>
                         {!user && (
                             <>
-                                <Link href="/esummit/login" className="hover:text-esummit-primary transition-colors">Login</Link>
-                                <Link href="/esummit/signup" className="hover:text-esummit-primary transition-colors">Sign Up</Link>
+                                <Link href="/esummit/login" className="text-gray-400 hover:text-esummit-primary transition-colors">Login</Link>
+                                <Link href="/esummit/signup" className="text-gray-400 hover:text-esummit-primary transition-colors">Sign Up</Link>
                             </>
                         )}
                     </div>

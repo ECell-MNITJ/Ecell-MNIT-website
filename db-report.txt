@@ -1,0 +1,8 @@
+Checking project: https://nizhsrbjmsoauqohujmk.supabase.co
+Column profile_id: EXISTS
+Column referral_code: EXISTS
+Column college: EXISTS
+Column year_of_study: MISSING (column campus_ambassadors.year_of_study does not exist)
+Column phone_number: MISSING (column campus_ambassadors.phone_number does not exist)
+Column is_active: MISSING (column campus_ambassadors.is_active does not exist)
+Column isActive: MISSING (column campus_ambassadors.isActive does not exist)

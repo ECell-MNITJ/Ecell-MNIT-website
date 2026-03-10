@@ -16,11 +16,13 @@ interface EventRegistrationProps {
         min_team_size: number;
         max_team_size: number;
         registration_link: string | null;
+        is_esummit?: boolean;
     };
     user: any;
+    hasValidPass?: boolean;
 }
 
-export default function EventRegistration({ event, user }: EventRegistrationProps) {
+export default function EventRegistration({ event, user, hasValidPass }: EventRegistrationProps) {
     const supabase = createClient();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
@@ -83,6 +85,12 @@ export default function EventRegistration({ event, user }: EventRegistrationProp
     async function executeWithProfileCheck(action: () => void) {
         if (!user) {
             router.push(`/login?next=/events/${event.id}`);
+            return;
+        }
+
+        // If it's an E-Summit event, they MUST have a valid pass
+        if (event.is_esummit && !hasValidPass) {
+            toast.error('You need an E-Summit Pass to register for this event.');
             return;
         }
 
@@ -245,6 +253,24 @@ export default function EventRegistration({ event, user }: EventRegistrationProp
                     className="bg-primary-golden text-white px-6 py-2 rounded-lg font-medium hover:bg-white hover:text-primary-golden transition-all"
                 >
                     Login to Register
+                </button>
+            </div>
+        );
+    }
+
+    if (event.is_esummit && !hasValidPass && !registration) {
+        return (
+            <div className="bg-red-500/10 p-6 rounded-xl border border-red-500/30 text-center">
+                <div className="w-12 h-12 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center mx-auto mb-4">
+                    <FiInfo className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">E-Summit Pass Required</h3>
+                <p className="text-gray-400 mb-6">You need an active E-Summit pass to register for this event.</p>
+                <button
+                    onClick={() => router.push('/esummit/passes')}
+                    className="bg-purple-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-500/25"
+                >
+                    Get Your Pass
                 </button>
             </div>
         );
