@@ -28,19 +28,19 @@ export default function FloatingPassesTab() {
             href="/esummit/passes"
             className="fixed right-0 top-1/2 -translate-y-1/2 z-[999] group flex"
         >
-            <div className="bg-gradient-to-b from-esummit-card/90 to-esummit-bg/90 backdrop-blur-md border-y border-l border-white/10 rounded-l-xl p-3 flex flex-col items-center gap-4 shadow-[0_0_30px_rgba(0,0,0,0.5)] hover:border-esummit-accent/50 hover:shadow-[0_0_30px_rgba(37,99,235,0.2)] transition-all duration-300 group-hover:pr-5">
-                <div className="text-esummit-accent drop-shadow-[0_0_8px_rgba(96,165,250,0.4)] group-hover:scale-110 transition-transform duration-300">
-                    <HiTicket className="w-6 h-6 rotate-90" />
+            <div className="bg-gradient-to-br from-esummit-card/95 to-esummit-bg/95 backdrop-blur-xl border-y border-l border-esummit-primary/30 rounded-l-2xl p-4 flex flex-col items-center gap-5 shadow-[0_0_40px_rgba(0,0,0,0.7)] hover:border-esummit-primary/60 hover:shadow-[0_0_30px_rgba(37,99,235,0.3)] transition-all duration-500 group-hover:pr-7">
+                <div className="text-esummit-primary drop-shadow-[0_0_12px_rgba(37,99,235,0.6)] group-hover:scale-125 transition-transform duration-500">
+                    <HiTicket className="w-7 h-7 rotate-90" />
                 </div>
                 <div className="flex flex-col items-center">
-                    <span className="text-white font-black tracking-[0.25em] text-[13px] [writing-mode:vertical-lr] rotate-180 uppercase font-sans">
+                    <span className="text-white font-black tracking-[0.3em] text-[11px] [writing-mode:vertical-lr] rotate-180 uppercase font-body opacity-90 group-hover:opacity-100 transition-opacity">
                         Passes
                     </span>
                 </div>
 
-                {/* Decorative corner glow */}
-                <div className="absolute top-0 right-0 w-8 h-8 bg-esummit-accent/5 blur-xl pointer-events-none"></div>
-                <div className="absolute bottom-0 right-0 w-8 h-8 bg-esummit-accent/5 blur-xl pointer-events-none"></div>
+                {/* Decorative glow effects */}
+                <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-esummit-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute -inset-1 bg-gradient-to-r from-esummit-primary/20 to-esummit-accent/20 rounded-l-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
             </div>
         </Link>
     );
