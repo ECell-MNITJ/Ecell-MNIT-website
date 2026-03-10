@@ -332,32 +332,33 @@ export default function EventRegistration({ event, user, hasValidPass }: EventRe
                 }}
             />
 
-            {!event.is_team_event ? (
+            {event.registration_link ? (
+                <div className="bg-esummit-card/30 p-6 rounded-2xl border border-white/10 backdrop-blur-md text-center">
+                    <p className="text-gray-400 mb-6 font-medium text-sm">
+                        This event requires registration on an external platform.
+                    </p>
+                    <a
+                        href={event.registration_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-full bg-gradient-to-r from-esummit-primary to-esummit-accent text-white py-4 rounded-xl font-black uppercase tracking-widest hover:shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:scale-[1.02] transition-all duration-300 shadow-lg text-sm"
+                    >
+                        Register Now
+                    </a>
+                </div>
+            ) : !event.is_team_event ? (
                 <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
                     <h3 className="text-xl font-heading text-primary-green mb-2">Register for Event</h3>
                     <p className="text-gray-600 mb-6">
-                        {event.registration_link
-                            ? "This event requires registration on an external platform."
-                            : "Click the button below to confirm your registration."}
+                        Click the button below to confirm your registration.
                     </p>
-                    {event.registration_link ? (
-                        <a
-                            href={event.registration_link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full bg-primary-golden text-center text-white py-3 rounded-lg font-bold hover:bg-yellow-600 transition-colors block"
-                        >
-                            Register on External Platform
-                        </a>
-                    ) : (
-                        <button
-                            onClick={() => executeWithProfileCheck(handleDetailedRegistration)}
-                            disabled={loading}
-                            className="w-full bg-primary-golden text-white py-3 rounded-lg font-bold hover:bg-yellow-600 transition-colors disabled:opacity-50"
-                        >
-                            {loading ? 'Registering...' : 'Register Now'}
-                        </button>
-                    )}
+                    <button
+                        onClick={() => executeWithProfileCheck(handleDetailedRegistration)}
+                        disabled={loading}
+                        className="w-full bg-primary-golden text-white py-3 rounded-lg font-bold hover:bg-yellow-600 transition-colors disabled:opacity-50"
+                    >
+                        {loading ? 'Registering...' : 'Register Now'}
+                    </button>
                 </div>
             ) : (
                 <div className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
