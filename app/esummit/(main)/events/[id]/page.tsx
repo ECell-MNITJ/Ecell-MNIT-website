@@ -129,7 +129,7 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                     </div>
 
                     {/* Title */}
-                    <h1 className="font-black text-5xl md:text-7xl lg:text-8xl mb-6 max-w-5xl mx-auto bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-esummit-accent tracking-tighter drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] break-words w-full">
+                    <h1 className="font-black text-5xl md:text-7xl lg:text-8xl mb-6 max-w-5xl mx-auto bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-esummit-accent tracking-wider drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] break-words w-full">
                         {event.title}
                     </h1>
 
