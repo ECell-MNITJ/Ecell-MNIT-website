@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
@@ -29,7 +29,6 @@ function LoginForm() {
 
             toast.success('Login successful!');
             router.push(nextUrl);
-            router.refresh();
         } catch (error: any) {
             toast.error(error.message || 'Login failed');
         } finally {
@@ -103,6 +102,30 @@ function LoginForm() {
 }
 
 export default function Login() {
+    const supabase = createClient();
+    const router = useRouter();
+    const [checking, setChecking] = useState(true);
+
+    useEffect(() => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            if (session) {
+                router.push('/profile');
+            } else {
+                setChecking(false);
+            }
+        });
+
+        return () => subscription.unsubscribe();
+    }, [supabase, router]);
+
+    if (checking) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-black">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-golden"></div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen pt-32 pb-12 flex items-center justify-center p-4">
             <Toaster position="top-right" />

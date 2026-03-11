@@ -4,6 +4,8 @@ import { FiLinkedin, FiTwitter, FiMail } from 'react-icons/fi';
 import { Metadata } from 'next';
 import PageLayout3DWrapper from '@/components/3d/PageLayout3DWrapper';
 
+export const revalidate = 0;
+
 export const metadata: Metadata = {
     title: 'About Us | E-Cell MNIT Jaipur',
     description: 'Learn about the Entrepreneurship Cell at MNIT Jaipur, our mission, vision, and the team fostering innovation and startup culture.',
@@ -82,9 +84,13 @@ export default async function About() {
                                 </div>
                             </div>
                             <div className="order-1 md:order-2 flex justify-center">
-                                <div className="relative w-full max-w-md aspect-square bg-gradient-to-br from-primary-green/20 to-primary-golden/20 rounded-full flex items-center justify-center animate-pulse-slow">
+                                <div className="relative w-full max-w-[280px] aspect-square bg-gradient-to-br from-primary-green/20 to-primary-golden/20 rounded-full flex items-center justify-center animate-pulse-slow overflow-hidden">
                                     <div className="absolute inset-0 border-2 border-dashed border-primary-golden/30 rounded-full animate-spin-slow"></div>
-                                    <span className="text-8xl">📖</span>
+                                    <img
+                                        src="/images/ecell_logo_new.png"
+                                        alt="E-Cell Logo"
+                                        className="w-full h-full object-cover relative z-10"
+                                    />
                                 </div>
                             </div>
                         </div>

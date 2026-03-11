@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
@@ -14,6 +14,19 @@ export default function Signup() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const supabase = createClient();
+    const [checking, setChecking] = useState(true);
+
+    useEffect(() => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            if (session) {
+                router.push('/profile');
+            } else {
+                setChecking(false);
+            }
+        });
+
+        return () => subscription.unsubscribe();
+    }, [supabase, router]);
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -52,6 +65,14 @@ export default function Signup() {
             setLoading(false);
         }
     };
+
+    if (checking) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-black">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-golden"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen pt-32 pb-12 flex items-center justify-center p-4">

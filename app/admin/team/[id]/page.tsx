@@ -6,7 +6,8 @@ import { createClient, type Database } from '@/lib/supabase/client';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { uploadImage, deleteImage } from '@/lib/supabase/storage';
 import toast from 'react-hot-toast';
-import { FiUpload, FiX } from 'react-icons/fi';
+import { FiUpload, FiX, FiCrop } from 'react-icons/fi';
+import ImageCropper from '@/components/admin/ImageCropper';
 
 export default function EditTeamMember() {
     const router = useRouter();
@@ -18,6 +19,8 @@ export default function EditTeamMember() {
     const [isCustomPosition, setIsCustomPosition] = useState(false);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [rawImage, setRawImage] = useState<string | null>(null);
+    const [showCropper, setShowCropper] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         role: '',
@@ -79,9 +82,26 @@ export default function EditTeamMember() {
                 toast.error('Image must be less than 5MB');
                 return;
             }
-            setImageFile(file);
-            setImagePreview(URL.createObjectURL(file));
+            const reader = new FileReader();
+            reader.onload = () => {
+                setRawImage(reader.result as string);
+                setShowCropper(true);
+            };
+            reader.readAsDataURL(file);
         }
+    };
+
+    const handleCropComplete = (blob: Blob) => {
+        const file = new File([blob], 'profile.jpg', { type: 'image/jpeg' });
+        setImageFile(file);
+        setImagePreview(URL.createObjectURL(blob));
+        setShowCropper(false);
+        setRawImage(null);
+    };
+
+    const handleCropCancel = () => {
+        setShowCropper(false);
+        setRawImage(null);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -156,17 +176,35 @@ export default function EditTeamMember() {
                                         src={imagePreview}
                                         alt="Preview"
                                         className="w-32 h-32 rounded-full object-cover"
+                                        crossOrigin="anonymous"
                                     />
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setImageFile(null);
-                                            setImagePreview(null);
-                                        }}
-                                        className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
-                                    >
-                                        <FiX className="w-4 h-4" />
-                                    </button>
+                                    <div className="absolute -top-2 -right-2 flex gap-1">
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                if (imagePreview) {
+                                                    // If it's a blob URL, we need to fetch it or just use it
+                                                    // For now, let's just set it as rawImage
+                                                    setRawImage(imagePreview);
+                                                    setShowCropper(true);
+                                                }
+                                            }}
+                                            className="bg-primary-golden text-white p-1 rounded-full hover:bg-yellow-600 shadow-sm"
+                                            title="Recrop"
+                                        >
+                                            <FiCrop className="w-4 h-4" />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setImageFile(null);
+                                                setImagePreview(null);
+                                            }}
+                                            className="bg-red-500 text-white p-1 rounded-full hover:bg-red-600 shadow-sm"
+                                        >
+                                            <FiX className="w-4 h-4" />
+                                        </button>
+                                    </div>
                                 </div>
                             ) : (
                                 <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center">
@@ -180,10 +218,22 @@ export default function EditTeamMember() {
                                     accept="image/*"
                                     onChange={handleImageChange}
                                     className="hidden"
+                                    onClick={(e) => {
+                                        (e.target as HTMLInputElement).value = '';
+                                    }}
                                 />
                             </label>
                         </div>
                     </div>
+
+                    {showCropper && rawImage && (
+                        <ImageCropper
+                            src={rawImage}
+                            aspectRatio={1}
+                            onCropComplete={handleCropComplete}
+                            onCancel={handleCropCancel}
+                        />
+                    )}
 
                     {/* Form fields - same structure as new page */}
                     <div>
