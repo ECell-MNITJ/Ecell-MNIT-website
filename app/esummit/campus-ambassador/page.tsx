@@ -190,7 +190,7 @@ export default function CampusAmbassadorPage() {
                             <div>
                                 <h3 className="text-3xl font-black mb-4 text-purple-400 uppercase tracking-widest">WHAT IS E-CELL ?</h3>
                                 <p className="text-gray-400 text-lg leading-relaxed font-sans">
-                                    The Entrepreneurship Cell of MNIT Jaipur is one of the largest student-run, non-profit organizations dedicated to fostering entrepreneurship. With a legacy spanning years of innovation, it has positively impacted thousands of students across India and beyond.
+                                    The Entrepreneurship Cell of MNIT Jaipur is a student-run, non-profit organizations dedicated to fostering entrepreneurship. With a legacy spanning years of innovation, it has positively impacted numerous students.
                                 </p>
                             </div>
                             <div>

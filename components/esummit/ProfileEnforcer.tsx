@@ -24,7 +24,7 @@ export default function ProfileEnforcer({ user }: { user: any }) {
             try {
                 const { data: profile, error } = await supabase
                     .from('profiles')
-                    .select('full_name, phone, age, gender, qr_code_url')
+                    .select('full_name, phone, age, gender, qr_code_url, user_type, college_id_url, govt_id_url')
                     .eq('id', user.id)
                     .single();
 
@@ -41,8 +41,10 @@ export default function ProfileEnforcer({ user }: { user: any }) {
 
                 if (!profile) return;
 
-                const isIncomplete = !profile.full_name || !profile.phone || !profile.age || !profile.gender || !profile.qr_code_url;
-                if (isIncomplete) {
+                const hasBasicDetails = profile.full_name && profile.phone && profile.age && profile.gender && profile.qr_code_url;
+                const hasUserTypeDetails = profile.user_type && (profile.college_id_url || profile.govt_id_url);
+                
+                if (!hasBasicDetails || !hasUserTypeDetails) {
                     setIsModalOpen(true);
                 }
             } catch (error) {

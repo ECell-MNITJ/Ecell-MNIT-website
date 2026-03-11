@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ConditionalLayout from "@/components/ConditionalLayout";
+import { Toaster } from 'react-hot-toast';
 
 const poppins = Poppins({
     weight: ['300', '400', '500', '600', '700', '800'],
@@ -70,6 +71,7 @@ export default async function RootLayout({
                 <StructuredData data={ecellNavigation} />
                 <SiteSettingsProvider initialSettings={settings}>
                     <ConditionalLayout>
+                        <Toaster position="top-right" />
                         {children}
                     </ConditionalLayout>
                 </SiteSettingsProvider>

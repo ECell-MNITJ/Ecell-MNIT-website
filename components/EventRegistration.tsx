@@ -70,16 +70,17 @@ export default function EventRegistration({ event, user, hasValidPass }: EventRe
 
         const { data: profile } = await supabase
             .from('profiles')
-            .select('phone, age, qr_code_url')
+            .select('phone, age, qr_code_url, user_type, college_id_url, govt_id_url')
             .eq('id', user.id)
             .single();
 
-        // Check if phone AND age are present (full_name is assumed from auth/initial creation)
-        // Also check if QR code is generated
-        if (!profile || !profile.phone || !profile.age || !profile.qr_code_url) {
-            return false;
-        }
-        return true;
+        if (!profile) return false;
+
+        // Check for basic details and user type details
+        const hasBasicDetails = profile.phone && profile.age && profile.qr_code_url;
+        const hasUserTypeDetails = profile.user_type && (profile.college_id_url || profile.govt_id_url);
+
+        return !!(hasBasicDetails && hasUserTypeDetails);
     }
 
     async function executeWithProfileCheck(action: () => void) {
@@ -249,7 +250,7 @@ export default function EventRegistration({ event, user, hasValidPass }: EventRe
     if (event.registration_link) {
         return (
             <div className="bg-esummit-card/30 p-6 rounded-2xl border border-white/10 backdrop-blur-md text-center">
-                <p className="text-gray-400 mb-6 font-medium text-sm">
+                <p className="text-gray-300 mb-6 font-medium text-sm">
                     This event requires registration on an external platform.
                 </p>
                 <a
@@ -266,11 +267,11 @@ export default function EventRegistration({ event, user, hasValidPass }: EventRe
 
     if (!user) {
         return (
-            <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 text-center">
-                <p className="text-gray-600 mb-4">Please login to register for this event.</p>
+            <div className="bg-esummit-card/30 p-6 rounded-2xl border border-white/10 backdrop-blur-md text-center">
+                <p className="text-gray-300 mb-4 text-sm">Please login to register for this event.</p>
                 <button
                     onClick={() => router.push(`/login?next=/events/${event.id}`)}
-                    className="bg-primary-golden text-white px-6 py-2 rounded-lg font-medium hover:bg-white hover:text-primary-golden transition-all"
+                    className="bg-esummit-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-esummit-accent transition-all text-sm"
                 >
                     Login to Register
                 </button>
@@ -298,14 +299,14 @@ export default function EventRegistration({ event, user, hasValidPass }: EventRe
 
     if (registration) {
         return (
-            <div className="bg-primary-green/5 p-6 rounded-xl border border-primary-green/20">
-                <div className="flex items-center gap-3 mb-4 text-green-700">
-                    <div className="p-2 bg-green-100 rounded-full">
+            <div className="bg-green-500/10 p-4 md:p-6 rounded-xl border border-green-500/20">
+                <div className="flex items-center gap-3 mb-4 text-green-400">
+                    <div className="p-2 bg-green-500/20 rounded-full">
                         <FiCheck className="w-5 h-5" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-lg">You are registered!</h3>
-                        <p className="text-sm opacity-80">
+                        <h3 className="font-bold text-base md:text-lg text-white">You are registered!</h3>
+                        <p className="text-xs md:text-sm text-gray-400">
                             {event.is_team_event && team
                                 ? `Team: ${team.name} (${registration.role})`
                                 : 'Individual Registration'}
@@ -314,17 +315,17 @@ export default function EventRegistration({ event, user, hasValidPass }: EventRe
                 </div>
 
                 {event.is_team_event && team && (
-                    <div className="bg-white p-4 rounded-lg border border-gray-200 mt-4">
-                        <p className="text-xs text-gray-500 uppercase font-bold mb-2">Team Join Code</p>
+                    <div className="bg-black/20 p-4 rounded-lg border border-white/10 mt-4">
+                        <p className="text-[10px] text-gray-500 uppercase font-bold mb-2">Team Join Code</p>
                         <div className="flex items-center gap-2">
-                            <code className="bg-gray-100 px-3 py-2 rounded text-lg font-mono font-bold tracking-wider">
+                            <code className="bg-esummit-bg px-3 py-2 rounded text-base md:text-lg font-mono font-bold tracking-wider text-white">
                                 {team.join_code}
                             </code>
-                            <button onClick={copyCode} className="p-2 hover:bg-gray-100 rounded text-gray-500 hover:text-primary-golden">
+                            <button onClick={copyCode} className="p-2 hover:bg-white/5 rounded text-gray-400 hover:text-esummit-primary">
                                 <FiCopy />
                             </button>
                         </div>
-                        <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                        <p className="text-[10px] text-gray-500 mt-2 flex items-center gap-1">
                             <FiInfo className="inline" /> Share this code with your teammates to let them join.
                         </p>
                     </div>
@@ -353,68 +354,68 @@ export default function EventRegistration({ event, user, hasValidPass }: EventRe
             />
 
             {!event.is_team_event ? (
-                <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                    <h3 className="text-xl font-heading text-primary-green mb-2">Register for Event</h3>
-                    <p className="text-gray-600 mb-6">
+                <div className="bg-esummit-card/30 p-4 md:p-6 rounded-xl border border-white/10 backdrop-blur-md">
+                    <h3 className="text-lg md:text-xl font-bold text-white mb-2">Register for Event</h3>
+                    <p className="text-gray-400 mb-6 text-sm">
                         Click the button below to confirm your registration.
                     </p>
                     <button
                         onClick={() => executeWithProfileCheck(handleDetailedRegistration)}
                         disabled={loading}
-                        className="w-full bg-primary-golden text-white py-3 rounded-lg font-bold hover:bg-yellow-600 transition-colors disabled:opacity-50"
+                        className="w-full bg-esummit-primary text-white py-3 rounded-lg font-bold hover:bg-esummit-accent transition-colors disabled:opacity-50 text-sm md:text-base"
                     >
                         {loading ? 'Registering...' : 'Register Now'}
                     </button>
                 </div>
             ) : (
-                <div className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
-                    <div className="flex border-b border-gray-200">
+                <div className="bg-esummit-card/30 rounded-xl border border-white/10 backdrop-blur-md overflow-hidden">
+                    <div className="flex border-b border-white/10">
                         <button
                             onClick={() => setActiveTab('create')}
-                            className={`flex-1 py-3 md:py-4 text-center text-sm md:text-base font-medium transition-colors ${activeTab === 'create'
-                                ? 'bg-white text-primary-golden border-b-2 border-primary-golden'
-                                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                            className={`flex-1 py-3 md:py-4 text-center text-xs md:text-sm font-medium transition-colors ${activeTab === 'create'
+                                ? 'bg-white/5 text-esummit-primary border-b-2 border-esummit-primary'
+                                : 'text-gray-400 hover:text-white hover:bg-white/5'
                                 }`}
                         >
-                            <span className="flex items-center justify-center gap-1 md:gap-2">
+                            <span className="flex items-center justify-center gap-1">
                                 <FiUserPlus /> Create Team
                             </span>
                         </button>
                         <button
                             onClick={() => setActiveTab('join')}
-                            className={`flex-1 py-3 md:py-4 text-center text-sm md:text-base font-medium transition-colors ${activeTab === 'join'
-                                ? 'bg-white text-primary-golden border-b-2 border-primary-golden'
-                                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                            className={`flex-1 py-3 md:py-4 text-center text-xs md:text-sm font-medium transition-colors ${activeTab === 'join'
+                                ? 'bg-white/5 text-esummit-primary border-b-2 border-esummit-primary'
+                                : 'text-gray-400 hover:text-white hover:bg-white/5'
                                 }`}
                         >
-                            <span className="flex items-center justify-center gap-1 md:gap-2">
+                            <span className="flex items-center justify-center gap-1">
                                 <FiLogIn /> Join Team
                             </span>
                         </button>
                     </div>
 
-                    <div className="p-6">
+                    <div className="p-4 md:p-6">
                         {activeTab === 'create' ? (
                             <form onSubmit={(e) => { e.preventDefault(); executeWithProfileCheck(() => handleCreateTeam(e)); }}>
                                 <div className="mb-4">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Team Name</label>
+                                    <label className="block text-xs font-medium text-gray-400 mb-1">Team Name</label>
                                     <input
                                         type="text"
                                         value={teamName}
                                         onChange={(e) => setTeamName(e.target.value)}
                                         placeholder="Enter a cool team name"
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none"
+                                        className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-lg focus:ring-2 focus:ring-esummit-primary focus:border-transparent outline-none text-white text-sm"
                                         required
                                     />
                                 </div>
-                                <div className="bg-blue-50 text-blue-700 text-sm p-3 rounded-lg mb-4 flex gap-2">
+                                <div className="bg-esummit-primary/10 text-esummit-accent text-[10px] md:text-xs p-3 rounded-lg mb-4 flex gap-2">
                                     <FiInfo className="shrink-0 mt-0.5" />
                                     <p>You will be the team leader. A unique join code will be generated for you to share with teammates.</p>
                                 </div>
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full bg-primary-golden text-white py-3 rounded-lg font-bold hover:bg-yellow-600 transition-colors disabled:opacity-50"
+                                    className="w-full bg-esummit-primary text-white py-3 rounded-lg font-bold hover:bg-esummit-accent transition-colors disabled:opacity-50 text-sm"
                                 >
                                     {loading ? 'Creating Team...' : 'Create & Register'}
                                 </button>
@@ -422,25 +423,25 @@ export default function EventRegistration({ event, user, hasValidPass }: EventRe
                         ) : (
                             <form onSubmit={(e) => { e.preventDefault(); executeWithProfileCheck(() => handleJoinTeam(e)); }}>
                                 <div className="mb-4">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Join Code</label>
+                                    <label className="block text-xs font-medium text-gray-400 mb-1">Join Code</label>
                                     <input
                                         type="text"
                                         value={joinCode}
                                         onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                                         placeholder="Enter 6-digit code"
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none uppercase tracking-widest"
+                                        className="w-full px-4 py-2 bg-black/20 border border-white/10 rounded-lg focus:ring-2 focus:ring-esummit-primary focus:border-transparent outline-none uppercase tracking-widest text-white text-sm"
                                         required
                                         maxLength={6}
                                     />
                                 </div>
-                                <div className="bg-blue-50 text-blue-700 text-sm p-3 rounded-lg mb-4 flex gap-2">
+                                <div className="bg-esummit-primary/10 text-esummit-accent text-[10px] md:text-xs p-3 rounded-lg mb-4 flex gap-2">
                                     <FiInfo className="shrink-0 mt-0.5" />
                                     <p>Ask your team leader for the join code. Ensure the team isn't full before joining.</p>
                                 </div>
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full bg-primary-green text-white py-3 rounded-lg font-bold hover:bg-green-700 transition-colors disabled:opacity-50"
+                                    className="w-full bg-white/10 text-white py-3 rounded-lg font-bold hover:bg-white/20 transition-colors disabled:opacity-50 text-sm"
                                 >
                                     {loading ? 'Joining...' : 'Join Team'}
                                 </button>

@@ -15,11 +15,45 @@ export default async function ReferralsAdminPage() {
         `)
         .order('created_at', { ascending: false });
 
+    // 1. Get referral codes from profiles for checked-in users
+    const { data: profileReferrals } = await supabase
+        .from('profiles')
+        .select('id, applied_referral_code')
+        .eq('esummit_checked_in', true)
+        .not('applied_referral_code', 'is', null);
+
+    // 2. Get referral codes from successful passes for checked-in users
+    const { data: passReferrals } = await supabase
+        .from('user_passes')
+        .select('user_id, applied_referral_code, profiles!inner(esummit_checked_in)')
+        .eq('payment_status', 'success')
+        .eq('profiles.esummit_checked_in', true)
+        .not('applied_referral_code', 'is', null);
+
+    // 3. Create a map of unique users to their "final" referral code (Hierarchy: Pass > Profile)
+    const userReferralMap = new Map<string, string>();
+
+    // First, set from profiles
+    (profileReferrals || []).forEach((p: any) => {
+        userReferralMap.set(p.id, p.applied_referral_code.toUpperCase());
+    });
+
+    // Then, override with pass referrals (prioritizing purchase source)
+    (passReferrals || []).forEach((pr: any) => {
+        userReferralMap.set(pr.user_id, pr.applied_referral_code.toUpperCase());
+    });
+
+    // 4. Count unique users per CA code
+    const countsMap: Record<string, number> = {};
+    userReferralMap.forEach((code) => {
+        countsMap[code] = (countsMap[code] || 0) + 1;
+    });
+
     // Transform count data for the component
     const mappedReferrals = (referrals || []).map((r: any) => ({
         ...r,
         is_active: !!r.is_active, // Ensure it's a boolean
-        referral_count: r.user_passes?.filter((p: any) => p.payment_status === 'success').length || 0
+        referral_count: countsMap[r.referral_code.toUpperCase()] || 0
     }));
 
     if (error) {

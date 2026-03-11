@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { FiEdit2, FiSave, FiCamera, FiGlobe, FiPhone, FiUser, FiX, FiTrash2, FiAward, FiColumns, FiPower } from 'react-icons/fi';
+import { FiEdit2, FiSave, FiCamera, FiGlobe, FiPhone, FiUser, FiX, FiTrash2, FiAward, FiColumns, FiPower, FiUserPlus } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 import QRCodeCard from './QRCodeCard';
@@ -15,6 +15,7 @@ export default function ESummitUserProfile({ user }: { user: any }) {
     const [editing, setEditing] = useState(false);
     const [profile, setProfile] = useState<any>(null);
     const [caData, setCaData] = useState<any>(null);
+    const [referrerData, setReferrerData] = useState<{ name: string, code: string } | null>(null);
     const [registrations, setRegistrations] = useState<any[]>([]);
 
     // Form state
@@ -53,19 +54,37 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                 console.error('Error fetching profile:', error);
             }
 
-            // Also fetch CA status and referral counts
+            // Also fetch CA status and robust referral counts (matching admin logic)
             const { data: caData, error: caError } = await supabase
                 .from('campus_ambassadors')
-                .select(`
-                    *,
-                    user_passes(payment_status)
-                `)
+                .select('*')
                 .eq('profile_id', user.id)
                 .single();
 
             if (!caError && caData) {
-                const referralCount = caData.user_passes?.filter((p: any) => p.payment_status === 'success').length || 0;
-                setCaData({ ...caData, referral_count: referralCount });
+                const myCode = caData.referral_code.toUpperCase();
+                
+                // 1. Get unique user IDs who used this code during registration and checked in
+                const { data: profileReferrals } = await supabase
+                    .from('profiles')
+                    .select('id')
+                    .eq('applied_referral_code', myCode)
+                    .eq('esummit_checked_in', true);
+
+                // 2. Get unique user IDs who used it for pass purchase and checked in
+                const { data: passReferrals } = await supabase
+                    .from('user_passes')
+                    .select('user_id, profiles!inner(esummit_checked_in)')
+                    .eq('applied_referral_code', myCode)
+                    .eq('payment_status', 'success')
+                    .eq('profiles.esummit_checked_in', true);
+
+                // 3. Count unique users (One user = One referral max)
+                const uniqueReferrals = new Set();
+                (profileReferrals || []).forEach(p => uniqueReferrals.add(p.id));
+                (passReferrals || []).forEach(p => uniqueReferrals.add(p.user_id));
+
+                setCaData({ ...caData, referral_count: uniqueReferrals.size });
             }
 
             if (data) {
@@ -79,6 +98,29 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                     age: data.age ? String(data.age) : '',
                     avatar_url: data.avatar_url || '',
                 });
+
+                // Fetch Referrer details if applied_referral_code exists
+                const profileData = data as any;
+                if (profileData.applied_referral_code) {
+                    console.log('Fetching referrer for code:', profileData.applied_referral_code);
+                    const { data: referrer, error: refError } = await supabase
+                        .from('campus_ambassadors')
+                        .select(`
+                            referral_code,
+                            profiles (
+                                full_name
+                            )
+                        `)
+                        .eq('referral_code', profileData.applied_referral_code)
+                        .maybeSingle();
+
+                    if (!refError && referrer) {
+                        setReferrerData({
+                            name: (referrer.profiles as any)?.full_name || 'Campus Ambassador',
+                            code: referrer.referral_code
+                        });
+                    }
+                }
             } else {
                 // Initialize with auth metadata if available
                 const metaName = user.user_metadata?.name || user.user_metadata?.full_name || '';
@@ -211,6 +253,32 @@ export default function ESummitUserProfile({ user }: { user: any }) {
         }
     }
 
+    async function deleteAvatar() {
+        try {
+            if (!confirm('Are you sure you want to delete your profile photo?')) return;
+            
+            setUploading(true);
+            const updates = {
+                id: user.id,
+                avatar_url: null,
+                updated_at: new Date().toISOString(),
+            };
+
+            const { error } = await supabase.from('profiles').upsert(updates);
+            if (error) throw error;
+
+            // Update local state
+            setFormData({ ...formData, avatar_url: '' });
+            setProfile((prev: any) => ({ ...prev, avatar_url: null }));
+            toast.success('Profile photo removed!');
+        } catch (error) {
+            console.error('Error deleting avatar:', error);
+            toast.success('Error removing photo!');
+        } finally {
+            setUploading(false);
+        }
+    }
+
     const router = useRouter(); // Need to import useRouter
 
     const handleLogout = async () => {
@@ -289,6 +357,16 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                         </div>
 
                         <div className="absolute bottom-0 right-0 flex gap-2">
+                            {formData.avatar_url && (
+                                <button
+                                    onClick={deleteAvatar}
+                                    disabled={uploading}
+                                    className="p-2.5 bg-red-500 text-white rounded-full shadow-lg cursor-pointer hover:bg-white hover:text-red-500 transition-all duration-300 hover:scale-110"
+                                    title="Delete Photo"
+                                >
+                                    <FiTrash2 className="w-5 h-5" />
+                                </button>
+                            )}
                             <label className="p-2.5 bg-esummit-primary text-white rounded-full shadow-lg cursor-pointer hover:bg-white hover:text-esummit-primary transition-all duration-300 hover:scale-110" title="Change Avatar">
                                 {uploading ? (
                                     <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
@@ -452,6 +530,11 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                                     {profile?.age && (
                                         <span className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-lg">
                                             <FiUser className="text-esummit-accent" /> {profile.age} Years
+                                        </span>
+                                    )}
+                                    {referrerData && (
+                                        <span className="flex items-center gap-2 bg-esummit-primary/10 border border-esummit-primary/20 px-4 py-2 rounded-lg text-esummit-accent" title="Referral Source">
+                                            <FiUserPlus className="text-esummit-accent" /> Referred by: {referrerData.name} ({referrerData.code})
                                         </span>
                                     )}
                                 </div>

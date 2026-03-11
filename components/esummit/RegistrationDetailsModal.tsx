@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { FiUser, FiSmartphone, FiCalendar, FiSave, FiX, FiInfo } from 'react-icons/fi';
+import { FiUser, FiSmartphone, FiCalendar, FiSave, FiX, FiInfo, FiBriefcase, FiBookOpen, FiUpload, FiFileText, FiUserPlus } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 interface RegistrationDetailsModalProps {
@@ -32,16 +32,38 @@ export default function RegistrationDetailsModal({ isOpen, onClose, onComplete, 
         last_name: initialNames.last,
         phone: user?.phone || '',
         age: '',
-        gender: ''
+        gender: '',
+        user_type: '',
+        college_name: '',
+        company_name: '',
+        referral_code: ''
     });
+
+    const [idFile, setIdFile] = useState<File | null>(null);
+    const [uploading, setUploading] = useState(false);
 
     if (!isOpen) return null;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!formData.first_name || !formData.last_name || !formData.phone || !formData.age || !formData.gender) {
-            toast.error('Please fill in all details');
+        if (!formData.first_name || !formData.last_name || !formData.phone || !formData.age || !formData.gender || !formData.user_type) {
+            toast.error('Please fill in all required details');
+            return;
+        }
+
+        if (formData.user_type === 'Student' && !formData.college_name) {
+            toast.error('Please enter your college name');
+            return;
+        }
+
+        if (formData.user_type === 'Founder' && !formData.company_name) {
+            toast.error('Please enter your company name');
+            return;
+        }
+
+        if (!idFile) {
+            toast.error('Please upload the required ID document');
             return;
         }
 
@@ -51,34 +73,129 @@ export default function RegistrationDetailsModal({ isOpen, onClose, onComplete, 
         }
 
         setLoading(true);
+        console.log('Starting profile update for user:', user?.id);
+        console.log('Form data:', formData);
+
+        let updatePayload: any = {};
+
         try {
-            // 1. Generate QR Code URL
+            if (!user?.id) {
+                throw new Error('User session not found. Please log in again.');
+            }
+
+            // Move referral validation to the top for immediate feedback
+            if (formData.referral_code.trim()) {
+                const searchCode = formData.referral_code.trim().toUpperCase();
+                console.log('Step 1: Validating referral code:', searchCode);
+                
+                const { data: ca, error: caError } = await supabase
+                    .from('campus_ambassadors')
+                    .select('referral_code')
+                    .eq('referral_code', searchCode)
+                    .maybeSingle(); // maybeSingle is better for "might not exist"
+                
+                if (caError) {
+                    console.error('CRITICAL: Referral validation query FAILED');
+                    console.error('Error details:', caError);
+                    toast.error(`Database Error: ${caError.message || 'Could not validate referral code'}`);
+                    setLoading(false);
+                    return;
+                }
+
+                if (ca) {
+                    console.log('Referral code matched:', ca.referral_code);
+                    updatePayload.applied_referral_code = ca.referral_code;
+                } else {
+                    console.warn('Referral code NOT FOUND:', searchCode);
+                    toast.error('Invalid Referral ID. Please enter a valid one or leave it blank.');
+                    setLoading(false);
+                    return; // Block submission
+                }
+            } else {
+                console.log('Step 1: No referral code entered');
+            }
+
+            // 2. Upload ID Image to Storage
+            console.log('Step 2: Checking ID file upload');
+            let idUrl = '';
+            if (idFile) {
+                const fileExt = idFile.name.split('.').pop();
+                const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+                console.log('Uploading ID to storage:', fileName);
+                
+                const { error: uploadError } = await supabase.storage
+                    .from('user-documents')
+                    .upload(fileName, idFile);
+
+                if (uploadError) {
+                    console.error('Storage upload error details:', uploadError);
+                    throw new Error(`ID Upload failed: ${uploadError.message}. Make sure you ran the SQL fix script!`);
+                }
+
+                const { data: { publicUrl } } = supabase.storage
+                    .from('user-documents')
+                    .getPublicUrl(fileName);
+                
+                idUrl = publicUrl;
+                console.log('ID uploaded successfully:', idUrl);
+            }
+
+            // 3. Generate QR Code URL
+            console.log('Step 3: Generating QR payload');
             const qrData = user.id;
             const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${qrData}`;
 
-            // 2. Combine Name
+            // 4. Combine Name
             const fullName = `${formData.first_name.trim()} ${formData.last_name.trim()}`;
 
-            // 3. Update Profile
-            const { error } = await supabase
+            // 5. Build Update Payload
+            updatePayload = {
+                ...updatePayload,
+                full_name: fullName,
+                phone: formData.phone,
+                age: parseInt(formData.age),
+                gender: formData.gender,
+                user_type: formData.user_type,
+                qr_code_url: qrCodeUrl,
+                updated_at: new Date().toISOString()
+            };
+
+            if (formData.user_type === 'Student') {
+                updatePayload.college_name = formData.college_name;
+                updatePayload.college_id_url = idUrl;
+            } else if (formData.user_type === 'Founder') {
+                updatePayload.company_name = formData.company_name;
+                updatePayload.govt_id_url = idUrl;
+            } else {
+                updatePayload.govt_id_url = idUrl;
+            }
+
+            console.log('Step 4: Updating profile in DB with payload:', updatePayload);
+            const { error: profileError } = await supabase
                 .from('profiles')
-                .update({
-                    full_name: fullName,
-                    phone: formData.phone,
-                    age: parseInt(formData.age),
-                    gender: formData.gender,
-                    qr_code_url: qrCodeUrl,
-                    updated_at: new Date().toISOString()
-                })
+                .update(updatePayload)
                 .eq('id', user.id);
 
-            if (error) throw error;
+            if (profileError) {
+                console.error('Supabase update error details:', profileError);
+                throw profileError;
+            }
 
+            console.log('Profile update confirmed by DB!');
             toast.success('Profile updated & QR Code generated!');
             onComplete();
         } catch (error: any) {
-            console.error('Error updating profile:', error);
-            toast.error(error.message || 'Failed to update profile');
+            // Enhanced logging that won't show as empty object in most overlays
+            const errorMsg = error.message || error.error_description || 'Unknown error occurred';
+            const errorCode = error.code || 'NO_CODE';
+            
+            console.error('CRITICAL: Profile Save Failed');
+            console.error('Message:', errorMsg);
+            console.error('Code:', errorCode);
+            console.error('Full details:', JSON.parse(JSON.stringify(error))); // Try to force enumeration
+            console.error('Original Error Object:', error);
+
+            toast.error(`Save Failed: ${errorMsg} (${errorCode})`);
         } finally {
             setLoading(false);
         }
@@ -175,26 +292,146 @@ export default function RegistrationDetailsModal({ isOpen, onClose, onComplete, 
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1.5 ml-1">Gender</label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                                    <FiUser />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-1.5 ml-1">Gender</label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                        <FiUser />
+                                    </div>
+                                    <select
+                                        required
+                                        value={formData.gender}
+                                        onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                                        className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none transition-all placeholder:text-gray-600 appearance-none"
+                                    >
+                                        <option value="" disabled>Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                        <option value="Prefer not to say">Prefer not to say</option>
+                                    </select>
                                 </div>
-                                <select
-                                    required
-                                    value={formData.gender}
-                                    onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                                    className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none transition-all placeholder:text-gray-600 appearance-none"
-                                >
-                                    <option value="" disabled>Select Gender</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Other">Other</option>
-                                    <option value="Prefer not to say">Prefer not to say</option>
-                                </select>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-1.5 ml-1">User Type</label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                        <FiBriefcase />
+                                    </div>
+                                    <select
+                                        required
+                                        value={formData.user_type}
+                                        onChange={(e) => setFormData({ ...formData, user_type: e.target.value })}
+                                        className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none transition-all placeholder:text-gray-600 appearance-none"
+                                    >
+                                        <option value="" disabled>Select Type</option>
+                                        <option value="Student">Student</option>
+                                        <option value="Founder">Founder</option>
+                                        <option value="Investor">Investor</option>
+                                        <option value="Visitor">Visitor</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
+
+                        {formData.user_type === 'Student' && (
+                            <div className="animate-in slide-in-from-top-2 duration-300">
+                                <label className="block text-sm font-medium text-gray-400 mb-1.5 ml-1">College Name</label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                        <FiBookOpen />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.college_name}
+                                        onChange={(e) => setFormData({ ...formData, college_name: e.target.value })}
+                                        className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none transition-all placeholder:text-gray-600"
+                                        placeholder="MNIT Jaipur"
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                        {formData.user_type === 'Founder' && (
+                            <div className="animate-in slide-in-from-top-2 duration-300">
+                                <label className="block text-sm font-medium text-gray-400 mb-1.5 ml-1">Company Name</label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                        <FiBriefcase />
+                                    </div>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.company_name}
+                                        onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
+                                        className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none transition-all placeholder:text-gray-600"
+                                        placeholder="Startup Inc."
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="border-t border-gray-800 pt-4 mt-2">
+                            <label className="text-sm font-medium text-gray-400 mb-1.5 ml-1 flex items-center gap-2">
+                                Referral Code <span className="text-[10px] text-gray-600 font-bold uppercase">(Optional)</span>
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                    <FiUserPlus className="w-4 h-4" />
+                                </div>
+                                <input
+                                    type="text"
+                                    value={formData.referral_code}
+                                    onChange={(e) => setFormData({ ...formData, referral_code: e.target.value.toUpperCase() })}
+                                    className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none transition-all placeholder:text-gray-600 font-mono tracking-widest uppercase"
+                                    placeholder="CA-1234"
+                                />
+                            </div>
+                            <p className="text-[10px] text-gray-500 mt-2 ml-1">
+                                If you were referred by a Campus Ambassador, enter their code here.
+                            </p>
+                        </div>
+
+                        {(formData.user_type) && (
+                            <div className="animate-in slide-in-from-top-2 duration-300">
+                                <label className="block text-sm font-medium text-gray-400 mb-1.5 ml-1">
+                                    {formData.user_type === 'Student' ? 'Upload College ID' : 'Upload Govt ID'}
+                                </label>
+                                <div 
+                                    className={`relative border-2 border-dashed rounded-xl p-4 transition-all flex flex-col items-center justify-center gap-2 cursor-pointer ${
+                                        idFile ? 'border-green-500/50 bg-green-500/5' : 'border-gray-700 hover:border-primary-golden/50 bg-gray-800/50'
+                                    }`}
+                                    onClick={() => document.getElementById('id-upload')?.click()}
+                                >
+                                    <input
+                                        id="id-upload"
+                                        type="file"
+                                        accept="image/*,.pdf"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) setIdFile(file);
+                                        }}
+                                    />
+                                    {idFile ? (
+                                        <>
+                                            <FiFileText className="w-8 h-8 text-green-500" />
+                                            <span className="text-gray-300 text-sm font-medium">{idFile.name} ({(idFile.size / (1024 * 1024)).toFixed(2)} MB)</span>
+                                            <span className="text-gray-500 text-xs text-center">Click to change file</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <FiUpload className="w-8 h-8 text-gray-500" />
+                                            <span className="text-gray-400 text-sm font-medium">Click to upload document</span>
+                                            <span className="text-gray-600 text-xs text-center">Max size 2MB. Supports Images & PDF.</span>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        )}
 
                         <div className="pt-4">
                             <button

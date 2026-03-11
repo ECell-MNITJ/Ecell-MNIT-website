@@ -106,14 +106,14 @@ export default function EsNavbar() {
                 className="w-full bg-esummit-card/90 md:bg-esummit-card/80 backdrop-blur-xl shadow-[0_0_30px_rgba(0,0,0,0.5)] border border-esummit-primary/20 py-3 pl-0 pr-4 md:pr-10"
             >
                 <div className="flex items-center justify-between">
-                    <Link href="/" className="group" suppressHydrationWarning>
-                        <div className="relative h-6 md:h-8 w-28 md:w-32 flex items-center justify-center overflow-hidden transform group-hover:scale-110 transition-transform duration-300">
+                    <Link href="/" className="group flex items-center" suppressHydrationWarning>
+                        <div className="relative h-6 md:h-8 w-24 md:w-32 flex items-center justify-center overflow-hidden transform group-hover:scale-105 transition-transform duration-300">
                             <Image
                                 src="/images/esummit-logo.png"
                                 alt="E-Summit Logo"
                                 fill
-                                sizes="(max-width: 768px) 128px, 144px"
-                                className="object-contain object-center scale-[1.22]"
+                                sizes="(max-width: 768px) 96px, 128px"
+                                className="object-contain object-center scale-[1.3]"
                                 priority
                             />
                         </div>
@@ -179,22 +179,22 @@ export default function EsNavbar() {
 
                     {/* Mobile Menu Button */}
                     <button
-                        className="md:hidden flex flex-col justify-center items-center w-10 h-10 z-50 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                        className="md:hidden flex flex-col justify-center items-center w-10 h-10 z-50 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 transition-colors"
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
                         aria-label="Toggle menu"
                     >
-                        <div className="relative w-6 h-5">
+                        <div className="relative w-6 h-5 flex flex-col justify-between">
                             <motion.span
-                                animate={isMenuOpen ? { rotate: 45, y: 10 } : { rotate: 0, y: 0 }}
-                                className="absolute left-0 w-6 h-0.5 bg-white origin-center"
+                                animate={isMenuOpen ? { rotate: 45, y: 9, width: '100%' } : { rotate: 0, y: 0, width: '100%' }}
+                                className="w-full h-0.5 bg-white origin-center"
                             />
                             <motion.span
-                                animate={isMenuOpen ? { opacity: 0 } : { opacity: 1 }}
-                                className="absolute left-0 top-[10px] w-6 h-0.5 bg-white"
+                                animate={isMenuOpen ? { opacity: 0, x: -10 } : { opacity: 1, x: 0 }}
+                                className="w-full h-0.5 bg-white"
                             />
                             <motion.span
-                                animate={isMenuOpen ? { rotate: -45, y: -10 } : { rotate: 0, y: 20 }}
-                                className="absolute left-0 w-6 h-0.5 bg-white origin-center"
+                                animate={isMenuOpen ? { rotate: -45, y: -9, width: '100%' } : { rotate: 0, y: 0, width: '100%' }}
+                                className="w-full h-0.5 bg-white origin-center"
                             />
                         </div>
                     </button>
@@ -210,14 +210,14 @@ export default function EsNavbar() {
                             transition={{ duration: 0.5, ease: "circOut" }}
                             className="md:hidden overflow-y-auto max-h-[85vh] mt-4"
                         >
-                            <ul className="flex flex-col gap-4 pt-6 pb-4">
+                            <ul className="flex flex-col gap-2 pt-6 pb-4 px-2">
                                 {navLinks.map((link) => (
                                     <li key={link.name}>
                                         <Link
                                             href={link.href}
-                                            className={`block py-4 px-6 text-center font-bold uppercase tracking-wider rounded-xl transition-all ${pathname === link.href
-                                                ? 'bg-esummit-primary text-white shadow-[0_0_15px_rgba(157,78,221,0.4)]'
-                                                : 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white'
+                                            className={`block py-4 px-6 text-center font-black uppercase tracking-[0.2em] text-xs rounded-2xl transition-all duration-300 ${pathname === link.href
+                                                ? 'bg-esummit-primary text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] border border-esummit-primary/50'
+                                                : 'bg-white/5 text-gray-400 border border-white/5 hover:bg-white/10 hover:text-white'
                                                 }`}
                                             onClick={() => setIsMenuOpen(false)}
                                         >
@@ -225,11 +225,11 @@ export default function EsNavbar() {
                                         </Link>
                                     </li>
                                 ))}
-                                <li className="pt-4 flex flex-col gap-4 border-t border-white/10 mt-2">
+                                <li className="pt-4 flex flex-col gap-3 border-t border-white/10 mt-2">
                                     {(isAdmin || isMember) && (
                                         <Link
                                             href="/esummit/scan"
-                                            className="block py-4 px-6 text-center border border-white/10 text-gray-300 font-bold uppercase tracking-wider rounded-xl hover:bg-white/10 hover:text-white transition-all"
+                                            className="block py-4 px-6 text-center border border-white/10 text-gray-400 font-black uppercase tracking-[0.2em] text-xs rounded-2xl bg-white/5 hover:bg-white/10 hover:text-white transition-all"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
                                             Scanner
@@ -238,7 +238,7 @@ export default function EsNavbar() {
                                     {isAdmin && (
                                         <Link
                                             href="/esummit/admin"
-                                            className="block py-4 px-6 text-center border border-esummit-primary/50 text-esummit-primary font-bold uppercase tracking-wider rounded-xl hover:bg-esummit-primary/10 transition-all"
+                                            className="block py-4 px-6 text-center border border-esummit-primary/30 text-esummit-primary font-black uppercase tracking-[0.2em] text-xs rounded-2xl bg-esummit-primary/5 hover:bg-esummit-primary/10 transition-all"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
                                             Admin Panel
@@ -247,19 +247,19 @@ export default function EsNavbar() {
                                     {user ? (
                                         <Link
                                             href="/esummit/profile"
-                                            className="flex items-center justify-center gap-3 py-4 px-6 bg-esummit-primary/10 border border-esummit-primary text-esummit-primary font-bold uppercase tracking-wider rounded-xl"
+                                            className="flex items-center justify-center gap-3 py-4 px-6 bg-esummit-primary/20 border border-esummit-primary-50 text-esummit-accent font-black uppercase tracking-[0.2em] text-xs rounded-2xl"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
-                                            <FiUser className="w-5 h-5" />
+                                            <FiUser className="w-4 h-4" />
                                             Profile
                                         </Link>
                                     ) : (
                                         <Link
                                             href="/esummit/login"
-                                            className="block py-4 px-6 text-center bg-white text-black font-bold uppercase tracking-wider rounded-xl hover:bg-gray-200"
+                                            className="block py-4 px-6 text-center bg-gradient-to-r from-esummit-primary to-esummit-accent text-white font-black uppercase tracking-[0.2em] text-xs rounded-2xl shadow-[0_0_20px_rgba(37,99,235,0.3)]"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
-                                            Login
+                                            Register Now
                                         </Link>
                                     )}
                                 </li>

@@ -111,7 +111,7 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                 )}
 
                 {/* Content */}
-                <div className="container mx-auto px-4 relative z-10 text-white py-20 text-center">
+                <div className="container mx-auto px-4 relative z-10 text-white py-12 md:py-20 text-center">
                     {/* Breadcrumb */}
                     <Link
                         href="/esummit/events"
@@ -129,20 +129,20 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                     </div>
 
                     {/* Title */}
-                    <h1 className="font-black text-5xl md:text-7xl lg:text-8xl mb-6 max-w-5xl mx-auto bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-esummit-accent tracking-wider drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] break-words w-full">
+                    <h1 className="font-black text-4xl md:text-7xl lg:text-8xl mb-6 max-w-5xl mx-auto bg-clip-text text-transparent bg-gradient-to-r from-white via-purple-200 to-esummit-accent tracking-wider drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] break-words w-full px-2">
                         {event.title}
                     </h1>
 
                     {/* Event Meta */}
-                    <div className="flex flex-wrap justify-center gap-6 text-gray-300">
-                        <div className="flex items-center gap-3 bg-esummit-card/50 px-6 py-3 rounded-xl border border-white/10 backdrop-blur-sm">
+                    <div className="flex flex-col md:flex-row flex-wrap justify-center items-center gap-4 md:gap-6 text-gray-300">
+                        <div className="flex items-center gap-3 bg-esummit-card/50 px-4 md:px-6 py-3 rounded-xl border border-white/10 backdrop-blur-sm w-fit">
                             <FiCalendar className="w-5 h-5 text-esummit-primary" />
-                            <span className="font-bold tracking-wide">{formatDate(event.date)}</span>
+                            <span className="font-bold tracking-wide text-sm md:text-base">{formatDate(event.date)}</span>
                         </div>
                         {event.location && (
-                            <div className="flex items-center gap-3 bg-esummit-card/50 px-6 py-3 rounded-xl border border-white/10 backdrop-blur-sm">
+                            <div className="flex items-center gap-3 bg-esummit-card/50 px-4 md:px-6 py-3 rounded-xl border border-white/10 backdrop-blur-sm w-fit">
                                 <FiMapPin className="w-5 h-5 text-esummit-primary" />
-                                <span className="font-bold tracking-wide">{event.location}</span>
+                                <span className="font-bold tracking-wide text-sm md:text-base">{event.location}</span>
                             </div>
                         )}
                     </div>
@@ -156,7 +156,7 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                 <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-esummit-accent/5 rounded-full blur-[100px]" />
 
                 <div className="container mx-auto px-4 relative z-10">
-                    <div className="grid lg:grid-cols-3 gap-12">
+                    <div className="grid lg:grid-cols-3 gap-8 md:gap-12">
                         {/* Left Column: Details */}
                         <div className="lg:col-span-2 space-y-12 min-w-0 w-full">
                             {/* Detailed Description */}
