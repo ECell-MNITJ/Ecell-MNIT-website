@@ -43,9 +43,9 @@ export default async function About() {
     const teamMembers = await getTeamMembers();
 
     // specific calculation for dynamic height
-    // Base content takes ~6.2 pages. Each row of team members (4 per row) adds ~0.4 pages.
-    const teamRows = Math.ceil(teamMembers.length / 4);
-    const totalPages = 6.2 + (teamRows * 0.4);
+    // Base content takes ~6.2 pages. Each row of team members (now ~5 per row) adds ~0.35 pages.
+    const teamRows = Math.ceil(teamMembers.length / 5);
+    const totalPages = 6.2 + (teamRows * 0.35);
 
     // Mobile calculation (1 column)
     const teamRowsMobile = teamMembers.length;
@@ -249,18 +249,18 @@ export default async function About() {
                 {/* Team Section */}
                 <section className="section py-20 pointer-events-none pb-40">
                     <div className="container-custom pointer-events-auto">
-                        <div className="text-center mb-16 bg-black/60 backdrop-blur-md px-8 py-6 rounded-2xl inline-block mx-auto border border-white/5">
+                        <div className="flex flex-col items-center justify-center text-center mb-16 px-8 py-8 rounded-3xl border border-white/5 bg-black/40 backdrop-blur-md max-w-4xl mx-auto">
                             <h2 className="text-4xl md:text-5xl font-heading text-primary-green mb-4">
                                 Our Team
                             </h2>
-                            <div className="w-20 h-1 bg-gradient-to-r from-primary-golden to-yellow-700 mx-auto mb-6 rounded-full" />
-                            <p className="text-gray-300 max-w-2xl mx-auto">
+                            <div className="w-24 h-1 bg-gradient-to-r from-primary-golden to-yellow-700 mb-6 rounded-full" />
+                            <p className="text-gray-300 max-w-2xl mx-auto text-lg">
                                 Meet the passionate individuals driving E-Cell MNIT forward
                             </p>
                         </div>
 
                         {teamMembers.length > 0 ? (
-                            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-8">
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8">
                                 {teamMembers.map((member) => (
                                     <div
                                         key={member.id}
@@ -270,16 +270,16 @@ export default async function About() {
                                             <img
                                                 src={member.image_url}
                                                 alt={member.name}
-                                                className="w-40 h-40 mx-auto mb-4 rounded-full object-cover group-hover:scale-110 transition-transform duration-300 shadow-lg border-2 border-primary-golden/20"
+                                                className="w-32 h-32 md:w-36 md:h-36 mx-auto mb-4 rounded-full object-cover group-hover:scale-110 transition-transform duration-300 shadow-lg border-2 border-primary-golden/20"
                                             />
                                         ) : (
-                                            <div className="w-40 h-40 mx-auto mb-4 bg-gradient-to-br from-primary-green to-gray-800 rounded-full flex items-center justify-center text-4xl font-heading text-white group-hover:scale-110 transition-transform duration-300 border-2 border-primary-golden/20">
+                                            <div className="w-32 h-32 md:w-36 md:h-36 mx-auto mb-4 bg-gradient-to-br from-primary-green to-gray-800 rounded-full flex items-center justify-center text-4xl font-heading text-white group-hover:scale-110 transition-transform duration-300 border-2 border-primary-golden/20">
                                                 {member.name.charAt(0)}
                                             </div>
                                         )}
-                                        <h3 className="text-xl font-heading text-white mb-1 group-hover:text-primary-golden transition-colors">{member.name}</h3>
-                                        <p className="text-primary-golden font-semibold text-sm mb-3">
-                                            {member.role} {member.position && `(${member.position})`}
+                                        <h3 className="text-lg font-heading text-white mb-1 group-hover:text-primary-golden transition-colors line-clamp-1">{member.name}</h3>
+                                        <p className="text-primary-golden font-semibold text-xs md:text-sm mb-3 uppercase tracking-wider">
+                                            {member.role}
                                         </p>
 
 
