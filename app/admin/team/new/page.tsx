@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createClient, type Database } from '@/lib/supabase/client';
 import { uploadImage } from '@/lib/supabase/storage';
 import toast from 'react-hot-toast';
-import { FiUpload, FiX, FiCrop } from 'react-icons/fi';
-import ImageCropper from '@/components/admin/ImageCropper';
+import { FiUpload, FiX } from 'react-icons/fi';
 
 export default function NewTeamMember() {
     const router = useRouter();
@@ -15,8 +14,6 @@ export default function NewTeamMember() {
     const [isCustomPosition, setIsCustomPosition] = useState(false);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
-    const [rawImage, setRawImage] = useState<string | null>(null);
-    const [showCropper, setShowCropper] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         role: '',
@@ -34,27 +31,9 @@ export default function NewTeamMember() {
                 toast.error('Image must be less than 5MB');
                 return;
             }
-
-            const reader = new FileReader();
-            reader.onload = () => {
-                setRawImage(reader.result as string);
-                setShowCropper(true);
-            };
-            reader.readAsDataURL(file);
+            setImageFile(file);
+            setImagePreview(URL.createObjectURL(file));
         }
-    };
-
-    const handleCropComplete = (blob: Blob) => {
-        const file = new File([blob], 'profile.jpg', { type: 'image/jpeg' });
-        setImageFile(file);
-        setImagePreview(URL.createObjectURL(blob));
-        setShowCropper(false);
-        setRawImage(null);
-    };
-
-    const handleCropCancel = () => {
-        setShowCropper(false);
-        setRawImage(null);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -135,14 +114,6 @@ export default function NewTeamMember() {
                                     <div className="absolute -top-2 -right-2 flex gap-1">
                                         <button
                                             type="button"
-                                            onClick={() => setShowCropper(true)}
-                                            className="bg-primary-golden text-white p-1 rounded-full hover:bg-yellow-600 shadow-sm"
-                                            title="Recrop"
-                                        >
-                                            <FiCrop className="w-4 h-4" />
-                                        </button>
-                                        <button
-                                            type="button"
                                             onClick={() => {
                                                 setImageFile(null);
                                                 setImagePreview(null);
@@ -174,14 +145,6 @@ export default function NewTeamMember() {
                         </div>
                     </div>
 
-                    {showCropper && rawImage && (
-                        <ImageCropper
-                            src={rawImage}
-                            aspectRatio={1}
-                            onCropComplete={handleCropComplete}
-                            onCancel={handleCropCancel}
-                        />
-                    )}
 
                     {/* Name */}
                     <div>
