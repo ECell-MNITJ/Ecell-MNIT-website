@@ -12,6 +12,7 @@ type Referral = Database['public']['Tables']['campus_ambassadors']['Row'] & {
         avatar_url: string | null;
     } | null;
     referral_count?: number;
+    checked_in_count?: number;
 } & { is_active: boolean };
 
 export default function ReferralsList({ initialReferrals }: { initialReferrals: Referral[] }) {
@@ -220,16 +221,29 @@ export default function ReferralsList({ initialReferrals }: { initialReferrals: 
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="flex flex-col">
-                                                <div className="flex items-baseline gap-1">
-                                                    <span className="text-xl font-black text-white">{ref.referral_count || 0}</span>
-                                                    {ref.usage_limit && (
-                                                        <span className="text-xs text-gray-500 font-bold">/ {ref.usage_limit}</span>
-                                                    )}
+                                            <div className="flex flex-col gap-2">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="w-2 h-2 rounded-full bg-blue-500 hidden sm:block"></span>
+                                                    <div className="flex items-baseline gap-1">
+                                                        <span className="text-xl font-black text-white">{ref.referral_count || 0}</span>
+                                                        {ref.usage_limit && (
+                                                            <span className="text-xs text-gray-500 font-bold">/ {ref.usage_limit}</span>
+                                                        )}
+                                                    </div>
+                                                    <span className="text-[9px] text-blue-400/80 font-bold uppercase hidden sm:block">
+                                                        Total Usages
+                                                    </span>
                                                 </div>
-                                                <span className="text-[9px] text-gray-500 font-bold uppercase">
-                                                    {ref.usage_limit ? 'Uses' : 'Successes'}
-                                                </span>
+                                                
+                                                <div className="flex items-center gap-2">
+                                                    <span className="w-2 h-2 rounded-full bg-green-500 hidden sm:block"></span>
+                                                    <div className="flex items-baseline gap-1">
+                                                        <span className="text-sm font-black text-gray-300">{ref.checked_in_count || 0}</span>
+                                                    </div>
+                                                    <span className="text-[9px] text-green-400/80 font-bold uppercase hidden sm:block">
+                                                        Checked-In
+                                                    </span>
+                                                </div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">

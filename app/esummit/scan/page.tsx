@@ -21,6 +21,9 @@ export default function QRScannerPage() {
         name: string;
         email: string;
         phone: string;
+        gender: string;
+        age: string | number;
+        isCA: boolean;
         event: string;
         avatar_url: string | null;
     } | null>(null);
@@ -150,15 +153,22 @@ export default function QRScannerPage() {
 
             const userName = profile.full_name || 'Unknown User';
 
+            // Check if user is an approved CA
+            const { data: caData } = await supabase
+                .from('campus_ambassadors')
+                .select('status')
+                .eq('profile_id', userId)
+                .single();
+
+            const isApprovedCA = caData?.status === 'approved';
+
             setScannedUserDetails({
                 name: userName,
                 email: 'N/A', // Email is not directly available in profiles table
-                // Wait, profiles table usually has email if we synced it. 
-                // Let's assume email is not critical or is in profiles. 
-                // Actually previous code got email from profiles (joined). 
-                // Does profiles have email? Let's check types.ts or previous fetch.
-                // Previous fetch: profiles(email). So yes.
                 phone: profile.phone || 'N/A',
+                gender: profile.gender || 'N/A',
+                age: profile.age || 'N/A',
+                isCA: isApprovedCA,
                 event: 'General E-Summit', // Default event name
                 avatar_url: profile.avatar_url
             });
@@ -280,6 +290,20 @@ export default function QRScannerPage() {
                         <div className="flex justify-between border-b border-gray-700 pb-2">
                             <span className="text-gray-400">Phone</span>
                             <span className="text-white font-mono">{scannedUserDetails.phone}</span>
+                        </div>
+                        <div className="flex justify-between border-b border-gray-700 pb-2 pt-2">
+                            <span className="text-gray-400">Gender</span>
+                            <span className="text-white capitalize">{scannedUserDetails.gender}</span>
+                        </div>
+                        <div className="flex justify-between border-b border-gray-700 pb-2 pt-2">
+                            <span className="text-gray-400">Age</span>
+                            <span className="text-white">{scannedUserDetails.age}</span>
+                        </div>
+                        <div className="flex justify-between border-b border-gray-700 pb-2 pt-2">
+                            <span className="text-gray-400">CA Status</span>
+                            <span className={`font-bold ${scannedUserDetails.isCA ? 'text-blue-400' : 'text-gray-400'}`}>
+                                {scannedUserDetails.isCA ? 'Campus Ambassador' : 'Regular User'}
+                            </span>
                         </div>
                         <div className="flex justify-between pt-2">
                             <span className="text-gray-400">Status</span>

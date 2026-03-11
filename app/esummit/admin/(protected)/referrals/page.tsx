@@ -15,46 +15,61 @@ export default async function ReferralsAdminPage() {
         `)
         .order('created_at', { ascending: false });
 
-    // 1. Get referral codes from profiles for checked-in users
+    // 1. Get referral codes from profiles for all users
     const { data: profileReferrals } = await supabase
         .from('profiles')
-        .select('id, applied_referral_code')
-        .eq('esummit_checked_in', true)
+        .select('id, applied_referral_code, esummit_checked_in')
         .not('applied_referral_code', 'is', null);
 
-    // 2. Get referral codes from successful passes for checked-in users
+    // 2. Get referral codes from successful passes for all users
     const { data: passReferrals } = await supabase
         .from('user_passes')
         .select('user_id, applied_referral_code, profiles!inner(esummit_checked_in)')
         .eq('payment_status', 'success')
-        .eq('profiles.esummit_checked_in', true)
         .not('applied_referral_code', 'is', null);
 
-    // 3. Create a map of unique users to their "final" referral code (Hierarchy: Pass > Profile)
-    const userReferralMap = new Map<string, string>();
+    // 3. Create a map of unique users to their "final" referral code and check-in status
+    const userReferralMap = new Map<string, { code: string, checkedIn: boolean }>();
 
     // First, set from profiles
     (profileReferrals || []).forEach((p: any) => {
-        userReferralMap.set(p.id, p.applied_referral_code.toUpperCase());
+        userReferralMap.set(p.id, {
+            code: p.applied_referral_code.toUpperCase(),
+            checkedIn: !!p.esummit_checked_in
+        });
     });
 
     // Then, override with pass referrals (prioritizing purchase source)
     (passReferrals || []).forEach((pr: any) => {
-        userReferralMap.set(pr.user_id, pr.applied_referral_code.toUpperCase());
+        userReferralMap.set(pr.user_id, {
+             code: pr.applied_referral_code.toUpperCase(),
+             checkedIn: !!pr.profiles?.esummit_checked_in
+        });
     });
 
-    // 4. Count unique users per CA code
-    const countsMap: Record<string, number> = {};
-    userReferralMap.forEach((code) => {
-        countsMap[code] = (countsMap[code] || 0) + 1;
+    // 4. Count unique users per CA code, split by check-in status
+    const countsMap: Record<string, { checkedIn: number, notCheckedIn: number }> = {};
+    userReferralMap.forEach((data) => {
+        if (!countsMap[data.code]) {
+            countsMap[data.code] = { checkedIn: 0, notCheckedIn: 0 };
+        }
+        if (data.checkedIn) {
+            countsMap[data.code].checkedIn += 1;
+        } else {
+            countsMap[data.code].notCheckedIn += 1;
+        }
     });
 
     // Transform count data for the component
-    const mappedReferrals = (referrals || []).map((r: any) => ({
-        ...r,
-        is_active: !!r.is_active, // Ensure it's a boolean
-        referral_count: countsMap[r.referral_code.toUpperCase()] || 0
-    }));
+    const mappedReferrals = (referrals || []).map((r: any) => {
+        const codeCounts = countsMap[r.referral_code?.toUpperCase() || ''] || { checkedIn: 0, notCheckedIn: 0 };
+        return {
+            ...r,
+            is_active: !!r.is_active, // Ensure it's a boolean
+            referral_count: codeCounts.checkedIn + codeCounts.notCheckedIn,
+            checked_in_count: codeCounts.checkedIn
+        };
+    });
 
     if (error) {
         console.error('Error fetching referrals:', error);

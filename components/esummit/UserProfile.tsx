@@ -64,27 +64,43 @@ export default function ESummitUserProfile({ user }: { user: any }) {
             if (!caError && caData) {
                 const myCode = caData.referral_code.toUpperCase();
                 
-                // 1. Get unique user IDs who used this code during registration and checked in
+                // 1. Get unique user IDs who used this code during registration
                 const { data: profileReferrals } = await (supabase
                     .from('profiles')
-                    .select('id')
-                    .eq('applied_referral_code', myCode)
-                    .eq('esummit_checked_in', true) as any);
+                    .select('id, esummit_checked_in')
+                    .eq('applied_referral_code', myCode) as any);
 
-                // 2. Get unique user IDs who used it for pass purchase and checked in
+                // 2. Get unique user IDs who used it for pass purchase
                 const { data: passReferrals } = await (supabase
                     .from('user_passes')
                     .select('user_id, profiles!inner(esummit_checked_in)')
                     .eq('applied_referral_code', myCode)
-                    .eq('payment_status', 'success')
-                    .eq('profiles.esummit_checked_in', true) as any);
+                    .eq('payment_status', 'success') as any);
 
-                // 3. Count unique users (One user = One referral max)
-                const uniqueReferrals = new Set();
-                (profileReferrals || []).forEach((p: any) => uniqueReferrals.add(p.id));
-                (passReferrals || []).forEach((p: any) => uniqueReferrals.add(p.user_id));
+                // 3. Count unique users by their checked-in status
+                const referralMap = new Map<string, boolean>();
+                
+                (profileReferrals || []).forEach((p: any) => {
+                    referralMap.set(p.id, !!p.esummit_checked_in);
+                });
+                
+                (passReferrals || []).forEach((p: any) => {
+                    referralMap.set(p.user_id, !!p.profiles?.esummit_checked_in);
+                });
 
-                setCaData({ ...caData, referral_count: uniqueReferrals.size });
+                let checkedInCount = 0;
+                let uncheckedCount = 0;
+                
+                referralMap.forEach((isCheckedIn) => {
+                    if (isCheckedIn) checkedInCount++;
+                    else uncheckedCount++;
+                });
+
+                setCaData({ 
+                    ...caData, 
+                    referral_count: checkedInCount + uncheckedCount,
+                    checked_in_count: checkedInCount
+                });
             }
 
             if (data) {
@@ -570,9 +586,21 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                                                         </div>
                                                     )}
                                                     {caData.status === 'approved' && (
-                                                        <div className="flex items-center gap-2 bg-blue-500/10 px-4 py-2 rounded-xl border border-blue-500/20">
-                                                            <span className="text-[10px] font-black uppercase tracking-widest text-blue-400">Total Referrals:</span>
-                                                            <span className="text-lg font-black text-white">{caData.referral_count || 0}</span>
+                                                        <div className="flex gap-3 border border-white/10 p-1.5 rounded-2xl bg-[#0b132b]/80 backdrop-blur-sm shadow-xl">
+                                                            <div className="flex items-center gap-2 bg-blue-500/10 hover:bg-blue-500/20 px-4 py-2 rounded-xl transition-colors border border-blue-500/20">
+                                                                <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                                                <div className="flex flex-col">
+                                                                    <span className="text-[8px] font-black uppercase tracking-widest text-blue-400">Total Referrals</span>
+                                                                    <span className="text-lg font-black text-white leading-none">{caData.referral_count || 0}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 bg-green-500/10 hover:bg-green-500/20 px-4 py-2 rounded-xl transition-colors border border-green-500/20">
+                                                                <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                                                <div className="flex flex-col">
+                                                                    <span className="text-[8px] font-black uppercase tracking-widest text-green-400">Checked In</span>
+                                                                    <span className="text-lg font-black text-white leading-none">{caData.checked_in_count || 0}</span>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     )}
                                                 </div>
