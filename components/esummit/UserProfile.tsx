@@ -65,24 +65,24 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                 const myCode = caData.referral_code.toUpperCase();
                 
                 // 1. Get unique user IDs who used this code during registration and checked in
-                const { data: profileReferrals } = await supabase
+                const { data: profileReferrals } = await (supabase
                     .from('profiles')
                     .select('id')
                     .eq('applied_referral_code', myCode)
-                    .eq('esummit_checked_in', true);
+                    .eq('esummit_checked_in', true) as any);
 
                 // 2. Get unique user IDs who used it for pass purchase and checked in
-                const { data: passReferrals } = await supabase
+                const { data: passReferrals } = await (supabase
                     .from('user_passes')
                     .select('user_id, profiles!inner(esummit_checked_in)')
                     .eq('applied_referral_code', myCode)
                     .eq('payment_status', 'success')
-                    .eq('profiles.esummit_checked_in', true);
+                    .eq('profiles.esummit_checked_in', true) as any);
 
                 // 3. Count unique users (One user = One referral max)
                 const uniqueReferrals = new Set();
-                (profileReferrals || []).forEach(p => uniqueReferrals.add(p.id));
-                (passReferrals || []).forEach(p => uniqueReferrals.add(p.user_id));
+                (profileReferrals || []).forEach((p: any) => uniqueReferrals.add(p.id));
+                (passReferrals || []).forEach((p: any) => uniqueReferrals.add(p.user_id));
 
                 setCaData({ ...caData, referral_count: uniqueReferrals.size });
             }
@@ -103,7 +103,7 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                 const profileData = data as any;
                 if (profileData.applied_referral_code) {
                     console.log('Fetching referrer for code:', profileData.applied_referral_code);
-                    const { data: referrer, error: refError } = await supabase
+                    const { data: referrer, error: refError } = await (supabase
                         .from('campus_ambassadors')
                         .select(`
                             referral_code,
@@ -112,7 +112,7 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                             )
                         `)
                         .eq('referral_code', profileData.applied_referral_code)
-                        .maybeSingle();
+                        .maybeSingle() as any);
 
                     if (!refError && referrer) {
                         setReferrerData({

@@ -77,10 +77,10 @@ export default function ParticipantsPage() {
     const fetchParticipants = async (silent = false) => {
         try {
             if (!silent) setLoading(true);
-            const { data, error } = await supabase
+            const { data, error } = await (supabase
                 .from('profiles')
                 .select('*')
-                .order('updated_at', { ascending: false });
+                .order('updated_at', { ascending: false }) as any);
 
             if (error) throw error;
             setParticipants(data || []);

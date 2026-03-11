@@ -72,7 +72,7 @@ export default function EventRegistration({ event, user, hasValidPass }: EventRe
             .from('profiles')
             .select('phone, age, qr_code_url, user_type, college_id_url, govt_id_url')
             .eq('id', user.id)
-            .single();
+            .single() as any;
 
         if (!profile) return false;
 

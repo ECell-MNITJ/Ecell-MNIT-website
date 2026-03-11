@@ -42,7 +42,7 @@ export default function EsNavbar() {
                 .from('profiles')
                 .select('role')
                 .eq('id', user.id)
-                .single();
+                .single() as any;
 
             if (profile?.role === 'member') {
                 memberRole = true;

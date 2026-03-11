@@ -26,7 +26,7 @@ export default function ProfileEnforcer({ user }: { user: any }) {
                     .from('profiles')
                     .select('full_name, phone, age, gender, qr_code_url, user_type, college_id_url, govt_id_url')
                     .eq('id', user.id)
-                    .single();
+                    .single() as any;
 
                 if (!active) return;
 
