@@ -50,7 +50,7 @@ export default function StartupMarquee({ startups }: StartupMarqueeProps) {
 
                         {/* Description */}
                         <p className="text-gray-400 text-xs line-clamp-4 z-10 leading-relaxed px-2">
-                            {startup.description || 'Innovative startup incubated at MNIT.'}
+                            {startup.description || 'Innovative startup at MNIT.'}
                         </p>
 
                         {/* Link Overlay */}

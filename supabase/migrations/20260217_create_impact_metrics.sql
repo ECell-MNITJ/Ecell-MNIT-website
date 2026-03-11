@@ -32,7 +32,7 @@ CREATE POLICY "Authenticated users can delete impact metrics"
 -- Insert initial sample data
 INSERT INTO impact_metrics (label, value, description, display_order)
 VALUES 
-    ('Startups Incubated', '50+', 'Over 50 successful startups incubated.', 1),
+    ('Startups ', '50+', 'Over 50 successful startups .', 1),
     ('Mentors', '200+', 'Network of industry experts and mentors.', 2),
     ('Events', '100+', 'Workshops, competitions and guest lectures.', 3)
 ON CONFLICT DO NOTHING;

@@ -13,6 +13,14 @@ export default function AdminSettingsPage() {
     const [contactPhone, setContactPhone] = useState('');
     const [contactAddress, setContactAddress] = useState('');
 
+    // Social Media Links
+    const [instagramUrl, setInstagramUrl] = useState('');
+    const [linkedinUrl, setLinkedinUrl] = useState('');
+    const [twitterUrl, setTwitterUrl] = useState('');
+    const [facebookUrl, setFacebookUrl] = useState('');
+    const [youtubeUrl, setYoutubeUrl] = useState('');
+    const [whatsappUrl, setWhatsappUrl] = useState('');
+
     // CA Settings
     const [caBaseDiscount, setCaBaseDiscount] = useState(0);
     const [caMilestone1Count, setCaMilestone1Count] = useState(0);
@@ -44,6 +52,12 @@ export default function AdminSettingsPage() {
                 setContactEmail(settings.contact_email || '');
                 setContactPhone(settings.contact_phone || '');
                 setContactAddress(settings.contact_address || '');
+                setInstagramUrl(settings.instagram_url || '');
+                setLinkedinUrl(settings.linkedin_url || '');
+                setTwitterUrl(settings.twitter_url || '');
+                setFacebookUrl(settings.facebook_url || '');
+                setYoutubeUrl(settings.youtube_url || '');
+                setWhatsappUrl(settings.whatsapp_url || '');
                 setCaBaseDiscount(settings.ca_base_discount_percentage || 0);
                 setCaMilestone1Count(settings.ca_milestone_1_count || 0);
                 setCaMilestone1Discount(settings.ca_milestone_1_discount || 0);
@@ -82,6 +96,12 @@ export default function AdminSettingsPage() {
                         ca_registrations_open: caRegistrationsOpen,
                         passes_enabled: passesEnabled,
                         pass_features_list: passFeaturesList,
+                        instagram_url: instagramUrl,
+                        linkedin_url: linkedinUrl,
+                        twitter_url: twitterUrl,
+                        facebook_url: facebookUrl,
+                        youtube_url: youtubeUrl,
+                        whatsapp_url: whatsappUrl,
                         show_stats: true,
                         show_blueprint: true
                     });
@@ -105,6 +125,12 @@ export default function AdminSettingsPage() {
                             ca_registrations_open: caRegistrationsOpen,
                             passes_enabled: passesEnabled,
                             pass_features_list: passFeaturesList,
+                            instagram_url: instagramUrl,
+                            linkedin_url: linkedinUrl,
+                            twitter_url: twitterUrl,
+                            facebook_url: facebookUrl,
+                            youtube_url: youtubeUrl,
+                            whatsapp_url: whatsappUrl,
                             updated_at: new Date().toISOString()
                         })
                         .eq('id', settings.id);
@@ -252,6 +278,72 @@ export default function AdminSettingsPage() {
                                         <input type="number" value={caMilestone2Count} onChange={(e) => setCaMilestone2Count(Number(e.target.value))} className="w-full p-1 border rounded text-xs" />
                                         <input type="number" value={caMilestone2Discount} onChange={(e) => setCaMilestone2Discount(Number(e.target.value))} className="w-full p-1 border rounded text-xs" />
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="pt-4 border-t border-gray-100">
+                            <h3 className="text-md font-bold mb-4">Social Media Links</h3>
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Instagram URL</label>
+                                    <input
+                                        type="url"
+                                        value={instagramUrl}
+                                        onChange={(e) => setInstagramUrl(e.target.value)}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden outline-none transition-all"
+                                        placeholder="https://instagram.com/..."
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">LinkedIn URL</label>
+                                    <input
+                                        type="url"
+                                        value={linkedinUrl}
+                                        onChange={(e) => setLinkedinUrl(e.target.value)}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden outline-none transition-all"
+                                        placeholder="https://linkedin.com/..."
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Twitter (X) URL</label>
+                                    <input
+                                        type="url"
+                                        value={twitterUrl}
+                                        onChange={(e) => setTwitterUrl(e.target.value)}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden outline-none transition-all"
+                                        placeholder="https://twitter.com/..."
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Facebook URL</label>
+                                    <input
+                                        type="url"
+                                        value={facebookUrl}
+                                        onChange={(e) => setFacebookUrl(e.target.value)}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden outline-none transition-all"
+                                        placeholder="https://facebook.com/..."
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">YouTube URL</label>
+                                    <input
+                                        type="url"
+                                        value={youtubeUrl}
+                                        onChange={(e) => setYoutubeUrl(e.target.value)}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden outline-none transition-all"
+                                        placeholder="https://youtube.com/..."
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp Link</label>
+                                    <input
+                                        type="url"
+                                        value={whatsappUrl}
+                                        onChange={(e) => setWhatsappUrl(e.target.value)}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden outline-none transition-all"
+                                        placeholder="https://wa.me/..."
+                                    />
                                 </div>
                             </div>
                         </div>

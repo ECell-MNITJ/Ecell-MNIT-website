@@ -115,8 +115,9 @@ export default function StartupList() {
                             </div>
 
                             <p className="text-gray-600 text-sm line-clamp-2 mb-4 h-10">
-                                {startup.description || 'No description provided.'}
+                                {startup.tagline || startup.description || 'No description provided.'}
                             </p>
+
 
                             {startup.website_url && (
                                 <a

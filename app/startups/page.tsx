@@ -52,7 +52,7 @@ export default function StartupsPage() {
                         Our <span className="text-primary-golden">Startups</span>
                     </h1>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-                        Discover the innovative ventures incubated at E-Cell MNIT. From tech solutions to sustainable ideas, explore the future being built here.
+                        Discover the innovative ventures at E-Cell MNIT. From tech solutions to sustainable ideas, explore the future being built here.
                     </p>
                 </motion.div>
 
@@ -97,8 +97,9 @@ export default function StartupsPage() {
                                             </p>
                                         ) : null}
                                         <p className="text-gray-400 text-sm leading-relaxed mb-6 line-clamp-3">
-                                            {startup.description || "Building the future, one step at a time."}
+                                            {startup.tagline || startup.description || "Building the future, one step at a time."}
                                         </p>
+
 
                                         <div className="mt-auto flex items-center justify-between">
                                             <span className="text-primary-golden text-sm font-semibold group-hover:translate-x-1 transition-transform flex items-center gap-2">

@@ -8,9 +8,9 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
     title: {
         template: "%s | E-Summit '26 | E-Cell MNIT",
-        default: "E-Summit '26 | Experience The Future | E-Cell MNIT",
+        default: "E-Summit '26 | FIRST PRINCIPLE OF IMPACT",
     },
-    description: "The flagship entrepreneurial summit of NIT Jaipur. Join us for 3 days of events, hackathons, and speaker sessions.",
+    description: "The flagship entrepreneurial summit of MNIT Jaipur. Join us for events, hackathons, and speaker sessions.",
     openGraph: {
         title: "E-Summit '26 | E-Cell MNIT",
         description: "The flagship entrepreneurial summit of NIT Jaipur.",

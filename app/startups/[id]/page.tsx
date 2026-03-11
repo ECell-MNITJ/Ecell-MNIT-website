@@ -154,7 +154,12 @@ export default function StartupDetailsPage() {
                             </h2>
 
                             <div className="prose prose-invert prose-lg max-w-none text-gray-300 leading-relaxed">
-                                {startup.description ? (
+                                {startup.detailed_description ? (
+                                    <div 
+                                        dangerouslySetInnerHTML={{ __html: startup.detailed_description }}
+                                        className="rich-text-content"
+                                    />
+                                ) : startup.description ? (
                                     startup.description.split('\n').map((paragraph, idx) => (
                                         paragraph.trim() && <p key={idx} className="mb-6">{paragraph}</p>
                                     ))
@@ -162,6 +167,7 @@ export default function StartupDetailsPage() {
                                     <p className="italic text-gray-500">No description provided for this startup yet.</p>
                                 )}
                             </div>
+
 
                             {/* Additional potential sections can go here (Timeline, Achievements, etc.) */}
                             <div className="mt-12 pt-8 border-t border-zinc-800">

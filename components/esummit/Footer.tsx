@@ -31,6 +31,7 @@ export default function EsFooter({ user }: { user: any }) {
         { name: 'Twitter', icon: 'fab fa-twitter', href: esummitSettings?.twitter_url },
         { name: 'Facebook', icon: 'fab fa-facebook-f', href: esummitSettings?.facebook_url },
         { name: 'YouTube', icon: 'fab fa-youtube', href: esummitSettings?.youtube_url },
+        { name: 'WhatsApp', icon: 'fab fa-whatsapp', href: esummitSettings?.whatsapp_url },
     ].filter(link => link.href && link.href.trim() !== '');
 
     return (

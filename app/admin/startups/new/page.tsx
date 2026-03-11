@@ -6,6 +6,7 @@ import { createClient, type Database } from '@/lib/supabase/client';
 import { uploadImage } from '@/lib/supabase/storage';
 import toast from 'react-hot-toast';
 import { FiUpload, FiX } from 'react-icons/fi';
+import RichTextEditor from '@/components/admin/RichTextEditor';
 
 export default function NewStartup() {
     const router = useRouter();
@@ -18,7 +19,9 @@ export default function NewStartup() {
 
     const [formData, setFormData] = useState({
         name: '',
+        tagline: '',
         description: '',
+        detailed_description: '',
         website_url: '',
         founder_names: '',
         founded_year: '',
@@ -50,7 +53,9 @@ export default function NewStartup() {
 
             const startupData: Database['public']['Tables']['startups']['Insert'] = {
                 name: formData.name,
+                tagline: formData.tagline,
                 description: formData.description,
+                detailed_description: formData.detailed_description,
                 website_url: formData.website_url,
                 founder_names: formData.founder_names,
                 founded_year: formData.founded_year,
@@ -137,14 +142,35 @@ export default function NewStartup() {
                     </div>
 
                     <div>
-                        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <label htmlFor="tagline" className="block text-sm font-medium text-gray-700 mb-2">Tagline (Visible on Card)</label>
+                        <input
+                            id="tagline"
+                            type="text"
+                            value={formData.tagline}
+                            onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent"
+                            placeholder="A catchy one-liner..."
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">Short Description</label>
                         <textarea
                             id="description"
                             rows={3}
                             value={formData.description}
                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent"
-                            placeholder="Brief blurp about what they do..."
+                            placeholder="Brief blurb about what they do..."
+                        />
+                    </div>
+
+                    <div>
+                        <label htmlFor="detailed_description" className="block text-sm font-medium text-gray-700 mb-2">Detailed Description (Visible on Details Page)</label>
+                        <RichTextEditor
+                            value={formData.detailed_description}
+                            onChange={(value) => setFormData({ ...formData, detailed_description: value })}
+                            placeholder="Comprehensive information about the startup, their mission, products, etc."
                         />
                     </div>
 

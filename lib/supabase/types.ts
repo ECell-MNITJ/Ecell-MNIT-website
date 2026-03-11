@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
     | string
     | number
     | boolean
@@ -302,6 +302,8 @@ export interface Database {
                     name: string;
                     logo_url: string | null;
                     description: string | null;
+                    tagline: string | null;
+                    detailed_description: string | null;
                     website_url: string | null;
                     founder_names: string | null;
                     founded_year: string | null;
@@ -314,6 +316,8 @@ export interface Database {
                     name: string;
                     logo_url?: string | null;
                     description?: string | null;
+                    tagline?: string | null;
+                    detailed_description?: string | null;
                     website_url?: string | null;
                     founder_names?: string | null;
                     founded_year?: string | null;
@@ -326,6 +330,8 @@ export interface Database {
                     name?: string;
                     logo_url?: string | null;
                     description?: string | null;
+                    tagline?: string | null;
+                    detailed_description?: string | null;
                     website_url?: string | null;
                     founder_names?: string | null;
                     founded_year?: string | null;
@@ -500,6 +506,7 @@ export interface Database {
                     instagram_url: string | null;
                     linkedin_url: string | null;
                     youtube_url: string | null;
+                    whatsapp_url: string | null;
                     show_esummit_button: boolean;
                     esummit_button_text: string;
                     created_at: string;
@@ -515,6 +522,7 @@ export interface Database {
                     instagram_url?: string | null;
                     linkedin_url?: string | null;
                     youtube_url?: string | null;
+                    whatsapp_url?: string | null;
                     show_esummit_button?: boolean;
                     esummit_button_text?: string;
                     created_at?: string;
@@ -530,6 +538,7 @@ export interface Database {
                     instagram_url?: string | null;
                     linkedin_url?: string | null;
                     youtube_url?: string | null;
+                    whatsapp_url?: string | null;
                     show_esummit_button?: boolean;
                     esummit_button_text?: string;
                     created_at?: string;
@@ -617,6 +626,12 @@ export interface Database {
                     passes_enabled: boolean;
                     created_at: string;
                     updated_at: string;
+                    instagram_url: string | null;
+                    linkedin_url: string | null;
+                    twitter_url: string | null;
+                    facebook_url: string | null;
+                    youtube_url: string | null;
+                    whatsapp_url: string | null;
                 };
                 Insert: {
                     id?: number;
@@ -638,6 +653,12 @@ export interface Database {
                     passes_enabled?: boolean;
                     created_at?: string;
                     updated_at?: string;
+                    instagram_url?: string | null;
+                    linkedin_url?: string | null;
+                    twitter_url?: string | null;
+                    facebook_url?: string | null;
+                    youtube_url?: string | null;
+                    whatsapp_url?: string | null;
                 };
                 Update: {
                     id?: number;
@@ -659,6 +680,12 @@ export interface Database {
                     passes_enabled?: boolean;
                     created_at?: string;
                     updated_at?: string;
+                    instagram_url?: string | null;
+                    linkedin_url?: string | null;
+                    twitter_url?: string | null;
+                    facebook_url?: string | null;
+                    youtube_url?: string | null;
+                    whatsapp_url?: string | null;
                 };
                 Relationships: [];
             };
