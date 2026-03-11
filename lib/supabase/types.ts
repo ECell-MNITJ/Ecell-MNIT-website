@@ -506,7 +506,6 @@ export interface Database {
                     instagram_url: string | null;
                     linkedin_url: string | null;
                     youtube_url: string | null;
-                    whatsapp_url: string | null;
                     show_esummit_button: boolean;
                     esummit_button_text: string;
                     created_at: string;
@@ -522,7 +521,6 @@ export interface Database {
                     instagram_url?: string | null;
                     linkedin_url?: string | null;
                     youtube_url?: string | null;
-                    whatsapp_url?: string | null;
                     show_esummit_button?: boolean;
                     esummit_button_text?: string;
                     created_at?: string;
@@ -538,7 +536,6 @@ export interface Database {
                     instagram_url?: string | null;
                     linkedin_url?: string | null;
                     youtube_url?: string | null;
-                    whatsapp_url?: string | null;
                     show_esummit_button?: boolean;
                     esummit_button_text?: string;
                     created_at?: string;
@@ -631,7 +628,6 @@ export interface Database {
                     twitter_url: string | null;
                     facebook_url: string | null;
                     youtube_url: string | null;
-                    whatsapp_url: string | null;
                 };
                 Insert: {
                     id?: number;
@@ -658,7 +654,6 @@ export interface Database {
                     twitter_url?: string | null;
                     facebook_url?: string | null;
                     youtube_url?: string | null;
-                    whatsapp_url?: string | null;
                 };
                 Update: {
                     id?: number;
@@ -685,7 +680,6 @@ export interface Database {
                     twitter_url?: string | null;
                     facebook_url?: string | null;
                     youtube_url?: string | null;
-                    whatsapp_url?: string | null;
                 };
                 Relationships: [];
             };

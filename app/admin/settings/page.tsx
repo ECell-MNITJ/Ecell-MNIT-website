@@ -196,19 +196,6 @@ export default function SettingsPage() {
                                     placeholder="https://youtube.com/..."
                                 />
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-400 mb-2">
-                                    <i className="fab fa-whatsapp text-green-500 mr-2"></i> WhatsApp Link
-                                </label>
-                                <input
-                                    type="url"
-                                    name="whatsapp_url"
-                                    value={formData.whatsapp_url || ''}
-                                    onChange={handleChange}
-                                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary-golden"
-                                    placeholder="https://wa.me/..."
-                                />
-                            </div>
                         </div>
                     </div>
 

@@ -19,7 +19,6 @@ export default function AdminSettingsPage() {
     const [twitterUrl, setTwitterUrl] = useState('');
     const [facebookUrl, setFacebookUrl] = useState('');
     const [youtubeUrl, setYoutubeUrl] = useState('');
-    const [whatsappUrl, setWhatsappUrl] = useState('');
 
     // CA Settings
     const [caBaseDiscount, setCaBaseDiscount] = useState(0);
@@ -57,7 +56,6 @@ export default function AdminSettingsPage() {
                 setTwitterUrl(settings.twitter_url || '');
                 setFacebookUrl(settings.facebook_url || '');
                 setYoutubeUrl(settings.youtube_url || '');
-                setWhatsappUrl(settings.whatsapp_url || '');
                 setCaBaseDiscount(settings.ca_base_discount_percentage || 0);
                 setCaMilestone1Count(settings.ca_milestone_1_count || 0);
                 setCaMilestone1Discount(settings.ca_milestone_1_discount || 0);
@@ -101,7 +99,6 @@ export default function AdminSettingsPage() {
                         twitter_url: twitterUrl,
                         facebook_url: facebookUrl,
                         youtube_url: youtubeUrl,
-                        whatsapp_url: whatsappUrl,
                         show_stats: true,
                         show_blueprint: true
                     });
@@ -130,7 +127,6 @@ export default function AdminSettingsPage() {
                             twitter_url: twitterUrl,
                             facebook_url: facebookUrl,
                             youtube_url: youtubeUrl,
-                            whatsapp_url: whatsappUrl,
                             updated_at: new Date().toISOString()
                         })
                         .eq('id', settings.id);
@@ -333,16 +329,6 @@ export default function AdminSettingsPage() {
                                         onChange={(e) => setYoutubeUrl(e.target.value)}
                                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden outline-none transition-all"
                                         placeholder="https://youtube.com/..."
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp Link</label>
-                                    <input
-                                        type="url"
-                                        value={whatsappUrl}
-                                        onChange={(e) => setWhatsappUrl(e.target.value)}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden outline-none transition-all"
-                                        placeholder="https://wa.me/..."
                                     />
                                 </div>
                             </div>
