@@ -1,6 +1,6 @@
 import { createServerClient } from '@/lib/supabase/server';
 import Link from 'next/link';
-import { FiLinkedin, FiTwitter } from 'react-icons/fi';
+import { FiLinkedin, FiTwitter, FiMail } from 'react-icons/fi';
 import { Metadata } from 'next';
 import PageLayout3DWrapper from '@/components/3d/PageLayout3DWrapper';
 
@@ -14,7 +14,8 @@ interface TeamMember {
     id: string;
     name: string;
     role: string;
-
+    position: string | null;
+    email: string | null;
     bio: string | null;
     image_url: string | null;
     linkedin_url: string | null;
@@ -271,11 +272,22 @@ export default async function About() {
                                             </div>
                                         )}
                                         <h3 className="text-xl font-heading text-white mb-1 group-hover:text-primary-golden transition-colors">{member.name}</h3>
-                                        <p className="text-primary-golden font-semibold text-sm mb-3">{member.role}</p>
+                                        <p className="text-primary-golden font-semibold text-sm mb-3">
+                                            {member.role} {member.position && `(${member.position})`}
+                                        </p>
 
 
-                                        {(member.linkedin_url || member.twitter_url) && (
+                                        {(member.linkedin_url || member.twitter_url || member.email) && (
                                             <div className="flex justify-center gap-4 mt-2">
+                                                {member.email && (
+                                                    <a
+                                                        href={`mailto:${member.email}`}
+                                                        className="text-gray-400 hover:text-primary-golden transition-colors bg-white/5 p-2 rounded-full"
+                                                        title={member.email}
+                                                    >
+                                                        <FiMail className="w-5 h-5" />
+                                                    </a>
+                                                )}
                                                 {member.linkedin_url && (
                                                     <a
                                                         href={member.linkedin_url}

@@ -15,12 +15,14 @@ export default function EditTeamMember() {
     const supabase = createClient() as SupabaseClient<Database>;
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
+    const [isCustomPosition, setIsCustomPosition] = useState(false);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         name: '',
         role: '',
-
+        position: '',
+        email: '',
         bio: '',
         linkedin_url: '',
         twitter_url: '',
@@ -45,12 +47,21 @@ export default function EditTeamMember() {
             setFormData({
                 name: data.name,
                 role: data.role,
+                position: data.position || '',
+                email: data.email || '',
                 bio: data.bio || '',
                 linkedin_url: data.linkedin_url || '',
                 twitter_url: data.twitter_url || '',
                 order_index: data.order_index,
                 image_url: data.image_url || '',
             });
+
+            // Check if existing position is custom
+            const standardPositions = ["Leadership", "Advisor", "Technology", "Events", "Marketing", "Corporate", "Creatives", "Logistics"];
+            if (data.position && !standardPositions.includes(data.position)) {
+                setIsCustomPosition(true);
+            }
+
             if (data.image_url) {
                 setImagePreview(data.image_url);
             }
@@ -89,6 +100,8 @@ export default function EditTeamMember() {
             const updateData: Database['public']['Tables']['team_members']['Update'] = {
                 name: formData.name,
                 role: formData.role,
+                position: isCustomPosition ? formData.position : (formData.position || null),
+                email: formData.email || null,
                 bio: formData.bio || null,
                 linkedin_url: formData.linkedin_url || null,
                 twitter_url: formData.twitter_url || null,
@@ -196,8 +209,57 @@ export default function EditTeamMember() {
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent"
                         />
                     </div>
+                    <div>
+                        <label htmlFor="position" className="block text-sm font-medium text-gray-700 mb-2">Position</label>
+                        <div className="space-y-3">
+                            <select
+                                id="position"
+                                value={isCustomPosition ? "Other" : (formData.position || "")}
+                                onChange={(e) => {
+                                    if (e.target.value === "Other") {
+                                        setIsCustomPosition(true);
+                                        setFormData({ ...formData, position: "" });
+                                    } else {
+                                        setIsCustomPosition(false);
+                                        setFormData({ ...formData, position: e.target.value });
+                                    }
+                                }}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent"
+                            >
+                                <option value="">Select Position (Optional)</option>
+                                <option value="Leadership">Leadership</option>
+                                <option value="Advisor">Advisor</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Events">Events</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Corporate">Corporate</option>
+                                <option value="Creatives">Creatives</option>
+                                <option value="Logistics">Logistics</option>
+                                <option value="Other">Other (Custom)</option>
+                            </select>
 
-
+                            {isCustomPosition && (
+                                <input
+                                    type="text"
+                                    placeholder="Enter custom position"
+                                    value={formData.position || ""}
+                                    onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent animate-in fade-in slide-in-from-top-2 duration-300"
+                                />
+                            )}
+                        </div>
+                    </div>
+                    <div>
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input
+                            id="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent"
+                            placeholder="john.doe@example.com"
+                        />
+                    </div>
 
                     <div>
                         <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">Bio</label>

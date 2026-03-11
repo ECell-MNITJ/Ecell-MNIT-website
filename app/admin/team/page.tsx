@@ -10,6 +10,7 @@ interface TeamMember {
     id: string;
     name: string;
     role: string;
+    position: string | null;
 
     image_url: string | null;
     order_index: number;
@@ -131,7 +132,7 @@ export default function TeamManagement() {
                                 {member.name}
                             </h3>
                             <p className="text-primary-golden text-sm font-medium mb-1">
-                                {member.role}
+                                {member.role} {member.position && `(${member.position})`}
                             </p>
 
                         </div>

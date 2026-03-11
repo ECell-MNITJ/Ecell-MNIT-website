@@ -11,12 +11,13 @@ export default function NewTeamMember() {
     const router = useRouter();
     const supabase = createClient();
     const [loading, setLoading] = useState(false);
+    const [isCustomPosition, setIsCustomPosition] = useState(false);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [formData, setFormData] = useState({
         name: '',
         role: '',
-
+        position: '',
         email: '',
         bio: '',
         linkedin_url: '',
@@ -60,7 +61,7 @@ export default function NewTeamMember() {
             const insertData: Database['public']['Tables']['team_members']['Insert'] = {
                 name: formData.name,
                 role: formData.role,
-
+                position: isCustomPosition ? formData.position : (formData.position || null),
                 email: formData.email || null,
                 bio: formData.bio || null,
                 image_url: imageUrl,
@@ -166,6 +167,50 @@ export default function NewTeamMember() {
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent"
                             placeholder="e.g., President, Vice President"
                         />
+                    </div>
+
+                    {/* Position */}
+                    <div>
+                        <label htmlFor="position" className="block text-sm font-medium text-gray-700 mb-2">
+                            Position
+                        </label>
+                        <div className="space-y-3">
+                            <select
+                                id="position"
+                                value={isCustomPosition ? "Other" : formData.position}
+                                onChange={(e) => {
+                                    if (e.target.value === "Other") {
+                                        setIsCustomPosition(true);
+                                        setFormData({ ...formData, position: "" });
+                                    } else {
+                                        setIsCustomPosition(false);
+                                        setFormData({ ...formData, position: e.target.value });
+                                    }
+                                }}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent"
+                            >
+                                <option value="">Select Position (Optional)</option>
+                                <option value="Leadership">Leadership</option>
+                                <option value="Advisor">Advisor</option>
+                                <option value="Technology">Technology</option>
+                                <option value="Events">Events</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Corporate">Corporate</option>
+                                <option value="Creatives">Creatives</option>
+                                <option value="Logistics">Logistics</option>
+                                <option value="Other">Other (Custom)</option>
+                            </select>
+
+                            {isCustomPosition && (
+                                <input
+                                    type="text"
+                                    placeholder="Enter custom position"
+                                    value={formData.position}
+                                    onChange={(e) => setFormData({ ...formData, position: e.target.value })}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent animate-in fade-in slide-in-from-top-2 duration-300"
+                                />
+                            )}
+                        </div>
                     </div>
 
 
