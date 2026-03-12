@@ -180,7 +180,7 @@ export default function ESummitLandingDataLayer() {
                 .select('*')
                 .order('display_order', { ascending: true });
 
-            if (sponsorsData) setSponsors(sponsorsData);
+            if (sponsorsData) setSponsors(sponsorsData as any as ESummitSponsor[]);
 
             // Fetch Speakers
             const { data: speakersData } = await supabase
