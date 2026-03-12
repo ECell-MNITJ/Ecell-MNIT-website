@@ -4,11 +4,6 @@ import { createServerClient } from '@/lib/supabase/server';
 
 export async function POST(req: Request) {
     try {
-        const razorpay = new Razorpay({
-            key_id: process.env.RAZORPAY_KEY_ID || '',
-            key_secret: process.env.RAZORPAY_KEY_SECRET || '',
-        });
-
         const supabase = await createServerClient();
 
         // Check if passes are enabled
@@ -133,6 +128,11 @@ export async function POST(req: Request) {
         }
 
         const amountInPaise = Math.round(finalPrice * 100);
+
+        const razorpay = new Razorpay({
+            key_id: process.env.RAZORPAY_KEY_ID || '',
+            key_secret: process.env.RAZORPAY_KEY_SECRET || '',
+        });
 
         const options = {
             amount: amountInPaise,

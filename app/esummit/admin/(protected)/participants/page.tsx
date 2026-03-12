@@ -79,7 +79,7 @@ export default function ParticipantsPage() {
             if (!silent) setLoading(true);
             const { data, error } = await (supabase
                 .from('profiles')
-                .select('*')
+                .select('*, campus_ambassadors(referral_code)')
                 .order('updated_at', { ascending: false }) as any);
 
             if (error) throw error;
@@ -109,6 +109,7 @@ export default function ParticipantsPage() {
                 Company: p.company_name || '-',
                 'QR Code URL': p.qr_code_url,
                 'System Role': p.role,
+                'CA Referral Code': p.campus_ambassadors?.referral_code || '-',
                 'Last Updated': new Date(p.updated_at || '').toLocaleDateString()
             }));
 
@@ -164,6 +165,11 @@ export default function ParticipantsPage() {
             const result = await promoteToCA(profileId, fullName, college);
             if (result.success) {
                 toast.success(`Registered as CA! Code: ${result.referralCode}`);
+                // Update local state immediately so UI updates without waiting for polling
+                setParticipants(prev => prev.map(p => p.id === profileId ? {
+                    ...p,
+                    campus_ambassadors: { referral_code: result.referralCode }
+                } : p));
             } else {
                 toast.error(result.error || 'Failed to promote to CA');
             }
@@ -171,10 +177,20 @@ export default function ParticipantsPage() {
         });
     };
 
+    // Helper to get referral code regardless of if Supabase returns object or array
+    const getReferralCode = (p: any) => {
+        if (!p.campus_ambassadors) return null;
+        if (Array.isArray(p.campus_ambassadors)) {
+            return p.campus_ambassadors[0]?.referral_code;
+        }
+        return p.campus_ambassadors.referral_code;
+    };
+
     const filteredParticipants = participants.filter(p =>
         p.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         p.phone?.includes(searchTerm) ||
-        p.id?.toLowerCase().includes(searchTerm.toLowerCase())
+        p.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        getReferralCode(p)?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const checkedInCount = participants.filter(p => p.esummit_checked_in).length;
@@ -263,6 +279,13 @@ export default function ParticipantsPage() {
                                                     <div className="text-xs text-gray-500 font-mono" title={participant.id}>
                                                         ID: {participant.id.split('-')[0]}...
                                                     </div>
+                                                    {getReferralCode(participant) && (
+                                                        <div className="mt-1">
+                                                            <span className="bg-emerald-500/10 text-emerald-500 text-[10px] px-1.5 py-0.5 rounded border border-emerald-500/20 font-bold uppercase tracking-wider">
+                                                                CA: {getReferralCode(participant)}
+                                                            </span>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </td>
@@ -280,9 +303,9 @@ export default function ParticipantsPage() {
                                                 </button>
                                                 <button
                                                     onClick={() => handlePromoteToCA(participant.id, participant.full_name, participant.college_name)}
-                                                    disabled={updatingRoleId === participant.id}
-                                                    className="p-2 bg-emerald-500/10 text-emerald-500 rounded-lg hover:bg-emerald-500 hover:text-white transition-all disabled:opacity-50"
-                                                    title="Promote to CA"
+                                                    disabled={updatingRoleId === participant.id || !!getReferralCode(participant)}
+                                                    className="p-2 bg-emerald-500/10 text-emerald-500 rounded-lg hover:bg-emerald-500 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    title={getReferralCode(participant) ? `Already CA: ${getReferralCode(participant)}` : "Promote to CA"}
                                                 >
                                                     <FiUserPlus />
                                                 </button>

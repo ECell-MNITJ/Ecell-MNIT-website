@@ -11,15 +11,25 @@ interface ParticipantDetailsModalProps {
     isUpdating?: boolean;
 }
 
-export default function ParticipantDetailsModal({ 
-    isOpen, 
-    onClose, 
+export default function ParticipantDetailsModal({
+    isOpen,
+    onClose,
     participant,
     onPromoteToCA,
     onDeleteProfile,
     isUpdating
 }: ParticipantDetailsModalProps) {
     if (!isOpen || !participant) return null;
+
+    const getReferralCode = (p: any) => {
+        if (!p.campus_ambassadors) return null;
+        if (Array.isArray(p.campus_ambassadors)) {
+            return p.campus_ambassadors[0]?.referral_code;
+        }
+        return p.campus_ambassadors.referral_code;
+    };
+
+    const referralCode = getReferralCode(participant);
 
     const formatDate = (dateString: string) => {
         if (!dateString) return 'N/A';
@@ -42,11 +52,14 @@ export default function ParticipantDetailsModal({
                         {onPromoteToCA && (
                             <button
                                 onClick={() => onPromoteToCA(participant.id, participant.full_name, participant.college_name)}
-                                disabled={isUpdating}
-                                className="hidden sm:flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-white px-4 py-2 rounded-xl transition-all border border-emerald-500/20 active:scale-95 disabled:opacity-50"
+                                disabled={isUpdating || !!referralCode}
+                                className="hidden sm:flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-white px-4 py-2 rounded-xl transition-all border border-emerald-500/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                                title={referralCode ? `Already CA: ${referralCode}` : "Add as CA"}
                             >
                                 <FiUserPlus className="text-lg" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Add as CA</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em]">
+                                    {referralCode ? 'Active CA' : 'Add as CA'}
+                                </span>
                             </button>
                         )}
                         {onDeleteProfile && (
@@ -133,7 +146,11 @@ export default function ParticipantDetailsModal({
                         <div className="grid grid-cols-3 gap-4 shrink-0">
                             <SummaryCard icon={<FiBriefcase />} label="Category" value={participant.user_type || 'Visitor'} />
                             <SummaryCard icon={<FiBookOpen />} label="Affiliation" value={participant.college_name || participant.company_name || 'N/A'} />
-                            <SummaryCard icon={<FiUser />} label="System Role" value={participant.role || 'User'} isRole />
+                            {referralCode ? (
+                                <SummaryCard icon={<FiUserPlus />} label="CA Referral" value={referralCode} />
+                            ) : (
+                                <SummaryCard icon={<FiUser />} label="System Role" value={participant.role || 'User'} isRole />
+                            )}
                         </div>
 
                         {/* Document Display Area */}
@@ -202,7 +219,10 @@ function SummaryCard({ icon, label, value, isRole }: { icon: any, label: string,
             </div>
             <div className="min-w-0">
                 <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest">{label}</p>
-                <h4 className={`text-xs font-black uppercase tracking-wider truncate ${isRole && value === 'admin' ? 'text-purple-400' : 'text-white'}`}>
+                <h4 className={`text-xs font-black uppercase tracking-wider truncate ${
+                    isRole && value === 'admin' ? 'text-purple-400' : 
+                    label === 'CA Referral' ? 'text-emerald-400' : 'text-white'
+                }`}>
                     {value}
                 </h4>
             </div>
