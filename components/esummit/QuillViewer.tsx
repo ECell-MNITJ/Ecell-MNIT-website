@@ -12,7 +12,6 @@ export default function QuillViewer({ html, className = '' }: QuillViewerProps) 
         <div className={`ql-container ql-snow ${className}`} style={{ border: 'none', background: 'transparent' }}>
             <style jsx global>{`
                 .ql-container.ql-snow {
-                    font-family: inherit !important;
                     font-size: inherit !important;
                     background: transparent !important;
                 }
@@ -24,6 +23,14 @@ export default function QuillViewer({ html, className = '' }: QuillViewerProps) 
                     overflow: visible !important;
                     cursor: default !important;
                 }
+                
+                /* Custom Fonts */
+                .ql-font-poppins { font-family: 'Poppins', sans-serif !important; }
+                .ql-font-bebas { font-family: 'Bebas Neue', cursive !important; }
+                .ql-font-inter { font-family: 'Inter', sans-serif !important; }
+                .ql-font-serif { font-family: serif !important; }
+                .ql-font-monospace { font-family: monospace !important; }
+
                 /* Match editor's default block behavior */
                 .ql-editor p, .ql-editor h1, .ql-editor h2, .ql-editor h3, .ql-editor ul, .ql-editor ol {
                     margin: 0 !important;

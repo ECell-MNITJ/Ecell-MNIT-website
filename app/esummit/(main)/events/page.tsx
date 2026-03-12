@@ -133,7 +133,7 @@ export default async function ESummitEventsPage() {
                 {/* Background Removed as requested */}
 
                 <div className="container mx-auto px-4 relative z-10 text-center">
-                    <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter uppercase pb-2">
+                    <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-normal uppercase pb-2">
                         <span className="text-white">E-Summit</span> <span className="text-transparent bg-clip-text bg-gradient-to-r from-esummit-primary to-esummit-accent pr-2 relative">Events</span>
                     </h1>
                     <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">

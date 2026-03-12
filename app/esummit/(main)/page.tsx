@@ -32,6 +32,7 @@ interface ESummitSponsor {
     name: string;
     logo_url: string | null;
     website_url: string | null;
+    brand_contributor: string | null;
     display_order: number;
 }
 
@@ -417,7 +418,7 @@ export default function ESummitLandingDataLayer() {
                     viewport={{ once: true }}
                     className="relative z-10 text-center max-w-4xl mx-auto px-4"
                 >
-                    <h2 className="text-4xl md:text-8xl font-black mb-6 md:mb-8 leading-tight tracking-tighter">
+                    <h2 className="text-4xl md:text-8xl font-black mb-6 md:mb-8 leading-tight tracking-normal">
                         EXPERIENCE THE <br />
                         <span className="text-esummit-primary drop-shadow-[0_0_20px_rgba(37,99,235,0.5)]">FUTURE</span>
                     </h2>

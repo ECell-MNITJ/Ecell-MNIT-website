@@ -101,7 +101,7 @@ export default function ContactPage() {
                     transition={{ duration: 0.8 }}
                     className="text-center mb-16"
                 >
-                    <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter">
+                    <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-normal">
                         GET IN <span className="text-transparent bg-clip-text bg-gradient-to-r from-esummit-primary to-esummit-accent">TOUCH</span>
                     </h1>
                     <p className="text-xl text-gray-400 max-w-2xl mx-auto">

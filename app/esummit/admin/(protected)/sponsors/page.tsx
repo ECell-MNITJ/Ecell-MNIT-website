@@ -10,6 +10,7 @@ interface ESummitSponsor {
     name: string;
     logo_url: string | null;
     website_url: string | null;
+    brand_contributor: string | null;
     display_order: number;
 }
 
@@ -32,6 +33,7 @@ export default function SponsorsAdminPage() {
     const [isAdding, setIsAdding] = useState(false);
     const [newName, setNewName] = useState('');
     const [newWebsite, setNewWebsite] = useState('');
+    const [newBrandContributor, setNewBrandContributor] = useState('');
     const [newImage, setNewImage] = useState<File | null>(null);
 
     // Editing State
@@ -95,7 +97,7 @@ export default function SponsorsAdminPage() {
             console.error('Error fetching sponsors:', error);
             toast.error('Failed to load sponsors');
         } else {
-            setSponsors(data || []);
+            setSponsors((data as any as ESummitSponsor[]) || []);
         }
     };
 
@@ -136,6 +138,7 @@ export default function SponsorsAdminPage() {
                 .insert({
                     name: newName,
                     website_url: newWebsite,
+                    brand_contributor: newBrandContributor,
                     logo_url: imageUrl,
                     display_order: sponsors.length
                 })
@@ -144,9 +147,10 @@ export default function SponsorsAdminPage() {
 
             if (error) throw error;
 
-            setSponsors([...sponsors, data]);
+            setSponsors([...sponsors, data as any as ESummitSponsor]);
             setNewName('');
             setNewWebsite('');
+            setNewBrandContributor('');
             setNewImage(null);
             setIsAdding(false);
             toast.success('Sponsor added successfully');
@@ -182,6 +186,7 @@ export default function SponsorsAdminPage() {
                 .update({
                     name: editingSponsor.name,
                     website_url: editingSponsor.website_url,
+                    brand_contributor: editingSponsor.brand_contributor,
                     logo_url: imageUrl,
                     updated_at: new Date().toISOString()
                 })
@@ -284,6 +289,15 @@ export default function SponsorsAdminPage() {
                                 />
                             </div>
                             <div className="col-span-1 md:col-span-2">
+                                <label className="block text-xs uppercase text-gray-400 mb-1">Brand Contributor (e.g. Official Ecosystem Partner)</label>
+                                <input
+                                    value={newBrandContributor}
+                                    onChange={e => setNewBrandContributor(e.target.value)}
+                                    className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-white outline-none"
+                                    placeholder="Official Ecosystem Partner"
+                                />
+                            </div>
+                            <div className="col-span-1 md:col-span-2">
                                 <label className="block text-xs uppercase text-gray-400 mb-1">Logo Image</label>
                                 <input
                                     type="file"
@@ -337,6 +351,15 @@ export default function SponsorsAdminPage() {
                                             />
                                         </div>
                                         <div className="col-span-1 md:col-span-2">
+                                            <label className="block text-xs uppercase text-gray-400 mb-1">Brand Contributor</label>
+                                            <input
+                                                value={editingSponsor!.brand_contributor || ''}
+                                                onChange={e => setEditingSponsor({ ...editingSponsor!, brand_contributor: e.target.value })}
+                                                className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-white"
+                                                placeholder="Official Ecosystem Partner"
+                                            />
+                                        </div>
+                                        <div className="col-span-1 md:col-span-2">
                                             <label className="block text-xs uppercase text-gray-400 mb-1">New Logo Image (Optional)</label>
                                             <input
                                                 type="file"
@@ -373,11 +396,18 @@ export default function SponsorsAdminPage() {
                                 </div>
                                 <div className="flex-1 text-center md:text-left">
                                     <h3 className="text-xl font-bold text-white">{sponsor.name}</h3>
-                                    {sponsor.website_url && (
-                                        <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-purple-400 hover:underline mt-1">
-                                            <FiLink size={12} /> {sponsor.website_url.replace(/^https?:\/\//, '')}
-                                        </a>
-                                    )}
+                                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
+                                        {sponsor.brand_contributor && (
+                                            <span className="text-sm text-purple-400 font-medium">
+                                                {sponsor.brand_contributor}
+                                            </span>
+                                        )}
+                                        {sponsor.website_url && (
+                                            <a href={sponsor.website_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-purple-400 hover:underline">
+                                                <FiLink size={12} /> {sponsor.website_url.replace(/^https?:\/\//, '')}
+                                            </a>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         );

@@ -274,9 +274,14 @@ export default function ParticipantsPage() {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <div className="font-bold text-white">{participant.full_name || 'N/A'}</div>
-                                                    <div className="text-xs text-gray-400">{participant.email || 'N/A'}</div>
-                                                    <div className="text-xs text-gray-500 font-mono" title={participant.id}>
+                                                    <div className="font-bold text-white text-sm">{participant.full_name || 'N/A'}</div>
+                                                    <div className="text-xs text-gray-400 font-medium">{participant.email || 'N/A'}</div>
+                                                    {participant.phone && (
+                                                        <div className="text-xs text-esummit-primary/80 font-bold mt-0.5 flex items-center gap-1">
+                                                            <span>Phone:</span> {participant.phone}
+                                                        </div>
+                                                    )}
+                                                    <div className="text-[10px] text-gray-500 font-mono mt-0.5" title={participant.id}>
                                                         ID: {participant.id.split('-')[0]}...
                                                     </div>
                                                     {getReferralCode(participant) && (
@@ -320,12 +325,11 @@ export default function ParticipantsPage() {
                                             </div>
                                         </td>
                                         <td className="p-4">
-                                            <span className={`inline-flex px-2 py-1 rounded text-[10px] font-black uppercase tracking-wider ${
-                                                participant.user_type === 'Student' ? 'bg-blue-500/20 text-blue-400' :
-                                                participant.user_type === 'Founder' ? 'bg-orange-500/20 text-orange-400' :
-                                                participant.user_type === 'Investor' ? 'bg-green-500/20 text-green-400' :
-                                                'bg-gray-700 text-gray-400'
-                                            }`}>
+                                            <span className={`inline-flex px-2 py-1 rounded text-[10px] font-black uppercase tracking-wider ${participant.user_type === 'Student' ? 'bg-blue-500/20 text-blue-400' :
+                                                    participant.user_type === 'Founder' ? 'bg-orange-500/20 text-orange-400' :
+                                                        participant.user_type === 'Investor' ? 'bg-green-500/20 text-green-400' :
+                                                            'bg-gray-700 text-gray-400'
+                                                }`}>
                                                 {participant.user_type || 'Visitor'}
                                             </span>
                                         </td>

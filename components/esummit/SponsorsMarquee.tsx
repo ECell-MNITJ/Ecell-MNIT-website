@@ -8,6 +8,7 @@ interface Sponsor {
     name: string;
     logo_url: string | null;
     website_url: string | null;
+    brand_contributor: string | null;
 }
 
 interface SponsorsMarqueeProps {
@@ -58,31 +59,44 @@ export function SponsorsMarquee({ sponsors, heading, isVisible }: SponsorsMarque
                     animate={{ x: ["0%", "-50%"] }}
                     transition={{
                         ease: "linear",
-                        duration: 5, // Halved duration for twice the speed
+                        duration: 30, // Increased duration to slow down the scroll
                         repeat: Infinity,
                     }}
                 >
                     {/* Only mapping double for standard loop mechanics */}
                     {[...duplicatedSponsors, ...duplicatedSponsors].map((sponsor, index) => (
-                        <div
-                            key={`${sponsor.id}-${index}`}
-                            className="shrink-0 group/card relative w-40 md:w-56 aspect-square flex items-center justify-center bg-gray-900/40 rounded-xl border border-white/5 hover:border-esummit-primary/50 hover:bg-white/5 transition-all duration-300 overflow-hidden"
-                        >
-                            {sponsor.website_url ? (
-                                <a
-                                    href={sponsor.website_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="w-full h-full flex items-center justify-center"
-                                    aria-label={`Visit ${sponsor.name} website`}
-                                >
-                                    <SponsorImage sponsor={sponsor} />
-                                </a>
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center">
-                                    <SponsorImage sponsor={sponsor} />
-                                </div>
-                            )}
+                        <div key={`${sponsor.id}-${index}`} className="flex flex-col items-center gap-4 shrink-0">
+                            <div
+                                className="group/card relative w-40 md:w-56 aspect-square flex items-center justify-center bg-gray-900/40 rounded-xl border border-white/5 hover:border-esummit-primary/50 hover:bg-white/5 transition-all duration-300 overflow-hidden"
+                            >
+                                {sponsor.website_url ? (
+                                    <a
+                                        href={sponsor.website_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-full h-full flex items-center justify-center"
+                                        aria-label={`Visit ${sponsor.name} website`}
+                                    >
+                                        <SponsorImage sponsor={sponsor} />
+                                    </a>
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                        <SponsorImage sponsor={sponsor} />
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Sponsor Name & Brand Contributor */}
+                            <div className="text-center space-y-1 max-w-[160px] md:max-w-[224px]">
+                                <h4 className="text-white font-black text-lg md:text-base truncate tracking-[0.15em] uppercase">
+                                    {sponsor.name}
+                                </h4>
+                                {sponsor.brand_contributor && (
+                                    <p className="text-esummit-primary font-medium text-[10px] md:text-xs uppercase tracking-wider leading-tight">
+                                        {sponsor.brand_contributor}
+                                    </p>
+                                )}
+                            </div>
                         </div>
                     ))}
                 </motion.div>

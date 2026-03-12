@@ -6,6 +6,10 @@ import { useEffect, useState } from 'react';
 
 const ReactQuill = dynamic(async () => {
     const { default: RQ } = await import('react-quill-new');
+    const { Quill } = await import('react-quill-new');
+    const Font = Quill.import('formats/font');
+    Font.whitelist = ['poppins', 'bebas', 'inter', 'serif', 'monospace'];
+    Quill.register(Font, true);
     return RQ;
 }, {
     ssr: false,
@@ -21,6 +25,7 @@ interface RichTextEditorProps {
 export default function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
     const modules = {
         toolbar: [
+            [{ 'font': ['poppins', 'bebas', 'inter', 'serif', 'monospace'] }],
             [{ 'header': [1, 2, 3, false] }],
             ['bold', 'italic', 'underline', 'strike'],
             [{ 'list': 'ordered' }, { 'list': 'bullet' }],
@@ -29,6 +34,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
     };
 
     const formats = [
+        'font',
         'header',
         'bold', 'italic', 'underline', 'strike',
         'list',
@@ -66,6 +72,39 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
                 .ql-snow .ql-picker-options {
                     background-color: #1f2937 !important;
                     border-color: #374151 !important;
+                }
+
+                /* Custom Fonts */
+                .ql-font-poppins { font-family: 'Poppins', sans-serif !important; }
+                .ql-font-bebas { font-family: 'Bebas Neue', cursive !important; }
+                .ql-font-inter { font-family: 'Inter', sans-serif !important; }
+                .ql-font-serif { font-family: serif !important; }
+                .ql-font-monospace { font-family: monospace !important; }
+
+                /* Picker Labels */
+                .ql-snow .ql-picker.ql-font .ql-picker-label::before,
+                .ql-snow .ql-picker.ql-font .ql-picker-item::before {
+                    content: 'Poppins';
+                }
+                .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="poppins"]::before,
+                .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="poppins"]::before {
+                    content: 'Poppins';
+                }
+                .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="bebas"]::before,
+                .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="bebas"]::before {
+                    content: 'Bebas Neue';
+                }
+                .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="inter"]::before,
+                .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="inter"]::before {
+                    content: 'Inter';
+                }
+                .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="serif"]::before,
+                .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="serif"]::before {
+                    content: 'Serif';
+                }
+                .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="monospace"]::before,
+                .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="monospace"]::before {
+                    content: 'Monospace';
                 }
             `}</style>
             <ReactQuill

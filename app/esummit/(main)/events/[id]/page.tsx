@@ -165,7 +165,7 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                                     <span className="w-2 h-8 bg-esummit-accent rounded-full" />
                                     About The Event
                                 </h2>
-                                <div className="text-gray-300 overflow-hidden break-words w-full">
+                                <div className="text-gray-300 overflow-hidden break-words w-full font-body">
                                     <QuillViewer html={event.detailed_description || ''} />
                                 </div>
                             </div>

@@ -7,12 +7,14 @@ import toast from 'react-hot-toast';
 
 interface RegistrationDetailsModalProps {
     isOpen: boolean;
+    isMandatory?: boolean;
     onClose: () => void;
     onComplete: () => void;
     user: any;
+    profile?: any;
 }
 
-export default function RegistrationDetailsModal({ isOpen, onClose, onComplete, user }: RegistrationDetailsModalProps) {
+export default function RegistrationDetailsModal({ isOpen, isMandatory = false, onClose, onComplete, user, profile }: RegistrationDetailsModalProps) {
     const supabase = createClient();
     const [loading, setLoading] = useState(false);
 
@@ -25,17 +27,17 @@ export default function RegistrationDetailsModal({ isOpen, onClose, onComplete, 
         return { first: fullName, last: '' };
     };
 
-    const initialNames = splitName(user?.user_metadata?.full_name || user?.full_name || '');
+    const initialNames = splitName(user?.user_metadata?.full_name || user?.full_name || profile?.full_name || '');
 
     const [formData, setFormData] = useState({
         first_name: initialNames.first,
         last_name: initialNames.last,
-        phone: user?.phone || '',
-        age: '',
-        gender: '',
-        user_type: '',
-        college_name: '',
-        company_name: '',
+        phone: profile?.phone || user?.phone || '',
+        age: profile?.age || '',
+        gender: profile?.gender || '',
+        user_type: profile?.user_type || '',
+        college_name: profile?.college_name || '',
+        company_name: profile?.company_name || '',
         referral_code: ''
     });
 
@@ -209,12 +211,14 @@ export default function RegistrationDetailsModal({ isOpen, onClose, onComplete, 
                         <span className="w-1 h-6 bg-primary-golden rounded-full"></span>
                         Quick Registration
                     </h2>
-                    <button
-                        onClick={onClose}
-                        className="text-gray-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-gray-800"
-                    >
-                        <FiX className="w-5 h-5" />
-                    </button>
+                    {!isMandatory && (
+                        <button
+                            onClick={onClose}
+                            className="text-gray-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-gray-800"
+                        >
+                            <FiX className="w-5 h-5" />
+                        </button>
+                    )}
                 </div>
 
                 <div className="p-6">
@@ -251,27 +255,29 @@ export default function RegistrationDetailsModal({ isOpen, onClose, onComplete, 
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-400 mb-1.5 ml-1">Phone Number</label>
-                            <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                                    <FiSmartphone />
+                        {!profile?.phone && (
+                            <div>
+                                <label className="block text-sm font-medium text-gray-400 mb-1.5 ml-1">Phone Number</label>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                                        <FiSmartphone />
+                                    </div>
+                                    <input
+                                        type="tel"
+                                        required
+                                        value={formData.phone}
+                                        onChange={(e) => {
+                                            const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                            setFormData({ ...formData, phone: val })
+                                        }}
+                                        pattern="\d{10}"
+                                        title="Phone number must be exactly 10 digits"
+                                        className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none transition-all placeholder:text-gray-600"
+                                        placeholder="9876543210"
+                                    />
                                 </div>
-                                <input
-                                    type="tel"
-                                    required
-                                    value={formData.phone}
-                                    onChange={(e) => {
-                                        const val = e.target.value.replace(/\D/g, '').slice(0, 10);
-                                        setFormData({ ...formData, phone: val })
-                                    }}
-                                    pattern="\d{10}"
-                                    title="Phone number must be exactly 10 digits"
-                                    className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent outline-none transition-all placeholder:text-gray-600"
-                                    placeholder="9876543210"
-                                />
                             </div>
-                        </div>
+                        )}
 
                         <div>
                             <label className="block text-sm font-medium text-gray-400 mb-1.5 ml-1">Age</label>

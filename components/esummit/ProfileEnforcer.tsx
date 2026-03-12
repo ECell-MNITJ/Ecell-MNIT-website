@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation';
 export default function ProfileEnforcer({ user }: { user: any }) {
     const supabase = createClient();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [checking, setChecking] = useState(true);
+    const [profileData, setProfileData] = useState<any>(null);
     const pathname = usePathname();
 
     useEffect(() => {
@@ -24,7 +24,7 @@ export default function ProfileEnforcer({ user }: { user: any }) {
             try {
                 const { data: profile, error } = await supabase
                     .from('profiles')
-                    .select('full_name, phone, age, gender, qr_code_url, user_type, college_id_url, govt_id_url')
+                    .select('*')
                     .eq('id', user.id)
                     .single() as any;
 
@@ -40,6 +40,7 @@ export default function ProfileEnforcer({ user }: { user: any }) {
                 }
 
                 if (!profile) return;
+                setProfileData(profile);
 
                 const hasBasicDetails = profile.full_name && profile.phone && profile.age && profile.gender && profile.qr_code_url;
                 const hasUserTypeDetails = profile.user_type && (profile.college_id_url || profile.govt_id_url);
@@ -49,8 +50,6 @@ export default function ProfileEnforcer({ user }: { user: any }) {
                 }
             } catch (error) {
                 if (active) console.error('Error in profile enforcer:', error);
-            } finally {
-                if (active) setChecking(false);
             }
         };
 
@@ -71,14 +70,13 @@ export default function ProfileEnforcer({ user }: { user: any }) {
     return (
         <RegistrationDetailsModal
             isOpen={isModalOpen}
+            isMandatory={true}
             onClose={() => {
-                // Determine if we should allow closing.
-                // If it's strictly enforced, maybe don't allow close?
-                // For now, allow close but it might pop up again on navigation.
-                setIsModalOpen(false);
+                // Strictly enforced: do not allow closing
             }}
             onComplete={handleComplete}
             user={user}
+            profile={profileData}
         />
     );
 }
