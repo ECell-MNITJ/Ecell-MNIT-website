@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 const ReactQuill = dynamic(async () => {
     const { default: RQ } = await import('react-quill-new');
     const { Quill } = await import('react-quill-new');
-    const Font = Quill.import('formats/font');
+    const Font = Quill.import('formats/font') as any;
     Font.whitelist = ['poppins', 'bebas', 'inter', 'serif', 'monospace'];
     Quill.register(Font, true);
     return RQ;
