@@ -1,5 +1,4 @@
 import { createServerClient } from '@/lib/supabase/server';
-import Link from 'next/link';
 import { FiLinkedin, FiTwitter, FiMail } from 'react-icons/fi';
 import { Metadata } from 'next';
 import PageLayout3DWrapper from '@/components/3d/PageLayout3DWrapper';
@@ -22,6 +21,8 @@ interface TeamMember {
     image_url: string | null;
     linkedin_url: string | null;
     twitter_url: string | null;
+    category: 'faculty' | 'student' | 'advisor';
+    section: string | null;
 }
 
 async function getTeamMembers(): Promise<TeamMember[]> {
@@ -36,19 +37,32 @@ async function getTeamMembers(): Promise<TeamMember[]> {
         return [];
     }
 
-    return data || [];
+    return (data as any) || [];
 }
 
 export default async function About() {
     const teamMembers = await getTeamMembers();
 
+    const facultyMembers = teamMembers.filter(m => m.category === 'faculty');
+    const studentMembers = teamMembers.filter(m => m.category === 'student' || m.category === 'advisor');
+
+    // Group students by section
+    const studentGroups: Record<string, TeamMember[]> = {};
+    studentMembers.forEach(member => {
+        const section = member.section || 'General';
+        if (!studentGroups[section]) studentGroups[section] = [];
+        studentGroups[section].push(member);
+    });
+
+    // Ensure we maintain a consistent order for sections (e.g. alphabetical or by latest member's index)
+    const sectionNames = Object.keys(studentGroups).sort();
+
     // specific calculation for dynamic height
-    // Base content takes ~6.2 pages. Each row of team members (now ~5 per row) adds ~0.35 pages.
-    const teamRows = Math.ceil(teamMembers.length / 5);
+    const teamRows = Math.ceil(teamMembers.length / 5) + (sectionNames.length * 0.5); // Add spacing for sections
     const totalPages = 6.2 + (teamRows * 0.35);
 
-    // Mobile calculation (1 column)
-    const teamRowsMobile = teamMembers.length;
+    // Mobile calculation
+    const teamRowsMobile = teamMembers.length + (sectionNames.length * 2);
     const totalPagesMobile = 6.2 + (teamRowsMobile * 0.4);
 
     return (
@@ -246,6 +260,26 @@ export default async function About() {
                     </div>
                 </section>
 
+                {/* Faculty Advisors Section */}
+                {facultyMembers.length > 0 && (
+                    <section className="section py-20 pointer-events-none">
+                        <div className="container-custom pointer-events-auto">
+                            <div className="flex flex-col items-center justify-center text-center mb-16 px-8 py-8 rounded-3xl border border-white/5 bg-black/40 backdrop-blur-md max-w-4xl mx-auto">
+                                <h2 className="text-4xl md:text-5xl font-heading text-primary-green mb-4">
+                                    Faculty Advisors
+                                </h2>
+                                <div className="w-24 h-1 bg-gradient-to-r from-primary-golden to-yellow-700 mb-6 rounded-full" />
+                            </div>
+
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto">
+                                {facultyMembers.map((member) => (
+                                    <TeamMemberCard key={member.id} member={member} />
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+                )}
+
                 {/* Team Section */}
                 <section className="section py-20 pointer-events-none pb-40">
                     <div className="container-custom pointer-events-auto">
@@ -259,63 +293,15 @@ export default async function About() {
                             </p>
                         </div>
 
-                        {teamMembers.length > 0 ? (
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8">
-                                {teamMembers.map((member) => (
-                                    <div
-                                        key={member.id}
-                                        className="text-center group bg-zinc-900/80 backdrop-blur-sm p-6 rounded-2xl border border-white/5 hover:border-primary-golden/30 transition-all duration-300"
-                                    >
-                                        {member.image_url ? (
-                                            <img
-                                                src={member.image_url}
-                                                alt={member.name}
-                                                className="w-32 h-32 md:w-36 md:h-36 mx-auto mb-4 rounded-full object-cover group-hover:scale-110 transition-transform duration-300 shadow-lg border-2 border-primary-golden/20"
-                                            />
-                                        ) : (
-                                            <div className="w-32 h-32 md:w-36 md:h-36 mx-auto mb-4 bg-gradient-to-br from-primary-green to-gray-800 rounded-full flex items-center justify-center text-4xl font-heading text-white group-hover:scale-110 transition-transform duration-300 border-2 border-primary-golden/20">
-                                                {member.name.charAt(0)}
-                                            </div>
-                                        )}
-                                        <h3 className="text-lg font-heading text-white mb-1 group-hover:text-primary-golden transition-colors line-clamp-1">{member.name}</h3>
-                                        <p className="text-primary-golden font-semibold text-xs md:text-sm mb-3 uppercase tracking-wider">
-                                            {member.role}
-                                        </p>
-
-
-                                        {(member.linkedin_url || member.twitter_url || member.email) && (
-                                            <div className="flex justify-center gap-4 mt-2">
-                                                {member.email && (
-                                                    <a
-                                                        href={`mailto:${member.email}`}
-                                                        className="text-gray-400 hover:text-primary-golden transition-colors bg-white/5 p-2 rounded-full"
-                                                        title={member.email}
-                                                    >
-                                                        <FiMail className="w-5 h-5" />
-                                                    </a>
-                                                )}
-                                                {member.linkedin_url && (
-                                                    <a
-                                                        href={member.linkedin_url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-gray-400 hover:text-primary-golden transition-colors bg-white/5 p-2 rounded-full"
-                                                    >
-                                                        <FiLinkedin className="w-5 h-5" />
-                                                    </a>
-                                                )}
-                                                {member.twitter_url && (
-                                                    <a
-                                                        href={member.twitter_url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="text-gray-400 hover:text-primary-golden transition-colors bg-white/5 p-2 rounded-full"
-                                                    >
-                                                        <FiTwitter className="w-5 h-5" />
-                                                    </a>
-                                                )}
-                                            </div>
-                                        )}
+                        {studentMembers.length > 0 ? (
+                            <div className="space-y-20">
+                                {sectionNames.map((sectionName) => (
+                                    <div key={sectionName}>
+                                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8">
+                                            {studentGroups[sectionName].map((member) => (
+                                                <TeamMemberCard key={member.id} member={member} />
+                                            ))}
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -328,5 +314,63 @@ export default async function About() {
                 </section>
             </div>
         </PageLayout3DWrapper>
+    );
+}
+
+function TeamMemberCard({ member }: { member: TeamMember }) {
+    return (
+        <div
+            className="text-center group bg-zinc-900/80 backdrop-blur-sm p-6 rounded-2xl border border-white/5 hover:border-primary-golden/30 transition-all duration-300"
+        >
+            {member.image_url ? (
+                <img
+                    src={member.image_url}
+                    alt={member.name}
+                    className="w-32 h-32 md:w-36 md:h-36 mx-auto mb-4 rounded-full object-cover group-hover:scale-110 transition-transform duration-300 shadow-lg border-2 border-primary-golden/20"
+                />
+            ) : (
+                <div className="w-32 h-32 md:w-36 md:h-36 mx-auto mb-4 bg-gradient-to-br from-primary-green to-gray-800 rounded-full flex items-center justify-center text-4xl font-heading text-white group-hover:scale-110 transition-transform duration-300 border-2 border-primary-golden/20">
+                    {member.name.charAt(0)}
+                </div>
+            )}
+            <h3 className="text-lg font-heading text-white mb-1 group-hover:text-primary-golden transition-colors line-clamp-1">{member.name}</h3>
+            <p className="text-primary-golden font-semibold text-xs md:text-sm mb-3 uppercase tracking-wider">
+                {member.role}
+            </p>
+
+            {(member.linkedin_url || member.twitter_url || member.email) && (
+                <div className="flex justify-center gap-4 mt-2">
+                    {member.email && (
+                        <a
+                            href={`mailto:${member.email}`}
+                            className="text-gray-400 hover:text-primary-golden transition-colors bg-white/5 p-2 rounded-full"
+                            title={member.email}
+                        >
+                            <FiMail className="w-5 h-5" />
+                        </a>
+                    )}
+                    {member.linkedin_url && (
+                        <a
+                            href={member.linkedin_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-gray-400 hover:text-primary-golden transition-colors bg-white/5 p-2 rounded-full"
+                        >
+                            <FiLinkedin className="w-5 h-5" />
+                        </a>
+                    )}
+                    {member.twitter_url && (
+                        <a
+                            href={member.twitter_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-gray-400 hover:text-primary-golden transition-colors bg-white/5 p-2 rounded-full"
+                        >
+                            <FiTwitter className="w-5 h-5" />
+                        </a>
+                    )}
+                </div>
+            )}
+        </div>
     );
 }

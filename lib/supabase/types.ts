@@ -21,6 +21,8 @@ export interface Database {
                     linkedin_url: string | null;
                     twitter_url: string | null;
                     order_index: number;
+                    category: 'faculty' | 'student' | 'advisor';
+                    section: string | null;
                     created_at: string;
                 };
                 Insert: {
@@ -34,6 +36,8 @@ export interface Database {
                     linkedin_url?: string | null;
                     twitter_url?: string | null;
                     order_index?: number;
+                    category?: 'faculty' | 'student' | 'advisor';
+                    section?: string | null;
                     created_at?: string;
                 };
                 Update: {
@@ -47,6 +51,8 @@ export interface Database {
                     linkedin_url?: string | null;
                     twitter_url?: string | null;
                     order_index?: number;
+                    category?: 'faculty' | 'student' | 'advisor';
+                    section?: string | null;
                     created_at?: string;
                 };
                 Relationships: [];
@@ -686,7 +692,7 @@ export interface Database {
             esummit_sponsors: {
                 Row: {
                     id: string;
-                    name: string;
+                    name: string | null;
                     logo_url: string | null;
                     website_url: string | null;
                     display_order: number;
@@ -695,7 +701,7 @@ export interface Database {
                 };
                 Insert: {
                     id?: string;
-                    name: string;
+                    name?: string | null;
                     logo_url?: string | null;
                     website_url?: string | null;
                     display_order?: number;
@@ -704,7 +710,7 @@ export interface Database {
                 };
                 Update: {
                     id?: string;
-                    name?: string;
+                    name?: string | null;
                     logo_url?: string | null;
                     website_url?: string | null;
                     display_order?: number;

@@ -11,12 +11,12 @@ interface TeamMember {
     name: string;
     role: string;
     position: string | null;
-
     image_url: string | null;
     order_index: number;
+    category: string;
 }
 
-export default function TeamManagement() {
+export default function FacultyManagement() {
     const [members, setMembers] = useState<TeamMember[]>([]);
     const [loading, setLoading] = useState(true);
     const supabase = createClient();
@@ -30,20 +30,20 @@ export default function TeamManagement() {
             const { data, error } = await supabase
                 .from('team_members')
                 .select('*')
-                .neq('category', 'faculty')
+                .eq('category', 'faculty')
                 .order('order_index', { ascending: true });
 
             if (error) throw error;
             setMembers(data || []);
         } catch (error: any) {
-            toast.error('Failed to load team members');
+            toast.error('Failed to load faculty advisors');
         } finally {
             setLoading(false);
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this team member?')) return;
+        if (!confirm('Are you sure you want to delete this faculty advisor?')) return;
 
         try {
             const { error } = await supabase
@@ -53,10 +53,10 @@ export default function TeamManagement() {
 
             if (error) throw error;
 
-            toast.success('Team member deleted');
+            toast.success('Faculty advisor deleted');
             fetchMembers();
         } catch (error: any) {
-            toast.error('Failed to delete team member');
+            toast.error('Failed to delete faculty advisor');
         }
     };
 
@@ -65,16 +65,16 @@ export default function TeamManagement() {
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="text-3xl font-heading text-primary-green mb-2">
-                        Team Members
+                        Faculty Advisors
                     </h1>
-                    <p className="text-gray-600">Manage your E-Cell team</p>
+                    <p className="text-gray-600">Manage your Faculty Advisors</p>
                 </div>
                 <Link
-                    href="/admin/team/new"
+                    href="/admin/faculty/new"
                     className="flex items-center gap-2 bg-gradient-to-r from-primary-golden to-yellow-700 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all"
                 >
                     <FiPlus className="w-5 h-5" />
-                    Add Member
+                    Add Faculty
                 </Link>
             </div>
 
@@ -84,13 +84,13 @@ export default function TeamManagement() {
                 </div>
             ) : members.length === 0 ? (
                 <div className="bg-white rounded-xl p-12 text-center shadow-lg">
-                    <p className="text-gray-600 mb-4">No team members yet</p>
+                    <p className="text-gray-600 mb-4">No faculty advisors yet</p>
                     <Link
-                        href="/admin/team/new"
+                        href="/admin/faculty/new"
                         className="inline-flex items-center gap-2 text-primary-golden hover:underline"
                     >
                         <FiPlus className="w-4 h-4" />
-                        Add your first member
+                        Add your first faculty member
                     </Link>
                 </div>
             ) : (
@@ -116,7 +116,7 @@ export default function TeamManagement() {
                                 )}
                                 <div className="flex gap-2">
                                     <Link
-                                        href={`/admin/team/${member.id}`}
+                                        href={`/admin/faculty/${member.id}`}
                                         className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
                                     >
                                         <FiEdit2 className="w-4 h-4" />
@@ -135,7 +135,6 @@ export default function TeamManagement() {
                             <p className="text-primary-golden text-sm font-medium mb-1">
                                 {member.role} {member.position && `(${member.position})`}
                             </p>
-
                         </div>
                     ))}
                 </div>

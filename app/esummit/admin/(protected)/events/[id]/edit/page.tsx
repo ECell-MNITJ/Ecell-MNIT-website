@@ -477,8 +477,8 @@ export default function EditESummitEvent() {
                                         type="number"
                                         min="1"
                                         required={formData.is_team_event}
-                                        value={formData.min_team_size}
-                                        onChange={(e) => setFormData({ ...formData, min_team_size: parseInt(e.target.value) })}
+                                        value={isNaN(formData.min_team_size) ? '' : formData.min_team_size}
+                                        onChange={(e) => setFormData({ ...formData, min_team_size: e.target.value === '' ? 1 : parseInt(e.target.value) })}
                                         className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                                     />
                                 </div>
@@ -489,8 +489,8 @@ export default function EditESummitEvent() {
                                         type="number"
                                         min="1"
                                         required={formData.is_team_event}
-                                        value={formData.max_team_size}
-                                        onChange={(e) => setFormData({ ...formData, max_team_size: parseInt(e.target.value) })}
+                                        value={isNaN(formData.max_team_size) ? '' : formData.max_team_size}
+                                        onChange={(e) => setFormData({ ...formData, max_team_size: e.target.value === '' ? 1 : parseInt(e.target.value) })}
                                         className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                                     />
                                 </div>

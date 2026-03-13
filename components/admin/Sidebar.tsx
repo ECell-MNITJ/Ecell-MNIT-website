@@ -27,6 +27,7 @@ export default function AdminSidebar() {
 
     const navItems = [
         { name: 'Dashboard', href: '/admin/dashboard', icon: FiHome },
+        { name: 'Faculty Advisors', href: '/admin/faculty', icon: FiUsers },
         { name: 'Team Members', href: '/admin/team', icon: FiUsers },
         { name: 'Events', href: '/admin/events', icon: FiCalendar },
         { name: 'Registrations', href: '/admin/registrations', icon: FiUsers },

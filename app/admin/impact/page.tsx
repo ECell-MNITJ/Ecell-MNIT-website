@@ -187,8 +187,8 @@ export default function AdminImpactPage() {
                                 <label className="block text-gray-400 text-sm mb-1">Display Order</label>
                                 <input
                                     type="number"
-                                    value={formData.display_order}
-                                    onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) })}
+                                    value={isNaN(formData.display_order as number) ? '' : formData.display_order}
+                                    onChange={(e) => setFormData({ ...formData, display_order: e.target.value === '' ? 0 : parseInt(e.target.value) })}
                                     className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:border-primary-golden outline-none"
                                 />
                             </div>

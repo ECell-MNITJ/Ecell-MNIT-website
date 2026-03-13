@@ -28,6 +28,8 @@ export default function EditTeamMember() {
         twitter_url: '',
         order_index: 0,
         image_url: '',
+        category: 'student' as 'student' | 'faculty' | 'advisor',
+        section: '',
     });
 
     useEffect(() => {
@@ -54,6 +56,8 @@ export default function EditTeamMember() {
                 twitter_url: data.twitter_url || '',
                 order_index: data.order_index,
                 image_url: data.image_url || '',
+                category: (data.category as any) || 'student',
+                section: data.section || '',
             });
 
             // Check if existing position is custom
@@ -107,6 +111,8 @@ export default function EditTeamMember() {
                 twitter_url: formData.twitter_url || null,
                 order_index: formData.order_index,
                 image_url: imageUrl,
+                category: formData.category,
+                section: formData.section || null,
             };
 
             const { error } = await (supabase
@@ -306,10 +312,43 @@ export default function EditTeamMember() {
                         <input
                             id="order"
                             type="number"
-                            value={formData.order_index}
-                            onChange={(e) => setFormData({ ...formData, order_index: parseInt(e.target.value) })}
+                            value={isNaN(formData.order_index) ? '' : formData.order_index}
+                            onChange={(e) => setFormData({ ...formData, order_index: e.target.value === '' ? 0 : parseInt(e.target.value) })}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent"
                         />
+                    </div>
+
+                    {/* Category */}
+                    <div>
+                        <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                            Category *
+                        </label>
+                        <select
+                            id="category"
+                            required
+                            value={formData.category}
+                            onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent"
+                        >
+                            <option value="student">Student</option>
+                            <option value="advisor">Advisor</option>
+                        </select>
+                    </div>
+
+                    {/* Section */}
+                    <div>
+                        <label htmlFor="section" className="block text-sm font-medium text-gray-700 mb-2">
+                            Section (Grouping)
+                        </label>
+                        <input
+                            id="section"
+                            type="text"
+                            value={formData.section}
+                            onChange={(e) => setFormData({ ...formData, section: e.target.value })}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent"
+                            placeholder="e.g., Final Year, Class of 2025"
+                        />
+                        <p className="text-sm text-gray-500 mt-1">Used to group members visually (e.g., by class year)</p>
                     </div>
 
                     <div className="flex gap-4 pt-4">

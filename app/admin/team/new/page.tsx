@@ -22,6 +22,8 @@ export default function NewTeamMember() {
         bio: '',
         linkedin_url: '',
         order_index: 0,
+        category: 'student' as 'student' | 'faculty' | 'advisor',
+        section: '',
     });
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,6 +69,8 @@ export default function NewTeamMember() {
                 image_url: imageUrl,
                 linkedin_url: formData.linkedin_url || null,
                 order_index: formData.order_index,
+                category: formData.category,
+                section: formData.section || null,
             };
 
             const { data, error } = await supabase.from('team_members').insert(insertData as any);
@@ -275,11 +279,44 @@ export default function NewTeamMember() {
                         <input
                             id="order"
                             type="number"
-                            value={formData.order_index}
-                            onChange={(e) => setFormData({ ...formData, order_index: parseInt(e.target.value) })}
+                            value={isNaN(formData.order_index) ? '' : formData.order_index}
+                            onChange={(e) => setFormData({ ...formData, order_index: e.target.value === '' ? 0 : parseInt(e.target.value) })}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent"
                         />
                         <p className="text-sm text-gray-500 mt-1">Lower numbers appear first</p>
+                    </div>
+
+                    {/* Category */}
+                    <div>
+                        <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+                            Category *
+                        </label>
+                        <select
+                            id="category"
+                            required
+                            value={formData.category}
+                            onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent"
+                        >
+                            <option value="student">Student</option>
+                            <option value="advisor">Advisor</option>
+                        </select>
+                    </div>
+
+                    {/* Section */}
+                    <div>
+                        <label htmlFor="section" className="block text-sm font-medium text-gray-700 mb-2">
+                            Section (Grouping)
+                        </label>
+                        <input
+                            id="section"
+                            type="text"
+                            value={formData.section}
+                            onChange={(e) => setFormData({ ...formData, section: e.target.value })}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-golden focus:border-transparent"
+                            placeholder="e.g., Final Year, Class of 2025"
+                        />
+                        <p className="text-sm text-gray-500 mt-1">Used to group members visually (e.g., by class year)</p>
                     </div>
 
                     {/* Buttons */}

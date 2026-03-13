@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 
 interface ESummitSponsor {
     id: string;
-    name: string;
+    name: string | null;
     logo_url: string | null;
     website_url: string | null;
     brand_contributor: string | null;
@@ -122,11 +122,6 @@ export default function SponsorsAdminPage() {
     };
 
     const handleAddSponsor = async () => {
-        if (!newName.trim()) {
-            toast.error("Sponsor name is required.");
-            return;
-        }
-
         try {
             let imageUrl = null;
             if (newImage) {
@@ -136,7 +131,7 @@ export default function SponsorsAdminPage() {
             const { data, error } = await supabase
                 .from('esummit_sponsors')
                 .insert({
-                    name: newName,
+                    name: newName || null,
                     website_url: newWebsite,
                     brand_contributor: newBrandContributor,
                     logo_url: imageUrl,
@@ -184,7 +179,7 @@ export default function SponsorsAdminPage() {
             const { error } = await supabase
                 .from('esummit_sponsors')
                 .update({
-                    name: editingSponsor.name,
+                    name: editingSponsor.name || null,
                     website_url: editingSponsor.website_url,
                     brand_contributor: editingSponsor.brand_contributor,
                     logo_url: imageUrl,
@@ -271,7 +266,7 @@ export default function SponsorsAdminPage() {
                         <h3 className="font-bold text-white mb-4">New Sponsor</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-xs uppercase text-gray-400 mb-1">Name *</label>
+                                <label className="block text-xs uppercase text-gray-400 mb-1">Name (Optional)</label>
                                 <input
                                     value={newName}
                                     onChange={e => setNewName(e.target.value)}
@@ -335,7 +330,7 @@ export default function SponsorsAdminPage() {
                                         <div>
                                             <label className="block text-xs uppercase text-gray-400 mb-1">Name</label>
                                             <input
-                                                value={editingSponsor!.name}
+                                                value={editingSponsor!.name || ''}
                                                 onChange={e => setEditingSponsor({ ...editingSponsor!, name: e.target.value })}
                                                 className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-white"
                                                 placeholder="Name"
@@ -389,13 +384,13 @@ export default function SponsorsAdminPage() {
 
                                 <div className="shrink-0 w-32 h-20 bg-gray-900 rounded border border-gray-700 flex items-center justify-center p-2 overflow-hidden">
                                     {sponsor.logo_url ? (
-                                        <img src={sponsor.logo_url} alt={sponsor.name} className="w-full h-full object-contain" />
+                                        <img src={sponsor.logo_url} alt={sponsor.name || 'Sponsor'} className="w-full h-full object-contain" />
                                     ) : (
                                         <span className="text-xs text-gray-500 font-bold">{sponsor.name}</span>
                                     )}
                                 </div>
                                 <div className="flex-1 text-center md:text-left">
-                                    <h3 className="text-xl font-bold text-white">{sponsor.name}</h3>
+                                    <h3 className="text-xl font-bold text-white">{sponsor.name || 'Untitled Sponsor'}</h3>
                                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
                                         {sponsor.brand_contributor && (
                                             <span className="text-sm text-purple-400 font-medium">
