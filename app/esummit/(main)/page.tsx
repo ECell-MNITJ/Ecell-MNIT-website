@@ -450,7 +450,7 @@ export default function ESummitLandingDataLayer() {
                 heading={settings.investors_heading}
                 isVisible={settings.show_investors}
                 reverse={true}
-                duration={20}
+                duration={30}
             />
 
             {/* Sponsors Section */}
