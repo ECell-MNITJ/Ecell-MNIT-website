@@ -609,12 +609,6 @@ export interface Database {
             esummit_settings: {
                 Row: {
                     id: number;
-                    show_stats: boolean;
-                    show_blueprint: boolean;
-                    show_sponsors: boolean;
-                    sponsors_heading: string;
-                    show_speakers: boolean;
-                    speakers_heading: string;
                     scanner_password: string;
                     contact_email: string;
                     contact_phone: string;
@@ -627,6 +621,8 @@ export interface Database {
                     ca_registrations_open: boolean;
                     pass_features_list: string[];
                     passes_enabled: boolean;
+                    show_investors: boolean;
+                    investors_heading: string;
                     created_at: string;
                     updated_at: string;
                     instagram_url: string | null;
@@ -641,6 +637,8 @@ export interface Database {
                     show_blueprint?: boolean;
                     show_sponsors?: boolean;
                     sponsors_heading?: string;
+                    show_investors?: boolean;
+                    investors_heading?: string;
                     scanner_password?: string;
                     contact_email?: string;
                     contact_phone?: string;
@@ -667,6 +665,8 @@ export interface Database {
                     show_blueprint?: boolean;
                     show_sponsors?: boolean;
                     sponsors_heading?: string;
+                    show_investors?: boolean;
+                    investors_heading?: string;
                     scanner_password?: string;
                     contact_email?: string;
                     contact_phone?: string;
@@ -690,6 +690,36 @@ export interface Database {
                 Relationships: [];
             };
             esummit_sponsors: {
+                Row: {
+                    id: string;
+                    name: string | null;
+                    logo_url: string | null;
+                    website_url: string | null;
+                    display_order: number;
+                    created_at: string;
+                    updated_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    name?: string | null;
+                    logo_url?: string | null;
+                    website_url?: string | null;
+                    display_order?: number;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    name?: string | null;
+                    logo_url?: string | null;
+                    website_url?: string | null;
+                    display_order?: number;
+                    created_at?: string;
+                    updated_at?: string;
+                };
+                Relationships: [];
+            };
+            esummit_investors: {
                 Row: {
                     id: string;
                     name: string | null;

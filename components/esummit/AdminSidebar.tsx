@@ -31,6 +31,7 @@ export default function ESummitAdminSidebar() {
         { name: 'Gallery', path: '/esummit/admin/gallery', icon: FiImage },
         { name: 'Landing Page', path: '/esummit/admin/landing', icon: FiSettings },
         { name: 'Sponsors', path: '/esummit/admin/sponsors', icon: FiImage },
+        { name: 'Investors', path: '/esummit/admin/investors', icon: FiImage },
         { name: 'Speakers', path: '/esummit/admin/speakers', icon: FiUsers },
         { name: 'Live Attendance', path: '/esummit/admin/attendance', icon: FiUsers },
         { name: 'Queries', path: '/esummit/admin/queries', icon: FiUsers },

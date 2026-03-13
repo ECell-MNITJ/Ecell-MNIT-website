@@ -45,6 +45,14 @@ interface ESummitSpeaker {
     display_order: number;
 }
 
+interface ESummitInvestor {
+    id: string;
+    name: string | null;
+    logo_url: string | null;
+    website_url: string | null;
+    display_order: number;
+}
+
 const ParallaxText = ({ children, baseVelocity = 100 }: { children: string; baseVelocity: number }) => {
     // Simplified marquee for now to reduce complexity in this file, 
     // but we can bring back the full marquee component if needed.
@@ -136,12 +144,15 @@ export default function ESummitLandingDataLayer() {
     const [stats, setStats] = useState<ESummitStat[]>([]);
     const [blueprints, setBlueprints] = useState<ESummitBlueprint[]>([]);
     const [sponsors, setSponsors] = useState<ESummitSponsor[]>([]);
+    const [investors, setInvestors] = useState<ESummitInvestor[]>([]);
     const [speakers, setSpeakers] = useState<ESummitSpeaker[]>([]);
     const [settings, setSettings] = useState({
         show_stats: true,
         show_blueprint: true,
         show_sponsors: true,
         sponsors_heading: 'Our Sponsors',
+        show_investors: true,
+        investors_heading: "Investors of F'10",
         show_speakers: true,
         speakers_heading: 'Eminent Speakers'
     });
@@ -168,23 +179,23 @@ export default function ESummitLandingDataLayer() {
                 .select('*')
                 .order('display_order', { ascending: true });
 
-            if (statsData) setStats(statsData);
-
             // Fetch Blueprints
-            const { data: bpData } = await supabase
+            const { data: blueprintsData } = await supabase
                 .from('esummit_blueprint')
                 .select('*')
                 .order('display_order', { ascending: true });
-
-            if (bpData) setBlueprints(bpData);
 
             // Fetch Sponsors
             const { data: sponsorsData } = await supabase
                 .from('esummit_sponsors')
                 .select('*')
                 .order('display_order', { ascending: true });
-
-            if (sponsorsData) setSponsors(sponsorsData as any as ESummitSponsor[]);
+            
+            // Fetch Investors
+            const { data: investorsData } = await supabase
+                .from('esummit_investors')
+                .select('*')
+                .order('display_order', { ascending: true });
 
             // Fetch Speakers
             const { data: speakersData } = await supabase
@@ -207,6 +218,8 @@ export default function ESummitLandingDataLayer() {
                     show_blueprint: typedSettings.show_blueprint,
                     show_sponsors: typedSettings.show_sponsors !== undefined ? typedSettings.show_sponsors : true,
                     sponsors_heading: typedSettings.sponsors_heading || 'Our Sponsors',
+                    show_investors: typedSettings.show_investors !== undefined ? typedSettings.show_investors : true,
+                    investors_heading: typedSettings.investors_heading || "Investors of F'10",
                     show_speakers: typedSettings.show_speakers !== undefined ? typedSettings.show_speakers : true,
                     speakers_heading: typedSettings.speakers_heading || 'Eminent Speakers'
                 });
@@ -244,7 +257,7 @@ export default function ESummitLandingDataLayer() {
                     </motion.div>
 
                     <div className="relative mb-8 flex justify-center w-full">
-                        <div className="relative w-[95%] sm:w-[90%] md:w-[80%] lg:w-[70%] aspect-[3/1]">
+                        <div className="relative w-full sm:w-[95%] md:w-[90%] lg:w-[85%] aspect-[3/1] max-w-6xl">
                             <Image
                                 src="/images/hero-logo.png"
                                 alt="E-Summit 2026 First Principle of Impact"
@@ -432,6 +445,13 @@ export default function ESummitLandingDataLayer() {
                 sponsors={sponsors}
                 heading={settings.sponsors_heading}
                 isVisible={settings.show_sponsors}
+            />
+
+            {/* Investors Section */}
+            <SponsorsMarquee
+                sponsors={investors as any}
+                heading={settings.investors_heading}
+                isVisible={settings.show_investors}
             />
 
             {/* Speakers Section */}
