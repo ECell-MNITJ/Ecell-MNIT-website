@@ -444,18 +444,20 @@ export default function ESummitLandingDataLayer() {
                 </section>
             )}
 
-            {/* Sponsors Section */}
-            <SponsorsMarquee
-                sponsors={sponsors}
-                heading={settings.sponsors_heading}
-                isVisible={settings.show_sponsors}
-            />
-
             {/* Investors Section */}
             <SponsorsMarquee
                 sponsors={investors as any}
                 heading={settings.investors_heading}
                 isVisible={settings.show_investors}
+                reverse={true}
+                duration={20}
+            />
+
+            {/* Sponsors Section */}
+            <SponsorsMarquee
+                sponsors={sponsors}
+                heading={settings.sponsors_heading}
+                isVisible={settings.show_sponsors}
             />
 
             {/* Speakers Section */}

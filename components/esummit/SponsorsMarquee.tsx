@@ -15,9 +15,11 @@ interface SponsorsMarqueeProps {
     sponsors: Sponsor[];
     heading: string;
     isVisible: boolean;
+    reverse?: boolean;
+    duration?: number;
 }
 
-export function SponsorsMarquee({ sponsors, heading, isVisible }: SponsorsMarqueeProps) {
+export function SponsorsMarquee({ sponsors, heading, isVisible, reverse = false, duration = 30 }: SponsorsMarqueeProps) {
     if (!isVisible || !sponsors || sponsors.length === 0) return null;
 
     // Duplicate sponsors to create a seamless infinite loop
@@ -55,11 +57,12 @@ export function SponsorsMarquee({ sponsors, heading, isVisible }: SponsorsMarque
                 <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-esummit-bg/80 to-transparent z-10 pointer-events-none" />
 
                 <motion.div
+                    key={`${reverse}-${duration}-${sponsors.length}`}
                     className="flex gap-4 md:gap-8 items-center flex-nowrap shrink-0"
-                    animate={{ x: ["0%", "-50%"] }}
+                    animate={{ x: reverse ? ["-50%", "0%"] : ["0%", "-50%"] }}
                     transition={{
                         ease: "linear",
-                        duration: 30, // Increased duration to slow down the scroll
+                        duration: duration,
                         repeat: Infinity,
                     }}
                 >
@@ -88,9 +91,11 @@ export function SponsorsMarquee({ sponsors, heading, isVisible }: SponsorsMarque
 
                             {/* Sponsor Name & Brand Contributor */}
                             <div className="text-center space-y-1 max-w-[160px] md:max-w-[224px]">
-                                <h4 className="text-white font-black text-lg md:text-base truncate tracking-[0.15em] uppercase">
-                                    {sponsor.name || 'Untitled Sponsor'}
-                                </h4>
+                                {sponsor.name && (
+                                    <h4 className="text-white font-black text-lg md:text-base truncate tracking-[0.15em] uppercase">
+                                        {sponsor.name}
+                                    </h4>
+                                )}
                                 {sponsor.brand_contributor && (
                                     <p className="text-esummit-primary font-medium text-[10px] md:text-xs uppercase tracking-wider leading-tight">
                                         {sponsor.brand_contributor}
@@ -107,7 +112,7 @@ export function SponsorsMarquee({ sponsors, heading, isVisible }: SponsorsMarque
 
 function SponsorImage({ sponsor }: { sponsor: Sponsor }) {
     if (!sponsor.logo_url) {
-        return <span className="text-xl font-bold text-gray-300">{sponsor.name || 'Untitled Sponsor'}</span>;
+        return <span className="text-xl font-bold text-gray-300">{sponsor.name || ''}</span>;
     }
 
     return (
