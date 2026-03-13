@@ -74,7 +74,15 @@ function ESummitLoginForm() {
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-400 ml-1">Password</label>
+                    <div className="flex justify-between items-center ml-1">
+                        <label className="text-sm font-medium text-gray-400">Password</label>
+                        <Link
+                            href="/esummit/forgot-password"
+                            className="text-xs text-esummit-primary hover:text-white transition-colors"
+                        >
+                            Forgot Password?
+                        </Link>
+                    </div>
                     <div className="relative">
                         <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg" />
                         <input
