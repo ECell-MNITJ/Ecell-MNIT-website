@@ -695,6 +695,7 @@ export interface Database {
                     name: string | null;
                     logo_url: string | null;
                     website_url: string | null;
+                    brand_contributor: string | null;
                     display_order: number;
                     created_at: string;
                     updated_at: string;
@@ -704,6 +705,7 @@ export interface Database {
                     name?: string | null;
                     logo_url?: string | null;
                     website_url?: string | null;
+                    brand_contributor?: string | null;
                     display_order?: number;
                     created_at?: string;
                     updated_at?: string;
@@ -713,6 +715,7 @@ export interface Database {
                     name?: string | null;
                     logo_url?: string | null;
                     website_url?: string | null;
+                    brand_contributor?: string | null;
                     display_order?: number;
                     created_at?: string;
                     updated_at?: string;

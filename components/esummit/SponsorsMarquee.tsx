@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 interface Sponsor {
     id: string;
-    name: string;
+    name: string | null;
     logo_url: string | null;
     website_url: string | null;
     brand_contributor: string | null;
@@ -75,7 +75,7 @@ export function SponsorsMarquee({ sponsors, heading, isVisible }: SponsorsMarque
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="w-full h-full flex items-center justify-center"
-                                        aria-label={`Visit ${sponsor.name} website`}
+                                        aria-label={`Visit ${sponsor.name || 'Sponsor'} website`}
                                     >
                                         <SponsorImage sponsor={sponsor} />
                                     </a>
@@ -89,7 +89,7 @@ export function SponsorsMarquee({ sponsors, heading, isVisible }: SponsorsMarque
                             {/* Sponsor Name & Brand Contributor */}
                             <div className="text-center space-y-1 max-w-[160px] md:max-w-[224px]">
                                 <h4 className="text-white font-black text-lg md:text-base truncate tracking-[0.15em] uppercase">
-                                    {sponsor.name}
+                                    {sponsor.name || 'Untitled Sponsor'}
                                 </h4>
                                 {sponsor.brand_contributor && (
                                     <p className="text-esummit-primary font-medium text-[10px] md:text-xs uppercase tracking-wider leading-tight">
@@ -107,14 +107,14 @@ export function SponsorsMarquee({ sponsors, heading, isVisible }: SponsorsMarque
 
 function SponsorImage({ sponsor }: { sponsor: Sponsor }) {
     if (!sponsor.logo_url) {
-        return <span className="text-xl font-bold text-gray-300">{sponsor.name}</span>;
+        return <span className="text-xl font-bold text-gray-300">{sponsor.name || 'Untitled Sponsor'}</span>;
     }
 
     return (
         <div className="relative w-full h-full">
             <Image
                 src={sponsor.logo_url}
-                alt={`${sponsor.name} logo`}
+                alt={`${sponsor.name || 'Sponsor'} logo`}
                 fill
                 unoptimized={true}
                 className="object-cover opacity-70 group-hover/card:opacity-100 transition-opacity duration-300 filter group-hover/card:drop-shadow-[0_0_15px_rgba(37,99,235,0.4)]"

@@ -29,7 +29,7 @@ interface ESummitBlueprint {
 
 interface ESummitSponsor {
     id: string;
-    name: string;
+    name: string | null;
     logo_url: string | null;
     website_url: string | null;
     brand_contributor: string | null;
@@ -203,7 +203,11 @@ export default function ESummitLandingDataLayer() {
                 .select('*')
                 .order('display_order', { ascending: true });
 
-            if (speakersData) setSpeakers(speakersData);
+            if (statsData) setStats(statsData as any as ESummitStat[]);
+            if (blueprintsData) setBlueprints(blueprintsData as any as ESummitBlueprint[]);
+            if (sponsorsData) setSponsors(sponsorsData as any as ESummitSponsor[]);
+            if (investorsData) setInvestors(investorsData as any as ESummitInvestor[]);
+            if (speakersData) setSpeakers(speakersData as any as ESummitSpeaker[]);
 
             // Fetch Settings
             const { data: settingsData } = await supabase
