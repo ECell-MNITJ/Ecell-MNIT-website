@@ -190,7 +190,7 @@ export default function ESummitLandingDataLayer() {
                 .from('esummit_sponsors')
                 .select('*')
                 .order('display_order', { ascending: true });
-            
+
             // Fetch Investors
             const { data: investorsData } = await supabase
                 .from('esummit_investors')
@@ -250,13 +250,13 @@ export default function ESummitLandingDataLayer() {
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1 }}
-                        className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-esummit-secondary/20 bg-esummit-card/30 backdrop-blur-sm text-xs md:text-sm font-medium text-esummit-secondary tracking-widest mb-6 md:mb-8"
+                        className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-esummit-secondary/20 bg-esummit-card/30 backdrop-blur-sm text-xs md:text-sm font-medium text-esummit-secondary tracking-widest mb-0"
                     >
                         <span className="w-1.5 h-1.5 rounded-full bg-esummit-primary animate-pulse" />
                         MNIT JAIPUR
                     </motion.div>
 
-                    <div className="relative mb-8 flex justify-center w-full">
+                    <div className="relative mb-0 flex justify-center w-full">
                         <div className="relative w-full sm:w-[95%] md:w-[90%] lg:w-[85%] aspect-[3/1] max-w-6xl">
                             <Image
                                 src="/images/hero-logo.png"
@@ -270,11 +270,11 @@ export default function ESummitLandingDataLayer() {
                             initial={{ scaleX: 0 }}
                             animate={{ scaleX: 1 }}
                             transition={{ duration: 1.5, delay: 0.5, ease: "circOut" }}
-                            className="absolute -bottom-4 left-4 right-4 md:left-1/4 md:right-1/4 h-px bg-gradient-to-r from-transparent via-esummit-primary to-transparent"
+                            className="absolute bottom-2 left-4 right-4 md:left-1/4 md:right-1/4 h-px bg-gradient-to-r from-transparent via-esummit-primary to-transparent"
                         />
                     </div>
 
-                    <p className="text-lg md:text-2xl text-esummit-secondary/70 max-w-2xl mx-auto font-light leading-relaxed mb-8 md:mb-12 px-4">
+                    <p className="text-lg md:text-2xl text-esummit-secondary/70 max-w-2xl mx-auto font-light leading-relaxed mb-2 md:mb-4 px-4">
                         E-Summit 2026 by E-Cell MNIT. Where ideas take flight and innovation knows no bounds.
                     </p>
 
