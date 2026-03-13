@@ -131,9 +131,9 @@ export default function ESummitResetPassword() {
                                     type="text"
                                     value={otpCode}
                                     onChange={(e) => setOtpCode(e.target.value)}
-                                    className="w-full bg-esummit-bg/50 border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white focus:outline-none focus:border-esummit-primary/50 focus:bg-esummit-bg/80 transition-all placeholder:text-gray-600 tracking-[0.5em] font-mono text-center"
-                                    placeholder="000000"
-                                    maxLength={6}
+                                    className="w-full bg-esummit-bg/50 border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white focus:outline-none focus:border-esummit-primary/50 focus:bg-esummit-bg/80 transition-all placeholder:text-gray-600 tracking-[0.2em] font-mono text-center"
+                                    placeholder="00000000"
+                                    maxLength={8}
                                 />
                             </div>
                             <p className="text-[10px] text-gray-600 ml-1">

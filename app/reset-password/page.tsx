@@ -91,9 +91,9 @@ export default function ResetPassword() {
                                 type="text"
                                 value={otpCode}
                                 onChange={(e) => setOtpCode(e.target.value)}
-                                className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent transition-all placeholder-gray-500 tracking-[0.5em] font-mono text-center"
-                                placeholder="000000"
-                                maxLength={6}
+                                className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-primary-golden focus:border-transparent transition-all placeholder-gray-500 tracking-[0.2em] font-mono text-center"
+                                placeholder="00000000"
+                                maxLength={8}
                             />
                             <p className="text-[10px] text-gray-500 mt-2">
                                 Only needed if you didn&apos;t click the link on this device.
