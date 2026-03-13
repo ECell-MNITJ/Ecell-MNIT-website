@@ -17,9 +17,10 @@ interface SponsorsMarqueeProps {
     isVisible: boolean;
     reverse?: boolean;
     duration?: number;
+    aspectRatio?: 'square' | 'portrait';
 }
 
-export function SponsorsMarquee({ sponsors, heading, isVisible, reverse = false, duration = 30 }: SponsorsMarqueeProps) {
+export function SponsorsMarquee({ sponsors, heading, isVisible, reverse = false, duration = 30, aspectRatio = 'square' }: SponsorsMarqueeProps) {
     if (!isVisible || !sponsors || sponsors.length === 0) return null;
 
     // Duplicate sponsors to create a seamless infinite loop
@@ -70,7 +71,7 @@ export function SponsorsMarquee({ sponsors, heading, isVisible, reverse = false,
                     {[...duplicatedSponsors, ...duplicatedSponsors].map((sponsor, index) => (
                         <div key={`${sponsor.id}-${index}`} className="flex flex-col items-center gap-4 shrink-0">
                             <div
-                                className="group/card relative w-40 md:w-56 aspect-square flex items-center justify-center bg-gray-900/40 rounded-xl border border-white/5 hover:border-esummit-primary/50 hover:bg-white/5 transition-all duration-300 overflow-hidden"
+                                className={`group/card relative w-40 md:w-56 ${aspectRatio === 'portrait' ? 'aspect-[3/4]' : 'aspect-square'} flex items-center justify-center bg-gray-900/40 rounded-xl border border-white/5 hover:border-esummit-primary/50 hover:bg-white/5 transition-all duration-300 overflow-hidden`}
                             >
                                 {sponsor.website_url ? (
                                     <a

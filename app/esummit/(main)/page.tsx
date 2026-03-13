@@ -317,14 +317,14 @@ export default function ESummitLandingDataLayer() {
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="bg-esummit-card/30 border border-white/10 rounded-3xl p-8 md:p-12 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden"
+                        className="bg-esummit-card/30 border border-white/10 rounded-3xl p-6 md:p-12 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden"
                     >
                         {/* Background Glow */}
                         <div className="absolute top-0 right-0 w-64 h-64 bg-esummit-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                         <div className="absolute bottom-0 left-0 w-64 h-64 bg-esummit-accent/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
 
                         <div className="text-center md:text-left relative z-10 flex-1">
-                            <h2 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 tracking-normal drop-shadow-sm whitespace-nowrap">
+                            <h2 className="text-2xl md:text-5xl lg:text-6xl font-black mb-4 tracking-normal drop-shadow-sm">
                                 REGISTER YOURSELF TO GET <span className="text-esummit-primary">ENROLLED FOR E-SUMMIT</span>
                             </h2>
                             <p className="text-gray-400 font-medium">Be part of MNIT Jaipur's First Entrepreneurship Summit.</p>
@@ -451,6 +451,7 @@ export default function ESummitLandingDataLayer() {
                 isVisible={settings.show_investors}
                 reverse={true}
                 duration={30}
+                aspectRatio="portrait"
             />
 
             {/* Sponsors Section */}

@@ -125,7 +125,7 @@ function ESummitLoginForm() {
 
 export default function ESummitLogin() {
     return (
-        <div className="min-h-screen bg-esummit-bg text-white flex items-center justify-center p-4 overflow-hidden relative font-body selection:bg-esummit-primary selection:text-white">
+        <div className="min-h-screen bg-esummit-bg text-white flex items-center justify-center p-4 overflow-y-auto py-12 relative font-body selection:bg-esummit-primary selection:text-white">
             <Toaster position="top-right"
                 toastOptions={{
                     style: {
@@ -138,7 +138,7 @@ export default function ESummitLogin() {
 
             <Link
                 href="/esummit"
-                className="absolute top-6 left-6 md:top-8 md:left-8 flex items-center gap-2 text-white/50 hover:text-white transition-colors z-20 group font-medium"
+                className="fixed top-10 left-6 md:top-8 md:left-8 flex items-center gap-2 text-white/50 hover:text-white transition-colors z-20 group font-medium"
             >
                 <FiArrowLeft className="group-hover:-translate-x-1 transition-transform" />
                 Back to Home

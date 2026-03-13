@@ -6,12 +6,11 @@ import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import { FiUser, FiMail, FiLock, FiArrowRight, FiArrowLeft, FiSmartphone } from 'react-icons/fi';
+import { FiUser, FiMail, FiLock, FiArrowRight, FiArrowLeft } from 'react-icons/fi';
 
 export default function ESummitSignup() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -26,10 +25,6 @@ export default function ESummitSignup() {
             return;
         }
 
-        if (!/^\d{10}$/.test(phone)) {
-            toast.error('Phone number must be 10 digits');
-            return;
-        }
 
         setLoading(true);
 
@@ -40,7 +35,6 @@ export default function ESummitSignup() {
                 options: {
                     data: {
                         name: name,
-                        phone: phone,
                     },
                 },
             });
@@ -63,7 +57,7 @@ export default function ESummitSignup() {
     };
 
     return (
-        <div className="min-h-screen bg-esummit-bg text-white flex items-center justify-center p-4 overflow-hidden relative font-body selection:bg-esummit-primary selection:text-white">
+        <div className="min-h-screen bg-esummit-bg text-white flex items-center justify-center p-4 overflow-y-auto py-12 relative font-body selection:bg-esummit-primary selection:text-white">
             <Toaster position="top-right"
                 toastOptions={{
                     style: {
@@ -76,7 +70,7 @@ export default function ESummitSignup() {
 
             <Link
                 href="/esummit"
-                className="absolute top-6 left-6 md:top-8 md:left-8 flex items-center gap-2 text-white/50 hover:text-white transition-colors z-20 group font-medium"
+                className="fixed top-10 left-6 md:top-8 md:left-8 flex items-center gap-2 text-white/50 hover:text-white transition-colors z-20 group font-medium"
             >
                 <FiArrowLeft className="group-hover:-translate-x-1 transition-transform" />
                 Back to Home
@@ -135,21 +129,6 @@ export default function ESummitSignup() {
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-400 ml-1">Phone Number</label>
-                        <div className="relative">
-                            <FiSmartphone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg" />
-                            <input
-                                type="tel"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                                required
-                                pattern="\d{10}"
-                                className="w-full bg-esummit-bg/50 border border-white/10 rounded-xl pl-12 pr-4 py-3.5 text-white focus:outline-none focus:border-esummit-primary/50 focus:bg-esummit-bg/80 transition-all placeholder:text-gray-600"
-                                placeholder="9876543210"
-                            />
-                        </div>
-                    </div>
 
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-gray-400 ml-1">Password</label>
