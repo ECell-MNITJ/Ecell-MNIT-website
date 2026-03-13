@@ -555,6 +555,13 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                                     )}
                                 </div>
 
+                                {/* Registration Confirmation Message */}
+                                <div className="mt-8 bg-esummit-primary/10 border border-esummit-primary/20 p-6 rounded-2xl backdrop-blur-sm">
+                                    <p className="text-white text-lg font-bold text-center">
+                                        You are now registered for E-summit, show this QR code at registration desk to enter E-summit
+                                    </p>
+                                </div>
+
                                 {/* CA Status Section */}
                                 {caData && (
                                     <div className="mt-8 border-t border-white/5 pt-8">

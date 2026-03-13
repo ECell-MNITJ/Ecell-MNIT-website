@@ -129,7 +129,8 @@ const FeatureRow = ({ title, desc, icon: Icon, align = 'left', delay, image_url 
 export default function ESummitLandingDataLayer() {
     const containerRef = useRef(null);
     const { scrollYProgress } = useScroll({ target: containerRef });
-    const [registerLink, setRegisterLink] = useState('/esummit/login'); // Default to login
+    const [registerLink, setRegisterLink] = useState('/esummit/login'); // Existing link for CTA at bottom
+    const [enrollLink, setEnrollLink] = useState('/esummit/signup'); // Default to signup for new section
 
     // Dynamic Data States
     const [stats, setStats] = useState<ESummitStat[]>([]);
@@ -152,6 +153,9 @@ export default function ESummitLandingDataLayer() {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
                 setRegisterLink('/esummit/events');
+                setEnrollLink('/esummit/profile');
+            } else {
+                setEnrollLink('/esummit/signup');
             }
         };
 
@@ -288,6 +292,36 @@ export default function ESummitLandingDataLayer() {
             <div className="relative z-20 bg-esummit-bg/50 backdrop-blur-sm border-y border-white/5 pointer-events-none">
                 <ParallaxText baseVelocity={-5}>INNOVATE • DISRUPT • SCALE •</ParallaxText>
             </div>
+
+            {/* Enrollment Prompt Section */}
+            <section className="py-12 md:py-16 relative z-10 border-b border-white/5">
+                <div className="container mx-auto px-4">
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="bg-esummit-card/30 border border-white/10 rounded-3xl p-8 md:p-12 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden"
+                    >
+                        {/* Background Glow */}
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-esummit-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-esummit-accent/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+
+                        <div className="text-center md:text-left relative z-10 flex-1">
+                            <h2 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 tracking-normal drop-shadow-sm whitespace-nowrap">
+                                REGISTER YOURSELF TO GET <span className="text-esummit-primary">ENROLLED FOR E-SUMMIT</span>
+                            </h2>
+                            <p className="text-gray-400 font-medium">Be part of MNIT Jaipur's First Entrepreneurship Summit.</p>
+                        </div>
+
+                        <Link
+                            href={enrollLink}
+                            className="group relative px-10 py-4 bg-white text-esummit-bg font-black uppercase tracking-widest text-sm hover:bg-esummit-primary hover:text-white transition-all duration-300 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-esummit-primary/40 flex items-center gap-2 z-10"
+                        >
+                            Get Started <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                    </motion.div>
+                </div>
+            </section>
 
             {/* Impact/Stats Section */}
             {settings.show_stats && (
