@@ -18,9 +18,18 @@ interface SponsorsMarqueeProps {
     reverse?: boolean;
     duration?: number;
     aspectRatio?: 'square' | 'portrait';
+    size?: 'normal' | 'large';
 }
 
-export function SponsorsMarquee({ sponsors, heading, isVisible, reverse = false, duration = 30, aspectRatio = 'square' }: SponsorsMarqueeProps) {
+export function SponsorsMarquee({
+    sponsors,
+    heading,
+    isVisible,
+    reverse = false,
+    duration = 30,
+    aspectRatio = 'square',
+    size = 'normal'
+}: SponsorsMarqueeProps) {
     if (!isVisible || !sponsors || sponsors.length === 0) return null;
 
     // Duplicate sponsors to create a seamless infinite loop
@@ -71,7 +80,7 @@ export function SponsorsMarquee({ sponsors, heading, isVisible, reverse = false,
                     {[...duplicatedSponsors, ...duplicatedSponsors].map((sponsor, index) => (
                         <div key={`${sponsor.id}-${index}`} className="flex flex-col items-center gap-4 shrink-0">
                             <div
-                                className={`group/card relative w-40 md:w-56 ${aspectRatio === 'portrait' ? 'aspect-[3/4]' : 'aspect-square'} flex items-center justify-center bg-gray-900/40 rounded-xl border border-white/5 hover:border-esummit-primary/50 hover:bg-white/5 transition-all duration-300 overflow-hidden`}
+                                className={`group/card relative ${size === 'large' ? 'w-44 md:w-64' : 'w-40 md:w-56'} ${aspectRatio === 'portrait' ? 'aspect-[3/4]' : 'aspect-square'} flex items-center justify-center bg-gray-900/40 rounded-xl border border-white/5 hover:border-esummit-primary/50 hover:bg-white/5 transition-all duration-300 overflow-hidden`}
                             >
                                 {sponsor.website_url ? (
                                     <a
@@ -91,9 +100,9 @@ export function SponsorsMarquee({ sponsors, heading, isVisible, reverse = false,
                             </div>
 
                             {/* Sponsor Name & Brand Contributor */}
-                            <div className="text-center space-y-1 max-w-[160px] md:max-w-[224px]">
+                            <div className={`text-center space-y-1 ${size === 'large' ? 'max-w-[176px] md:max-w-[256px]' : 'max-w-[160px] md:max-w-[224px]'}`}>
                                 {sponsor.name && (
-                                    <h4 className="text-white font-black text-lg md:text-base truncate tracking-[0.15em] uppercase">
+                                    <h4 className={`text-white font-black ${size === 'large' ? 'text-lg md:text-base' : 'text-lg md:text-base'} truncate tracking-[0.15em] uppercase`}>
                                         {sponsor.name}
                                     </h4>
                                 )}

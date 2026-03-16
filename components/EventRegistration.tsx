@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import TeamMembers from './TeamMembers';
 import RegistrationDetailsModal from './esummit/RegistrationDetailsModal';
+import { QRCodeCanvas } from 'qrcode.react';
 
 interface EventRegistrationProps {
     event: {
@@ -313,6 +314,43 @@ export default function EventRegistration({ event, user, hasValidPass }: EventRe
                         </p>
                     </div>
                 </div>
+
+                {registration.registration_id && (
+                    <div className="bg-esummit-primary/10 p-4 rounded-lg border border-esummit-primary/20 mb-4">
+                        <p className="text-[10px] text-esummit-primary uppercase font-bold mb-2 tracking-widest">Your Ticket ID</p>
+                        <div className="flex items-center justify-between">
+                            <span className="text-xl md:text-2xl font-black text-white tracking-widest font-mono">
+                                {registration.registration_id}
+                            </span>
+                            <button 
+                                onClick={async () => {
+                                    await navigator.clipboard.writeText(registration.registration_id);
+                                    toast.success('Ticket ID copied!');
+                                }}
+                                className="p-2 hover:bg-white/5 rounded text-gray-400 hover:text-esummit-primary transition-colors"
+                                title="Copy Ticket ID"
+                            >
+                                <FiCopy />
+                            </button>
+                        </div>
+                        <p className="text-[10px] text-gray-500 mt-2">
+                            Show this ID at the event venue for check-in.
+                        </p>
+                    </div>
+                )}
+
+                {registration.registration_id && (
+                    <div className="bg-white p-4 rounded-xl flex flex-col items-center justify-center gap-4 mb-4 shadow-inner">
+                        <QRCodeCanvas
+                            value={registration.registration_id}
+                            size={160}
+                            level="H"
+                            includeMargin={true}
+                            className="rounded-lg"
+                        />
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Scan for Event Entry</p>
+                    </div>
+                )}
 
                 {event.is_team_event && team && (
                     <div className="bg-black/20 p-4 rounded-lg border border-white/10 mt-4">

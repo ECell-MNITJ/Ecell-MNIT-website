@@ -452,6 +452,7 @@ export default function ESummitLandingDataLayer() {
                 reverse={true}
                 duration={30}
                 aspectRatio="portrait"
+                size="large"
             />
 
             {/* Sponsors Section */}

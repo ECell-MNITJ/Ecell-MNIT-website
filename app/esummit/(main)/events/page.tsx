@@ -14,6 +14,7 @@ interface Event {
     is_esummit: boolean;
     registrations_open: boolean;
     display_order: number;
+    registration_link?: string | null;
 }
 
 async function getEsummitEvents(): Promise<Event[]> {
@@ -34,7 +35,22 @@ async function getEsummitEvents(): Promise<Event[]> {
 }
 
 export default async function ESummitEventsPage() {
+    const supabase = await createServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    
     const events = await getEsummitEvents();
+    
+    let userRegistrations: any[] = [];
+    if (user) {
+        const { data } = await supabase
+            .from('event_registrations')
+            .select('event_id, registration_id')
+            .eq('user_id', user.id);
+        userRegistrations = data || [];
+    }
+
+    const regMap = new Map(userRegistrations.map(r => [r.event_id, r.registration_id]));
+
     const upcomingEvents = events.filter((e) => e.status === 'upcoming');
     const pastEvents = events.filter((e) => e.status === 'past');
     const ongoingEvents = events.filter((e) => e.status === 'ongoing');
@@ -47,84 +63,112 @@ export default async function ESummitEventsPage() {
         });
     };
 
-    const EventCard = ({ event }: { event: Event }) => (
-        <div className="group relative bg-esummit-card/80 backdrop-blur-md rounded-2xl overflow-hidden border border-esummit-primary/20 hover:border-esummit-primary/60 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(157,78,221,0.2)]">
-            <Link href={`/esummit/events/${event.id}`}>
-                {event.image_url ? (
-                    <div className="relative h-48 overflow-hidden">
-                        <img
-                            src={event.image_url}
-                            alt={event.title}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-esummit-card via-transparent to-transparent opacity-80" />
-
-                        {/* Status Badge */}
-                        <div className="absolute top-4 left-4">
-                            {event.status === 'upcoming' && (
-                                <span className="bg-esummit-primary/90 text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider backdrop-blur-sm shadow-[0_0_10px_rgba(157,78,221,0.4)] animate-pulse">
-                                    Upcoming
-                                </span>
-                            )}
-                            {event.status === 'ongoing' && (
-                                <span className="bg-esummit-accent/90 text-esummit-bg text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider backdrop-blur-sm shadow-[0_0_10px_rgba(0,240,255,0.4)] animate-pulse">
-                                    Live Now
-                                </span>
-                            )}
-                            {event.status === 'past' && (
-                                <span className="bg-gray-800/90 text-gray-400 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider backdrop-blur-sm border border-gray-700">
-                                    Completed
-                                </span>
-                            )}
-                        </div>
-
-                        {/* Category Badge */}
-                        <div className="absolute top-4 right-4 flex flex-col items-end gap-2">
-                            <span className="bg-black/50 text-white text-xs font-medium px-3 py-1.5 rounded-full border border-white/10 backdrop-blur-sm transition-all hover:bg-black/70">
-                                {event.category}
-                            </span>
-                            {!event.registrations_open && event.status === 'upcoming' && (
-                                <span className="bg-red-900/80 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-tighter border border-red-500/30 backdrop-blur-sm shadow-[0_0_10px_rgba(239,68,68,0.2)]">
-                                    Registration Closed
-                                </span>
-                            )}
-                        </div>
-                    </div>
-                ) : (
-                    <div className="relative h-48 bg-gradient-to-br from-esummit-card to-black flex items-center justify-center border-b border-esummit-primary/10">
-                        <div className="text-5xl grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">HUB</div>
-                    </div>
-                )}
-            </Link>
-
-            <div className="p-5 relative">
-                {/* Glow Effect */}
-                <div className="absolute -top-10 left-0 w-full h-10 bg-gradient-to-t from-esummit-card to-transparent" />
-
-                <div className="flex items-center gap-2 mb-4 text-xs font-medium text-esummit-primary tracking-wider uppercase">
-                    <span className="flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-esummit-primary" />
-                        {formatDate(event.date)}
-                    </span>
-                </div>
-
+    const EventCard = ({ event }: { event: Event }) => {
+        // If an event has an external link, we ignore any internal registration data
+        const ticketId = event.registration_link ? null : regMap.get(event.id);
+        
+        return (
+            <div className="group relative bg-esummit-card/80 backdrop-blur-md rounded-2xl overflow-hidden border border-esummit-primary/20 hover:border-esummit-primary/60 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(157,78,221,0.2)]">
                 <Link href={`/esummit/events/${event.id}`}>
-                    <h3 className="text-lg md:text-xl font-bold text-white mb-2 group-hover:text-esummit-accent transition-colors">
-                        {event.title}
-                    </h3>
+                    {event.image_url ? (
+                        <div className="relative h-48 overflow-hidden">
+                            <img
+                                src={event.image_url}
+                                alt={event.title}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-esummit-card via-transparent to-transparent opacity-80" />
+
+                            {/* Status Badge */}
+                            <div className="absolute top-4 left-4">
+                                {event.status === 'upcoming' && (
+                                    <span className="bg-esummit-primary/90 text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider backdrop-blur-sm shadow-[0_0_10px_rgba(157,78,221,0.4)] animate-pulse">
+                                        Upcoming
+                                    </span>
+                                )}
+                                {event.status === 'ongoing' && (
+                                    <span className="bg-esummit-accent/90 text-esummit-bg text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider backdrop-blur-sm shadow-[0_0_10px_rgba(0,240,255,0.4)] animate-pulse">
+                                        Live Now
+                                    </span>
+                                )}
+                                {event.status === 'past' && (
+                                    <span className="bg-gray-800/90 text-gray-400 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider backdrop-blur-sm border border-gray-700">
+                                        Completed
+                                    </span>
+                                )}
+                            </div>
+
+                            {/* Category Badge */}
+                            <div className="absolute top-4 right-4 flex flex-col items-end gap-2">
+                                <span className="bg-black/50 text-white text-xs font-medium px-3 py-1.5 rounded-full border border-white/10 backdrop-blur-sm transition-all hover:bg-black/70">
+                                    {event.category}
+                                </span>
+                                {ticketId && (
+                                    <span className="bg-green-600/90 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-widest border border-green-400/30 backdrop-blur-sm shadow-[0_0_10px_rgba(34,197,94,0.3)]">
+                                        Registered
+                                    </span>
+                                )}
+                                {!ticketId && !event.registrations_open && event.status === 'upcoming' && (
+                                    <span className="bg-red-900/80 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-tighter border border-red-500/30 backdrop-blur-sm shadow-[0_0_10px_rgba(239,68,68,0.2)]">
+                                        Registration Closed
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="relative h-48 bg-gradient-to-br from-esummit-card to-black flex items-center justify-center border-b border-esummit-primary/10">
+                            <div className="text-5xl grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">HUB</div>
+                            {ticketId && (
+                                <div className="absolute top-4 right-4">
+                                     <span className="bg-green-600/90 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-widest border border-green-400/30 backdrop-blur-sm shadow-[0_0_10px_rgba(34,197,94,0.3)]">
+                                        Registered
+                                    </span>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </Link>
 
-                <p className="text-gray-400 leading-relaxed line-clamp-2 mb-4 text-xs md:text-sm">{event.description}</p>
+                <div className="p-5 relative">
+                    {/* Glow Effect */}
+                    <div className="absolute -top-10 left-0 w-full h-10 bg-gradient-to-t from-esummit-card to-transparent" />
 
-                <Link
-                    href={`/esummit/events/${event.id}`}
-                    className="inline-flex items-center justify-center w-full bg-white/5 hover:bg-esummit-primary text-white text-xs font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg border border-white/10 hover:border-esummit-primary transition-all duration-300 group-hover:shadow-[0_0_20px_rgba(157,78,221,0.4)]"
-                >
-                    View Details
-                </Link>
+                    <div className="flex items-center gap-2 mb-4 text-xs font-medium text-esummit-primary tracking-wider uppercase">
+                        <span className="flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-esummit-primary" />
+                            {formatDate(event.date)}
+                        </span>
+                    </div>
+
+                    <Link href={`/esummit/events/${event.id}`}>
+                        <h3 className="text-lg md:text-xl font-bold text-white mb-2 group-hover:text-esummit-accent transition-colors">
+                            {event.title}
+                        </h3>
+                    </Link>
+
+                    <p className="text-gray-400 leading-relaxed line-clamp-2 mb-4 text-xs md:text-sm">{event.description}</p>
+
+                    {ticketId ? (
+                        <div className="space-y-3">
+                            <Link
+                                href={`/esummit/events/${event.id}`}
+                                className="inline-flex items-center justify-center w-full bg-white/5 hover:bg-white/10 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-lg border border-white/10 transition-all duration-300"
+                            >
+                                View Ticket Details
+                            </Link>
+                        </div>
+                    ) : (
+                        <Link
+                            href={`/esummit/events/${event.id}`}
+                            className="inline-flex items-center justify-center w-full bg-white/5 hover:bg-esummit-primary text-white text-xs font-bold uppercase tracking-widest px-4 py-2.5 rounded-lg border border-white/10 hover:border-esummit-primary transition-all duration-300 group-hover:shadow-[0_0_20px_rgba(157,78,221,0.4)]"
+                        >
+                            View Details
+                        </Link>
+                    )}
+                </div>
             </div>
-        </div>
-    );
+        );
+    };
 
     return (
         <div className="min-h-screen text-white selection:bg-esummit-primary selection:text-white">

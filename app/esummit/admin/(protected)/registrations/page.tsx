@@ -7,7 +7,7 @@ export default async function ESummitRegistrationsPage() {
     // 1. Fetch all E-Summit events first to ensure we have headers for events even without registrations
     const { data: events, error: eventsError } = await supabase
         .from('events')
-        .select('id, title, is_team_event')
+        .select('id, title, is_team_event, registration_link')
         .eq('is_esummit', true)
         .order('date', { ascending: false });
 
@@ -16,7 +16,7 @@ export default async function ESummitRegistrationsPage() {
     }
 
     // 2. Fetch registrations for E-Summit events
-    const { data: registrations, error: regError } = await supabase
+    const { data: rawRegistrations, error: regError } = await supabase
         .from('event_registrations')
         .select(`
             id,
@@ -24,12 +24,15 @@ export default async function ESummitRegistrationsPage() {
             user_id,
             event_id,
             checked_in,
+            registration_id,
             team_id,
             teams(name),
             events!inner(title, is_esummit)
         `)
         .eq('events.is_esummit', true)
         .order('created_at', { ascending: false });
+
+    const registrations = rawRegistrations as any[] | null;
 
     if (regError) {
         console.error('Error fetching registrations:', regError);
@@ -38,14 +41,14 @@ export default async function ESummitRegistrationsPage() {
     // 3. Fetch profiles separately
     let registrationsWithProfiles: any[] = [];
     if (registrations && registrations.length > 0) {
-        const userIds = Array.from(new Set(registrations.map(r => r.user_id)));
+        const userIds = Array.from(new Set(registrations.map((r: any) => r.user_id)));
         const { data: profiles } = await supabase
             .from('profiles')
             .select('id, full_name, email')
             .in('id', userIds) as { data: any[] | null };
 
         const profilesMap = new Map((profiles || []).map(p => [p.id, p]));
-        registrationsWithProfiles = registrations.map(reg => ({
+        registrationsWithProfiles = registrations.map((reg: any) => ({
             ...reg,
             profile: profilesMap.get(reg.user_id)
         }));
@@ -55,7 +58,7 @@ export default async function ESummitRegistrationsPage() {
     const groupedRegistrations: any = {};
 
     // Initialize with all events
-    events?.forEach(event => {
+    events?.forEach((event: any) => { // Added type 'any' for linting
         groupedRegistrations[event.id] = {
             event: event,
             registrations: []
@@ -63,7 +66,7 @@ export default async function ESummitRegistrationsPage() {
     });
 
     // Populate with registrations
-    registrationsWithProfiles.forEach(reg => {
+    registrationsWithProfiles.forEach((reg: any) => { // Added type 'any' for linting
         if (groupedRegistrations[reg.event_id]) {
             groupedRegistrations[reg.event_id].registrations.push(reg);
         } else {

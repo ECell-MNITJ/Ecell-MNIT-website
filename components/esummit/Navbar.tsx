@@ -87,6 +87,7 @@ export default function EsNavbar() {
     const navLinks = [
         { name: 'Home', href: '/esummit' },
         { name: 'Events', href: '/esummit/events' },
+        { name: 'MERCH', href: '/esummit/merchandise' },
         { name: 'Gallery', href: '/esummit/gallery' },
         { name: 'Contact', href: '/esummit/contact' },
     ];

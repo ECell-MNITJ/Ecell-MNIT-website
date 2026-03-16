@@ -75,6 +75,18 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
     const supabase = await createServerClient();
     const { data: { user } } = await supabase.auth.getUser();
 
+    // Check if user is registered for this event
+    let registration = null;
+    if (user) {
+        const { data } = await supabase
+            .from('event_registrations')
+            .select('registration_id')
+            .eq('event_id', id)
+            .eq('user_id', user.id)
+            .maybeSingle();
+        registration = data;
+    }
+
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', {
             weekday: 'long',
@@ -310,9 +322,9 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
 
                                     <div className="p-8">
                                         <h3 className="text-2xl font-black text-center text-white mb-8 uppercase tracking-widest border-b border-white/10 pb-4">
-                                            Register Now
+                                            {registration ? 'Your Ticket' : 'Register Now'}
                                         </h3>
-                                        {event.registrations_open ? (
+                                        {event.registrations_open || registration ? (
                                             <EventRegistration
                                                 event={{
                                                     id: event.id,

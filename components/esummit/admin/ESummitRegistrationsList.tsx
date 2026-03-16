@@ -26,6 +26,7 @@ interface Event {
     id: string;
     title: string;
     is_team_event?: boolean;
+    registration_link?: string | null;
 }
 
 interface GroupedRegistrations {
@@ -190,6 +191,10 @@ export default function ESummitRegistrationsList({
                 const item = groupedRegistrations[eventId];
                 const isExpanded = expandedEvents.has(eventId);
                 const regCount = item.registrations.length;
+
+                // Skip external events with 0 registrations
+                if (item.event.registration_link && regCount === 0) return null;
+
                 const { teams, individuals } = groupByTeam(item.registrations);
 
                 return (
@@ -326,6 +331,7 @@ function RegistrationTable({
                 <thead>
                     <tr className="bg-gray-800/30 text-gray-400 text-[10px] uppercase tracking-widest font-bold border-b border-gray-800/50">
                         <th className="px-6 py-3">User</th>
+                        <th className="px-6 py-3">Ticket ID</th>
                         <th className="px-6 py-3">Email</th>
                         <th className="px-6 py-3 text-center">Attendance</th>
                         <th className="px-6 py-3 text-right">Registered At</th>
@@ -344,6 +350,11 @@ function RegistrationTable({
                                         {reg.profile?.full_name || reg.user_id}
                                     </div>
                                 </div>
+                            </td>
+                            <td className="px-6 py-4">
+                                <span className="bg-purple-900/30 text-purple-400 px-2 py-1 rounded border border-purple-500/20 text-[10px] font-mono font-bold tracking-wider">
+                                    {(reg as any).registration_id || '-'}
+                                </span>
                             </td>
                             <td className="px-6 py-4 text-gray-400 text-xs">
                                 {reg.profile?.email || '-'}

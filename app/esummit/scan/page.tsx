@@ -17,6 +17,8 @@ export default function QRScannerPage() {
     const [verificationStatus, setVerificationStatus] = useState<'idle' | 'success' | 'error'>('idle');
     const [verificationMessage, setVerificationMessage] = useState('');
     const [lastScanned, setLastScanned] = useState<string | null>(null);
+    const [events, setEvents] = useState<{ id: string, title: string }[]>([]);
+    const [selectedEventId, setSelectedEventId] = useState<string>('general');
     const [scannedUserDetails, setScannedUserDetails] = useState<{
         name: string;
         email: string;
@@ -32,7 +34,21 @@ export default function QRScannerPage() {
 
     useEffect(() => {
         checkAccess();
+        fetchEvents();
     }, []);
+
+    const fetchEvents = async () => {
+        const { data, error } = await supabase
+            .from('events')
+            .select('id, title')
+            .eq('is_esummit', true)
+            .is('registration_link', null)
+            .order('title');
+        
+        if (data) {
+            setEvents(data as any);
+        }
+    };
 
     const checkAccess = async () => {
         try {
@@ -121,86 +137,124 @@ export default function QRScannerPage() {
         }
 
         try {
-            const userId = result;
+            if (selectedEventId === 'general') {
+                // Legacy logic: UUID based general entry
+                const userId = result;
+                const { data: profile, error } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', userId)
+                    .single();
 
-            // 1. Check Profile directly (General Check-in)
-            const { data: profile, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', userId)
-                .single();
+                if (error || !profile) {
+                    setVerificationStatus('error');
+                    setVerificationMessage('User Not Found');
+                    toast.error('User profile not found');
+                    setTimeout(() => setLastScanned(null), 3000);
+                    return;
+                }
 
-            if (error || !profile) {
-                // If profile not found, maybe check old registration logic as fallback?
-                // But new requirement says "even if user hasn't registered in any events".
-                // So if profile exists, they are registered for E-Summit.
-                console.error('Profile scan error:', error);
-                setVerificationStatus('error');
-                setVerificationMessage('User Not Found');
-                toast.error('User profile not found');
-                setTimeout(() => setLastScanned(null), 3000);
-                return;
+                if (!profile.full_name || !profile.phone || !profile.age || !profile.gender) {
+                    setVerificationStatus('error');
+                    setVerificationMessage('Incomplete Profile');
+                    toast.error('Profile incomplete.');
+                    setTimeout(() => setLastScanned(null), 3000);
+                    return;
+                }
+
+                const userName = profile.full_name || 'Unknown User';
+
+                // Check CA
+                const { data: caData } = await supabase
+                    .from('campus_ambassadors')
+                    .select('status')
+                    .eq('profile_id', userId)
+                    .single();
+
+                setScannedUserDetails({
+                    name: userName,
+                    email: 'N/A',
+                    phone: profile.phone || 'N/A',
+                    gender: profile.gender || 'N/A',
+                    age: profile.age || 'N/A',
+                    isCA: caData?.status === 'approved',
+                    event: 'General E-Summit',
+                    avatar_url: profile.avatar_url
+                });
+
+                if (profile.esummit_checked_in) {
+                    setVerificationStatus('error');
+                    setVerificationMessage('ALREADY CHECKED IN');
+                    return;
+                }
+
+                const { data: updatedData, error: updateError } = await supabase
+                    .from('profiles')
+                    .update({
+                        esummit_checked_in: true,
+                        esummit_checked_in_at: new Date().toISOString()
+                    })
+                    .eq('id', userId)
+                    .select();
+
+                if (updateError) throw updateError;
+                if (!updatedData || updatedData.length === 0) throw new Error('Permission Denied');
+
+                setVerificationStatus('success');
+                setVerificationMessage('VERIFIED');
+                toast.success(`Welcome ${userName}`);
+            } else {
+                // New logic: registration_id based event entry
+                const { data: registration, error: regError } = await supabase
+                    .from('event_registrations')
+                    .select('*, profile:profiles(*), event:events(title)')
+                    .eq('registration_id', result)
+                    .eq('event_id', selectedEventId)
+                    .single();
+
+                if (regError || !registration) {
+                    setVerificationStatus('error');
+                    setVerificationMessage('Registration Not Found');
+                    toast.error('Invalid Ticket ID for this event');
+                    setTimeout(() => setLastScanned(null), 3000);
+                    return;
+                }
+
+                const reg = registration as any;
+                const profile = reg.profile;
+                const eventTitle = reg.event?.title || 'Event';
+
+                setScannedUserDetails({
+                    name: profile?.full_name || 'Individual',
+                    email: profile?.email || 'N/A',
+                    phone: profile?.phone || 'N/A',
+                    gender: profile?.gender || 'N/A',
+                    age: profile?.age || 'N/A',
+                    isCA: false,
+                    event: eventTitle,
+                    avatar_url: profile?.avatar_url
+                });
+
+                if (registration.checked_in) {
+                    setVerificationStatus('error');
+                    setVerificationMessage('ALREADY CHECKED IN');
+                    return;
+                }
+
+                const { error: updateError } = await supabase
+                    .from('event_registrations')
+                    .update({
+                        checked_in: true,
+                        checked_in_at: new Date().toISOString()
+                    })
+                    .eq('id', registration.id);
+
+                if (updateError) throw updateError;
+
+                setVerificationStatus('success');
+                setVerificationMessage('ACCESS GRANTED');
+                toast.success(`Verified for ${eventTitle}`);
             }
-
-            // 2. Check completeness (Name, Phone, Age, Gender)
-            if (!profile.full_name || !profile.phone || !profile.age || !profile.gender) {
-                setVerificationStatus('error');
-                setVerificationMessage('Incomplete Profile');
-                toast.error('Profile incomplete. Ask user to update details.');
-                setTimeout(() => setLastScanned(null), 3000);
-                return;
-            }
-
-            const userName = profile.full_name || 'Unknown User';
-
-            // Check if user is an approved CA
-            const { data: caData } = await supabase
-                .from('campus_ambassadors')
-                .select('status')
-                .eq('profile_id', userId)
-                .single();
-
-            const isApprovedCA = caData?.status === 'approved';
-
-            setScannedUserDetails({
-                name: userName,
-                email: 'N/A', // Email is not directly available in profiles table
-                phone: profile.phone || 'N/A',
-                gender: profile.gender || 'N/A',
-                age: profile.age || 'N/A',
-                isCA: isApprovedCA,
-                event: 'General E-Summit', // Default event name
-                avatar_url: profile.avatar_url
-            });
-
-            // 3. Check if already checked in
-            if (profile.esummit_checked_in) {
-                setVerificationStatus('error');
-                setVerificationMessage('ALREADY CHECKED IN');
-                return;
-            }
-
-            // 4. Mark as Checked In
-            const { data: updatedData, error: updateError } = await supabase
-                .from('profiles')
-                .update({
-                    esummit_checked_in: true,
-                    esummit_checked_in_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString()
-                })
-                .eq('id', userId)
-                .select();
-
-            if (updateError) throw updateError;
-
-            if (!updatedData || updatedData.length === 0) {
-                throw new Error('Permission Denied: Could not update profile. You may not have staff permissions.');
-            }
-
-            setVerificationStatus('success');
-            setVerificationMessage('VERIFIED');
-            toast.success(`Welcome ${userName}`);
-
         } catch (error: any) {
             console.error('Scan error:', error);
             setVerificationStatus('error');
@@ -235,6 +289,27 @@ export default function QRScannerPage() {
                     <FiArrowLeft className="w-6 h-6" />
                 </Link>
                 <h1 className="text-xl font-bold text-center flex-1 pr-10">E-Summit Check-in</h1>
+            </div>
+
+            <div className="w-full max-w-md mb-6 space-y-2">
+                <label className="text-xs text-gray-400 uppercase font-bold tracking-widest pl-1">Scanning For:</label>
+                <select 
+                    value={selectedEventId}
+                    onChange={(e) => {
+                        setSelectedEventId(e.target.value);
+                        resetScan();
+                    }}
+                    className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-primary-golden outline-none transition"
+                >
+                    <option value="general">General Entry (E-Summit)</option>
+                    <optgroup label="Specific Events">
+                        {events.map((event) => (
+                            <option key={event.id} value={event.id}>
+                                {event.title}
+                            </option>
+                        ))}
+                    </optgroup>
+                </select>
             </div>
 
             <div className="w-full max-w-md aspect-square bg-gray-900 rounded-2xl overflow-hidden border-2 border-primary-golden relative shadow-2xl mb-6">
