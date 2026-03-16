@@ -29,6 +29,7 @@ interface Event {
     max_team_size: number;
     registrations_open: boolean;
     registration_link: string | null;
+    end_date?: string | null;
 }
 
 async function getEvent(id: string): Promise<Event | null> {
@@ -134,10 +135,27 @@ export default async function ESummitEventDetail({ params }: { params: Promise<{
                     </Link>
 
                     {/* Badge */}
-                    <div className="flex justify-center mb-8">
+                    <div className="flex justify-center items-center gap-4 mb-8">
                         <span className="bg-esummit-primary/20 border border-esummit-primary/50 text-esummit-accent text-sm font-bold px-6 py-2 rounded-full uppercase tracking-widest backdrop-blur-md shadow-[0_0_15px_rgba(157,78,221,0.3)]">
                             {event.category}
                         </span>
+                        {(() => {
+                            const now = new Date();
+                            const start = new Date(event.date);
+                            const end = event.end_date ? new Date(event.end_date) : new Date(start.getTime() + 3 * 60 * 60 * 1000);
+                            
+                            if (now < start) return null; // Upcoming is implicit or shown in list
+                            if (now >= start && now <= end) return (
+                                <span className="bg-esummit-accent/90 text-esummit-bg text-xs font-bold px-4 py-2 rounded-full uppercase tracking-wider backdrop-blur-sm shadow-[0_0_15px_rgba(0,240,255,0.4)] animate-pulse">
+                                    Live Now
+                                </span>
+                            );
+                            return (
+                                <span className="bg-gray-800/90 text-gray-400 text-xs font-bold px-4 py-2 rounded-full uppercase tracking-wider backdrop-blur-sm border border-gray-700">
+                                    Completed
+                                </span>
+                            );
+                        })()}
                     </div>
 
                     {/* Title */}

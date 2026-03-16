@@ -10,6 +10,7 @@ interface Event {
     id: string;
     title: string;
     date: string;
+    end_date?: string | null;
     category: string;
     status: string;
     registrations_open: boolean;
@@ -121,12 +122,21 @@ export default function ESummitEventList({ initialEvents }: Props) {
                                     </td>
                                     <td className="px-6 py-4 text-gray-400">{event.category}</td>
                                     <td className="px-6 py-4">
-                                        <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${event.status === 'upcoming' ? 'bg-green-900/30 text-green-400 border border-green-800' :
-                                            event.status === 'ongoing' ? 'bg-orange-900/30 text-orange-400 border border-orange-800' :
-                                                'bg-gray-800 text-gray-400 border border-gray-700'
-                                            }`}>
-                                            {event.status.toUpperCase()}
-                                        </span>
+                                        {(() => {
+                                            const now = new Date();
+                                            const start = new Date(event.date);
+                                            const end = event.end_date ? new Date(event.end_date) : new Date(start.getTime() + 3 * 60 * 60 * 1000);
+                                            const calculatedStatus = now < start ? 'upcoming' : (now <= end ? 'ongoing' : 'past');
+
+                                            return (
+                                                <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${calculatedStatus === 'upcoming' ? 'bg-green-900/30 text-green-400 border border-green-800' :
+                                                    calculatedStatus === 'ongoing' ? 'bg-orange-900/30 text-orange-400 border border-orange-800' :
+                                                        'bg-gray-800 text-gray-400 border border-gray-700'
+                                                    }`}>
+                                                    {calculatedStatus.toUpperCase() === 'ONGOING' ? 'LIVE NOW' : (calculatedStatus.toUpperCase() === 'PAST' ? 'COMPLETED' : calculatedStatus.toUpperCase())}
+                                                </span>
+                                            );
+                                        })()}
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex justify-center">

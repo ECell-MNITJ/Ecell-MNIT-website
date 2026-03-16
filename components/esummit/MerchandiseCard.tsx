@@ -15,7 +15,7 @@ interface Product {
 
 export default function MerchandiseCard({ product }: { product: Product }) {
     const DetailsButton = (
-        <button className="flex items-center gap-2 px-3 py-1.5 bg-white text-black font-black text-[10px] uppercase tracking-widest rounded-full hover:bg-esummit-primary hover:text-white transition-all duration-300">
+        <button className="flex items-center gap-2 px-3 py-1.5 bg-white text-black font-medium text-[10px] uppercase tracking-widest rounded-full hover:bg-esummit-primary hover:text-white transition-all duration-300">
             Details <FiArrowRight />
         </button>
     );
@@ -41,7 +41,7 @@ export default function MerchandiseCard({ product }: { product: Product }) {
                         <FiShoppingBag size={48} />
                     </div>
                 )}
-                
+
                 {/* Overlay with category badge */}
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
                     <span className="text-esummit-primary text-xs font-black uppercase tracking-widest mb-2 px-3 py-1 bg-esummit-primary/10 rounded-full w-fit backdrop-blur-sm border border-esummit-primary/20">
@@ -54,22 +54,22 @@ export default function MerchandiseCard({ product }: { product: Product }) {
             <div className="p-3 sm:p-5 space-y-1.5 sm:space-y-3">
                 <div className="flex justify-between items-start">
                     <div>
-                        <h3 className="text-sm sm:text-lg font-bold text-white group-hover:text-esummit-primary transition-colors line-clamp-1">
+                        <h3 className="text-sm sm:text-lg font-bold text-white group-hover:text-esummit-primary transition-colors line-clamp-1 tracking-wider">
                             {product.name}
                         </h3>
                     </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between pt-2 border-t border-white/5">
-                    <div className="text-base sm:text-xl font-black text-white">
-                        <span className="text-esummit-primary text-xs sm:text-base mr-1">₹</span>
+                    <div className="text-sm sm:text-md font-medium text-white">
+                        <span className="text-esummit-primary text-[10px] sm:text-sm mr-1">₹</span>
                         {product.price}
                     </div>
-                    
+
                     {product.details_url ? (
-                        <a 
-                            href={product.details_url} 
-                            target="_blank" 
+                        <a
+                            href={product.details_url}
+                            target="_blank"
                             rel="noopener noreferrer"
                         >
                             {DetailsButton}

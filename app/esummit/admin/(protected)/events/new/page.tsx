@@ -23,6 +23,7 @@ export default function NewESummitEvent() {
         description: '',
         detailed_description: '',
         date: '',
+        end_date: '',
         category: 'General',
         location: '',
 
@@ -101,12 +102,13 @@ export default function NewESummitEvent() {
             }
 
 
-            const eventData: Database['public']['Tables']['events']['Insert'] = {
+            const eventData: any = {
                 title: formData.title,
                 description: formData.description,
                 detailed_description: formData.detailed_description,
                 event_details: eventDetails as any,
                 date: new Date(formData.date).toISOString(),
+                end_date: formData.end_date ? new Date(formData.end_date).toISOString() : null,
                 category: formData.category,
                 location: formData.location,
 
@@ -129,10 +131,8 @@ export default function NewESummitEvent() {
                 return;
             }
 
-            console.log('Inserting event data...');
-
             // Attempt insert without select() to avoid RLS read policy issues
-            const { error } = await supabase.from('events').insert(eventData as any);
+            const { error }: any = await supabase.from('events').insert(eventData);
 
             if (error) {
                 console.error('Supabase Insert Error:', error.message);
@@ -273,7 +273,7 @@ export default function NewESummitEvent() {
                             id="status"
                             value={formData.status}
                             onChange={(e) => {
-                                const newStatus = e.target.value as any;
+                                const newStatus = e.target.value as typeof formData.status; // Cast to specific type
                                 setFormData({
                                     ...formData,
                                     status: newStatus,
@@ -298,6 +298,18 @@ export default function NewESummitEvent() {
                             onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                             className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent [color-scheme:dark]"
                         />
+                    </div>
+
+                    <div>
+                        <label htmlFor="end_date" className="block text-sm font-medium text-gray-300 mb-2">End Date & Time (Optional)</label>
+                        <input
+                            id="end_date"
+                            type="datetime-local"
+                            value={formData.end_date}
+                            onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                            className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent [color-scheme:dark]"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">Leave empty for a default 3-hour duration.</p>
                     </div>
 
                     <div>

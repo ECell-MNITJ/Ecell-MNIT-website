@@ -26,6 +26,7 @@ export default function EditESummitEvent() {
         description: '',
         detailed_description: '',
         date: '',
+        end_date: '',
         category: 'General',
         location: '',
 
@@ -101,24 +102,26 @@ export default function EditESummitEvent() {
                 setShowCustomCategory(isCustom);
             }
 
+            const rawEvent = data as any;
             setFormData({
-                title: data.title,
-                description: data.description,
-                detailed_description: data.detailed_description || '',
-                date: formatDateForInput(data.date),
-                category: data.category,
-                location: data.location || '',
+                title: rawEvent.title,
+                description: rawEvent.description,
+                detailed_description: rawEvent.detailed_description || '',
+                date: formatDateForInput(rawEvent.date),
+                end_date: rawEvent.end_date ? formatDateForInput(rawEvent.end_date) : '',
+                category: rawEvent.category,
+                location: rawEvent.location || '',
 
-                details_url: data.details_url || '',
-                status: data.status,
-                featured: data.featured,
-                registrations_open: data.registrations_open ?? true,
+                details_url: rawEvent.details_url || '',
+                status: rawEvent.status,
+                featured: rawEvent.featured,
+                registrations_open: rawEvent.registrations_open ?? true,
 
-                image_url: data.image_url || '',
-                is_team_event: data.is_team_event || false,
-                min_team_size: data.min_team_size || 1,
-                max_team_size: data.max_team_size || 1,
-                show_on_ecell: data.show_on_ecell || false,
+                image_url: rawEvent.image_url || '',
+                is_team_event: rawEvent.is_team_event || false,
+                min_team_size: rawEvent.min_team_size || 1,
+                max_team_size: rawEvent.max_team_size || 1,
+                show_on_ecell: rawEvent.show_on_ecell || false,
             });
 
             if (data.event_details) {
@@ -164,12 +167,13 @@ export default function EditESummitEvent() {
                 imageUrl = await uploadImage(imageFile, 'event-images', formData.image_url);
             }
 
-            const eventData: Database['public']['Tables']['events']['Update'] = {
+            const eventData: any = {
                 title: formData.title,
                 description: formData.description,
                 detailed_description: formData.detailed_description,
                 event_details: eventDetails as any,
                 date: new Date(formData.date).toISOString(),
+                end_date: formData.end_date ? new Date(formData.end_date).toISOString() : null,
                 category: formData.category,
                 location: formData.location,
 
@@ -186,7 +190,7 @@ export default function EditESummitEvent() {
 
             const { error } = await supabase
                 .from('events')
-                .update(eventData as any)
+                .update(eventData)
                 .eq('id', id);
 
             if (error) throw error;
@@ -358,6 +362,18 @@ export default function EditESummitEvent() {
                             onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                             className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent [color-scheme:dark]"
                         />
+                    </div>
+
+                    <div>
+                        <label htmlFor="end_date" className="block text-sm font-medium text-gray-300 mb-2">End Date & Time (Optional)</label>
+                        <input
+                            id="end_date"
+                            type="datetime-local"
+                            value={formData.end_date}
+                            onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                            className="w-full px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent [color-scheme:dark]"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">If blank, status transitions will be less precise.</p>
                     </div>
 
                     <div>

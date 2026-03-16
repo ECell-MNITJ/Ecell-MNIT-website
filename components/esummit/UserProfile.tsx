@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { FiEdit2, FiSave, FiCamera, FiGlobe, FiPhone, FiUser, FiX, FiTrash2, FiAward, FiColumns, FiPower, FiUserPlus } from 'react-icons/fi';
+import { FiEdit2, FiSave, FiCamera, FiGlobe, FiPhone, FiUser, FiX, FiTrash2, FiAward, FiColumns, FiPower, FiUserPlus, FiCheckCircle } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 import QRCodeCard from './QRCodeCard';
@@ -492,7 +492,7 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                             <div>
                                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                                     <div>
-                                        <h1 className="text-4xl md:text-5xl font-black text-white mb-2 tracking-tight">
+                                        <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">
                                             {profile?.full_name || user.user_metadata?.name || user.user_metadata?.full_name || 'Anonymous User'}
                                         </h1>
                                         <p className="text-esummit-primary font-medium">{user.email}</p>
@@ -556,9 +556,13 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                                 </div>
 
                                 {/* Registration Confirmation Message */}
-                                <div className="mt-8 bg-esummit-primary/10 border border-esummit-primary/20 p-6 rounded-2xl backdrop-blur-sm">
+                                 <div className={`mt-8 border p-6 rounded-2xl backdrop-blur-sm transition-all duration-500 ${profile?.esummit_checked_in 
+                                    ? 'bg-green-500/5 border-green-500/20' 
+                                    : 'bg-esummit-primary/10 border-esummit-primary/20'}`}>
                                     <p className="text-white text-lg font-bold text-center">
-                                        You are now registered for E-summit, show this QR code at registration desk to enter E-summit
+                                        {profile?.esummit_checked_in 
+                                            ? "Welcome to E-Summit! You have successfully checked in at the main entry."
+                                            : "You are now registered for E-summit, show this QR code at registration desk to enter E-summit"}
                                     </p>
                                 </div>
 
@@ -667,8 +671,14 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                                             }`}>
                                             {reg.status}
                                         </span>
-                                        <h3 className="text-xl font-bold text-white group-hover:text-esummit-accent transition-colors">
+                                        <h3 className="text-xl font-bold text-white group-hover:text-esummit-accent transition-colors flex items-center gap-2">
                                             {reg.events?.title || 'Unknown Event'}
+                                            {reg.checked_in && (
+                                                <span className="bg-green-500/10 text-green-400 border border-green-500/30 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest flex items-center gap-1">
+                                                    <FiCheckCircle className="w-2.5 h-2.5" />
+                                                    Entered
+                                                </span>
+                                            )}
                                         </h3>
                                     </div>
                                     {reg.events?.image_url && (
@@ -677,18 +687,22 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                                         </div>
                                     )}
                                 </div>
-                                <div className="flex flex-col gap-2 pt-4 border-t border-white/5 text-sm text-gray-400">
-                                    <div className="flex justify-between">
-                                        <span>Registered on:</span>
-                                        <span className="text-gray-300 font-medium">{new Date(reg.created_at).toLocaleDateString()}</span>
-                                    </div>
-                                    {reg.team_id && (
+                                    <div className="flex flex-col gap-2 pt-4 border-t border-white/5 text-sm text-gray-400">
                                         <div className="flex justify-between">
-                                            <span>Team Code:</span>
-                                            <span className="text-esummit-primary font-mono font-bold tracking-wider uppercase">{reg.team_id.slice(0, 8)}</span>
+                                            <span>Ticket ID:</span>
+                                            <span className="text-esummit-primary font-mono font-bold tracking-wider uppercase">{reg.registration_id}</span>
                                         </div>
-                                    )}
-                                </div>
+                                        <div className="flex justify-between">
+                                            <span>Registered on:</span>
+                                            <span className="text-gray-300 font-medium">{new Date(reg.created_at).toLocaleDateString()}</span>
+                                        </div>
+                                        {reg.team_id && (
+                                            <div className="flex justify-between">
+                                                <span>Team Code:</span>
+                                                <span className="text-esummit-primary font-mono font-bold tracking-wider uppercase">{reg.team_id.slice(0, 8)}</span>
+                                            </div>
+                                        )}
+                                    </div>
                             </div>
                         ))}
                     </div>

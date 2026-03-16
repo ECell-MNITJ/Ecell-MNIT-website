@@ -15,6 +15,7 @@ interface QRCodeCardProps {
         full_name?: string;
         esummit_id?: string;
         qr_code_url?: string | null;
+        esummit_checked_in?: boolean;
     };
 }
 
@@ -132,6 +133,12 @@ export default function QRCodeCard({ user, profile }: QRCodeCardProps) {
                 <p className="text-gray-500 text-sm font-mono mt-1">
                     ID: {user.id.substring(0, 8).toUpperCase()}
                 </p>
+                {profile?.esummit_checked_in && (
+                    <div className="mt-2 flex items-center justify-center gap-1.5 text-green-600 font-black text-[10px] uppercase tracking-widest">
+                        <FiCheckCircle className="w-3 h-3" />
+                        Checked In
+                    </div>
+                )}
                 <div className="mt-3 px-3 py-1 bg-esummit-primary/10 text-esummit-primary text-xs font-bold rounded-full uppercase tracking-wider inline-block">
                     E-Summit Pass
                 </div>

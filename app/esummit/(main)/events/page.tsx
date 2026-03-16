@@ -15,13 +15,14 @@ interface Event {
     registrations_open: boolean;
     display_order: number;
     registration_link?: string | null;
+    end_date?: string | null;
 }
 
 async function getEsummitEvents(): Promise<Event[]> {
     const supabase = await createServerClient();
     const { data, error } = await supabase
         .from('events')
-        .select('id, title, description, date, category, location, image_url, status, featured, is_esummit, registrations_open, display_order, registration_link, details_url')
+        .select('id, title, description, date, end_date, category, location, image_url, status, featured, is_esummit, registrations_open, display_order, registration_link, details_url')
         .eq('is_esummit', true)
         .order('display_order', { ascending: true })
         .order('date', { ascending: false });
@@ -51,9 +52,19 @@ export default async function ESummitEventsPage() {
 
     const regMap = new Map(userRegistrations.map(r => [r.event_id, r.registration_id]));
 
-    const upcomingEvents = events.filter((e) => e.status === 'upcoming');
-    const pastEvents = events.filter((e) => e.status === 'past');
-    const ongoingEvents = events.filter((e) => e.status === 'ongoing');
+    const getCalculatedStatus = (event: Event) => {
+        const now = new Date();
+        const start = new Date(event.date);
+        const end = event.end_date ? new Date(event.end_date) : new Date(start.getTime() + 3 * 60 * 60 * 1000); // Default 3 hours
+
+        if (now < start) return 'upcoming';
+        if (now >= start && now <= end) return 'ongoing';
+        return 'past';
+    };
+
+    const upcomingEvents = events.filter((e) => getCalculatedStatus(e) === 'upcoming');
+    const pastEvents = events.filter((e) => getCalculatedStatus(e) === 'past');
+    const ongoingEvents = events.filter((e) => getCalculatedStatus(e) === 'ongoing');
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', {
@@ -79,19 +90,18 @@ export default async function ESummitEventsPage() {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-esummit-card via-transparent to-transparent opacity-80" />
 
-                            {/* Status Badge */}
                             <div className="absolute top-4 left-4">
-                                {event.status === 'upcoming' && (
+                                {getCalculatedStatus(event) === 'upcoming' && (
                                     <span className="bg-esummit-primary/90 text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider backdrop-blur-sm shadow-[0_0_10px_rgba(157,78,221,0.4)] animate-pulse">
                                         Upcoming
                                     </span>
                                 )}
-                                {event.status === 'ongoing' && (
+                                {getCalculatedStatus(event) === 'ongoing' && (
                                     <span className="bg-esummit-accent/90 text-esummit-bg text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider backdrop-blur-sm shadow-[0_0_10px_rgba(0,240,255,0.4)] animate-pulse">
                                         Live Now
                                     </span>
                                 )}
-                                {event.status === 'past' && (
+                                {getCalculatedStatus(event) === 'past' && (
                                     <span className="bg-gray-800/90 text-gray-400 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider backdrop-blur-sm border border-gray-700">
                                         Completed
                                     </span>
@@ -108,7 +118,7 @@ export default async function ESummitEventsPage() {
                                         Registered
                                     </span>
                                 )}
-                                {!ticketId && !event.registrations_open && event.status === 'upcoming' && (
+                                {!ticketId && !event.registrations_open && getCalculatedStatus(event) === 'upcoming' && (
                                     <span className="bg-red-900/80 text-white text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-tighter border border-red-500/30 backdrop-blur-sm shadow-[0_0_10px_rgba(239,68,68,0.2)]">
                                         Registration Closed
                                     </span>
