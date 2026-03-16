@@ -124,11 +124,21 @@ export default function QRScannerPage() {
         setVerificationMessage('Processing...');
         setScannedUserDetails(null);
 
-        // UUID regex
+        // UUID or ES- registration ID regex
         const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        const regIdRegex = /^ES-[A-Z0-9]{6}$/i;
 
-        if (!uuidRegex.test(result)) {
-            console.log('Invalid UUID format:', result);
+        if (selectedEventId === 'general' && !uuidRegex.test(result)) {
+            console.log('Invalid UUID format for general entry:', result);
+            setVerificationStatus('error');
+            setVerificationMessage(`Invalid Format: ${result.substring(0, 15)}...`);
+            toast.error(`Invalid QR Format`);
+            setTimeout(() => setLastScanned(null), 3000);
+            return;
+        }
+
+        if (selectedEventId !== 'general' && !uuidRegex.test(result) && !regIdRegex.test(result)) {
+            console.log('Invalid Format for Event Entry:', result);
             setVerificationStatus('error');
             setVerificationMessage(`Invalid Format: ${result.substring(0, 15)}...`);
             toast.error(`Invalid QR Format`);
