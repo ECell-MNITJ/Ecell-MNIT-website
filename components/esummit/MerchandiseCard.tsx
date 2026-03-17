@@ -15,8 +15,8 @@ interface Product {
 
 export default function MerchandiseCard({ product }: { product: Product }) {
     const DetailsButton = (
-        <button className="flex items-center gap-2 px-3 py-1.5 bg-white text-black font-medium text-[10px] uppercase tracking-widest rounded-full hover:bg-esummit-primary hover:text-white transition-all duration-300">
-            Details <FiArrowRight />
+        <button className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 bg-white text-black font-medium text-[8px] sm:text-[10px] uppercase tracking-widest rounded-full hover:bg-esummit-primary hover:text-white transition-all duration-300">
+            Details <FiArrowRight className="text-[10px] sm:text-xs" />
         </button>
     );
 
@@ -60,8 +60,8 @@ export default function MerchandiseCard({ product }: { product: Product }) {
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-white/5">
-                    <div className="text-sm sm:text-md font-medium text-white">
+                <div className="flex items-center justify-between flex-wrap gap-x-2 gap-y-2 pt-2 border-t border-white/5">
+                    <div className="text-sm sm:text-md font-medium text-white shrink-0">
                         <span className="text-esummit-primary text-[10px] sm:text-sm mr-1">₹</span>
                         {product.price}
                     </div>
@@ -71,11 +71,14 @@ export default function MerchandiseCard({ product }: { product: Product }) {
                             href={product.details_url}
                             target="_blank"
                             rel="noopener noreferrer"
+                            className="shrink-0 ml-auto"
                         >
                             {DetailsButton}
                         </a>
                     ) : (
-                        DetailsButton
+                        <div className="shrink-0 ml-auto">
+                            {DetailsButton}
+                        </div>
                     )}
                 </div>
             </div>
