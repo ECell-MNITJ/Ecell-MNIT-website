@@ -41,8 +41,6 @@ export default function RegistrationDetailsModal({ isOpen, isMandatory = false, 
         referral_code: ''
     });
 
-    const [idFile, setIdFile] = useState<File | null>(null);
-    const [uploading, setUploading] = useState(false);
 
     if (!isOpen) return null;
 
@@ -64,10 +62,6 @@ export default function RegistrationDetailsModal({ isOpen, isMandatory = false, 
             return;
         }
 
-        if (!idFile) {
-            toast.error('Please upload the required ID document');
-            return;
-        }
 
         if (!/^\d{10}$/.test(formData.phone)) {
             toast.error('Phone number must be exactly 10 digits');
@@ -117,30 +111,6 @@ export default function RegistrationDetailsModal({ isOpen, isMandatory = false, 
                 console.log('Step 1: No referral code entered');
             }
 
-            // 2. Upload ID Image to Storage
-            console.log('Step 2: Checking ID file upload');
-            let idUrl = '';
-            if (idFile) {
-                const fileExt = idFile.name.split('.').pop();
-                const fileName = `${user.id}/${Date.now()}.${fileExt}`;
-                console.log('Uploading ID to storage:', fileName);
-                
-                const { error: uploadError } = await supabase.storage
-                    .from('user-documents')
-                    .upload(fileName, idFile);
-
-                if (uploadError) {
-                    console.error('Storage upload error details:', uploadError);
-                    throw new Error(`ID Upload failed: ${uploadError.message}. Make sure you ran the SQL fix script!`);
-                }
-
-                const { data: { publicUrl } } = supabase.storage
-                    .from('user-documents')
-                    .getPublicUrl(fileName);
-                
-                idUrl = publicUrl;
-                console.log('ID uploaded successfully:', idUrl);
-            }
 
             // 3. Generate QR Code URL
             console.log('Step 3: Generating QR payload');
@@ -164,12 +134,8 @@ export default function RegistrationDetailsModal({ isOpen, isMandatory = false, 
 
             if (formData.user_type === 'Student') {
                 updatePayload.college_name = formData.college_name;
-                updatePayload.college_id_url = idUrl;
             } else if (formData.user_type === 'Founder') {
                 updatePayload.company_name = formData.company_name;
-                updatePayload.govt_id_url = idUrl;
-            } else {
-                updatePayload.govt_id_url = idUrl;
             }
 
             console.log('Step 4: Updating profile in DB with payload:', updatePayload);
@@ -401,43 +367,6 @@ export default function RegistrationDetailsModal({ isOpen, isMandatory = false, 
                             </p>
                         </div>
 
-                        {(formData.user_type) && (
-                            <div className="animate-in slide-in-from-top-2 duration-300">
-                                <label className="block text-sm font-medium text-gray-400 mb-1.5 ml-1">
-                                    {formData.user_type === 'Student' ? 'Upload College ID' : 'Upload Govt ID'}
-                                </label>
-                                <div 
-                                    className={`relative border-2 border-dashed rounded-xl p-4 transition-all flex flex-col items-center justify-center gap-2 cursor-pointer ${
-                                        idFile ? 'border-green-500/50 bg-green-500/5' : 'border-gray-700 hover:border-primary-golden/50 bg-gray-800/50'
-                                    }`}
-                                    onClick={() => document.getElementById('id-upload')?.click()}
-                                >
-                                    <input
-                                        id="id-upload"
-                                        type="file"
-                                        accept="image/*,.pdf"
-                                        className="hidden"
-                                        onChange={(e) => {
-                                            const file = e.target.files?.[0];
-                                            if (file) setIdFile(file);
-                                        }}
-                                    />
-                                    {idFile ? (
-                                        <>
-                                            <FiFileText className="w-8 h-8 text-green-500" />
-                                            <span className="text-gray-300 text-sm font-medium">{idFile.name} ({(idFile.size / (1024 * 1024)).toFixed(2)} MB)</span>
-                                            <span className="text-gray-500 text-xs text-center">Click to change file</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <FiUpload className="w-8 h-8 text-gray-500" />
-                                            <span className="text-gray-400 text-sm font-medium">Click to upload document</span>
-                                            <span className="text-gray-600 text-xs text-center">Max size 2MB. Supports Images & PDF.</span>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
-                        )}
 
                         <div className="pt-4">
                             <button

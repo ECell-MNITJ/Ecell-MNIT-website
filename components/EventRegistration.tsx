@@ -79,7 +79,7 @@ export default function EventRegistration({ event, user, hasValidPass }: EventRe
 
         // Check for basic details and user type details
         const hasBasicDetails = profile.phone && profile.age && profile.qr_code_url;
-        const hasUserTypeDetails = profile.user_type && (profile.college_id_url || profile.govt_id_url);
+        const hasUserTypeDetails = !!profile.user_type;
 
         return !!(hasBasicDetails && hasUserTypeDetails);
     }

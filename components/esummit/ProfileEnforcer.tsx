@@ -43,7 +43,7 @@ export default function ProfileEnforcer({ user }: { user: any }) {
                 setProfileData(profile);
 
                 const hasBasicDetails = profile.full_name && profile.phone && profile.age && profile.gender && profile.qr_code_url;
-                const hasUserTypeDetails = profile.user_type && (profile.college_id_url || profile.govt_id_url);
+                const hasUserTypeDetails = !!profile.user_type;
                 
                 if (!hasBasicDetails || !hasUserTypeDetails) {
                     setIsModalOpen(true);

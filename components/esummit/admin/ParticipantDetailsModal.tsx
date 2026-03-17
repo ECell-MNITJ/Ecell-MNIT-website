@@ -178,9 +178,10 @@ export default function ParticipantDetailsModal({
                                         </div>
                                     </>
                                 ) : (
-                                    <div className="absolute inset-0 flex flex-col items-center justify-center opacity-20">
-                                        <FiBriefcase className="w-16 h-16 mb-4" />
-                                        <span className="text-xs font-black uppercase tracking-[0.3em]">No Document Attached</span>
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center opacity-40 px-10 text-center">
+                                        <FiBriefcase className="w-16 h-16 mb-4 text-gray-600" />
+                                        <span className="text-sm font-black uppercase tracking-[0.3em] text-gray-500">Identity Documents Not Required</span>
+                                        <p className="text-[10px] text-gray-600 mt-2 max-w-xs">ID upload functionality has been disabled to conserve storage space. Professional status verified during check-in.</p>
                                     </div>
                                 )}
                             </div>
