@@ -113,7 +113,10 @@ export default function UserProfile({ user }: { user: any }) {
 
             const { error: uploadError } = await supabase.storage
                 .from('avatars')
-                .upload(filePath, file);
+                .upload(filePath, file, {
+                    cacheControl: '604800',
+                    upsert: false
+                });
 
             if (uploadError) {
                 throw uploadError;

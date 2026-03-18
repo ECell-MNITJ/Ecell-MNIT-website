@@ -10,6 +10,7 @@ interface MerchandiseProduct {
     name: string;
     price: string;
     image_url: string | null;
+    image_urls: string[] | null;
     category: string | null;
     details_url: string | null;
     display_order: number;
@@ -30,11 +31,11 @@ export default function MerchandiseAdminPage() {
     const [newPrice, setNewPrice] = useState('');
     const [newCategory, setNewCategory] = useState('');
     const [newDetailsUrl, setNewDetailsUrl] = useState('');
-    const [newImage, setNewImage] = useState<File | null>(null);
+    const [newImages, setNewImages] = useState<File[]>([]);
 
     // Editing State
     const [editingProduct, setEditingProduct] = useState<MerchandiseProduct | null>(null);
-    const [editImage, setEditImage] = useState<File | null>(null);
+    const [editImages, setEditImages] = useState<File[]>([]);
 
     useEffect(() => {
         fetchData();
@@ -94,24 +95,29 @@ export default function MerchandiseAdminPage() {
         }
     };
 
-    const uploadImage = async (file: File) => {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `merch/${fileName}`;
+    const uploadImages = async (files: File[]) => {
+        const urls = [];
+        for (const file of files) {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Math.random()}.${fileExt}`;
+            const filePath = `merch/${fileName}`;
 
-        const { error: uploadError } = await supabase.storage
-            .from('esummit_uploads')
-            .upload(filePath, file);
+            const { error: uploadError } = await supabase.storage
+                .from('esummit_uploads')
+                .upload(filePath, file, {
+                    cacheControl: '604800',
+                    upsert: false
+                });
 
-        if (uploadError) {
-            throw uploadError;
+            if (uploadError) throw uploadError;
+
+            const { data } = supabase.storage
+                .from('esummit_uploads')
+                .getPublicUrl(filePath);
+
+            urls.push(data.publicUrl);
         }
-
-        const { data } = supabase.storage
-            .from('esummit_uploads')
-            .getPublicUrl(filePath);
-
-        return data.publicUrl;
+        return urls;
     };
 
     const handleAddProduct = async () => {
@@ -120,9 +126,9 @@ export default function MerchandiseAdminPage() {
             return;
         }
         try {
-            let imageUrl = null;
-            if (newImage) {
-                imageUrl = await uploadImage(newImage);
+            let urls: string[] = [];
+            if (newImages.length > 0) {
+                urls = await uploadImages(newImages);
             }
 
             const { data, error } = await supabase
@@ -132,7 +138,8 @@ export default function MerchandiseAdminPage() {
                     price: newPrice,
                     category: newCategory,
                     details_url: newDetailsUrl,
-                    image_url: imageUrl,
+                    image_url: urls[0] || null,
+                    image_urls: urls,
                     display_order: products.length
                 })
                 .select()
@@ -145,7 +152,7 @@ export default function MerchandiseAdminPage() {
             setNewPrice('');
             setNewCategory('');
             setNewDetailsUrl('');
-            setNewImage(null);
+            setNewImages([]);
             setIsAdding(false);
             toast.success('Product added successfully');
         } catch (error) {
@@ -170,9 +177,11 @@ export default function MerchandiseAdminPage() {
         if (!editingProduct) return;
 
         try {
-            let imageUrl = editingProduct.image_url;
-            if (editImage) {
-                imageUrl = await uploadImage(editImage);
+            let currentUrls = editingProduct.image_urls || (editingProduct.image_url ? [editingProduct.image_url] : []);
+            
+            if (editImages.length > 0) {
+                const newUploadedUrls = await uploadImages(editImages);
+                currentUrls = [...currentUrls, ...newUploadedUrls];
             }
 
             const { error } = await supabase
@@ -182,16 +191,17 @@ export default function MerchandiseAdminPage() {
                     price: editingProduct.price,
                     category: editingProduct.category,
                     details_url: editingProduct.details_url,
-                    image_url: imageUrl,
+                    image_url: currentUrls[0] || null,
+                    image_urls: currentUrls,
                     updated_at: new Date().toISOString()
                 })
                 .eq('id', editingProduct.id);
 
             if (error) throw error;
 
-            setProducts(products.map(p => p.id === editingProduct.id ? { ...editingProduct, image_url: imageUrl } : p));
+            setProducts(products.map(p => p.id === editingProduct.id ? { ...editingProduct, image_url: currentUrls[0] || null, image_urls: currentUrls } : p));
             setEditingProduct(null);
-            setEditImage(null);
+            setEditImages([]);
             toast.success('Product updated');
         } catch (error) {
             console.error(error);
@@ -289,13 +299,26 @@ export default function MerchandiseAdminPage() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs uppercase text-gray-400 mb-1">Product Image</label>
+                                <label className="block text-xs uppercase text-gray-400 mb-1">Product Images (Multiple allowed)</label>
                                 <input
                                     type="file"
                                     accept="image/*"
-                                    onChange={(e) => setNewImage(e.target.files?.[0] || null)}
+                                    multiple
+                                    onChange={(e) => {
+                                        const files = Array.from(e.target.files || []);
+                                        setNewImages(files);
+                                    }}
                                     className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-gray-700 file:text-white"
                                 />
+                                {newImages.length > 0 && (
+                                    <div className="flex gap-2 mt-2 overflow-x-auto pb-2">
+                                        {newImages.map((file, idx) => (
+                                            <div key={idx} className="shrink-0 w-12 h-12 bg-gray-700 rounded border border-gray-600 flex items-center justify-center text-[10px] text-gray-400 p-1 text-center overflow-hidden">
+                                                {file.name}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="mt-4 flex justify-end">
@@ -355,18 +378,40 @@ export default function MerchandiseAdminPage() {
                                                 className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-white"
                                             />
                                         </div>
-                                        <div>
-                                            <label className="block text-xs uppercase text-gray-400 mb-1">New Image (Optional)</label>
+                                        <div className="md:col-span-2">
+                                            <label className="block text-xs uppercase text-gray-400 mb-1">Current Images</label>
+                                            <div className="flex flex-wrap gap-2 mb-4">
+                                                {(editingProduct!.image_urls || (editingProduct!.image_url ? [editingProduct!.image_url] : [])).map((url, idx) => (
+                                                    <div key={idx} className="relative group/img w-16 h-16 bg-gray-900 rounded border border-gray-700 overflow-hidden">
+                                                        <img src={url} alt="" className="w-full h-full object-contain" />
+                                                        <button 
+                                                            onClick={() => {
+                                                                const urls = (editingProduct!.image_urls || [editingProduct!.image_url!]).filter((_, i) => i !== idx);
+                                                                setEditingProduct({ ...editingProduct!, image_urls: urls, image_url: urls[0] || null });
+                                                            }}
+                                                            className="absolute inset-0 bg-red-500/80 text-white opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center"
+                                                        >
+                                                            <FiTrash2 size={16} />
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                            <label className="block text-xs uppercase text-gray-400 mb-1">Add More Images</label>
                                             <input
                                                 type="file"
                                                 accept="image/*"
-                                                onChange={(e) => setEditImage(e.target.files?.[0] || null)}
+                                                multiple
+                                                onChange={(e) => {
+                                                    const files = Array.from(e.target.files || []);
+                                                    setEditImages(files);
+                                                }}
                                                 className="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-gray-700 file:text-white"
                                             />
                                         </div>
                                     </div>
                                     <div className="flex justify-end gap-3 mt-2">
-                                        <button onClick={() => { setEditingProduct(null); setEditImage(null); }} className="px-4 py-2 text-gray-400 hover:text-white">Cancel</button>
+                                        <button onClick={() => { setEditingProduct(null); setEditImages([]); }} className="px-4 py-2 text-gray-400 hover:text-white">Cancel</button>
                                         <button onClick={handleUpdateProduct} className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">Save Changes</button>
                                     </div>
                                 </div>
@@ -380,8 +425,12 @@ export default function MerchandiseAdminPage() {
                                     <button onClick={() => handleDeleteProduct(product.id)} className="p-2 bg-gray-700 rounded text-gray-300 hover:text-red-500"><FiTrash2 size={14} /></button>
                                 </div>
 
-                                <div className="shrink-0 w-24 h-24 bg-gray-900 rounded-lg border border-gray-700 flex items-center justify-center p-2 overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
-                                    {product.image_url ? (
+                                <div className="shrink-0 w-24 h-24 bg-gray-900 rounded-lg border border-gray-700 flex items-center justify-center p-2 overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 overflow-x-auto gap-2">
+                                    {(product.image_urls && product.image_urls.length > 0) ? (
+                                        product.image_urls.map((url, i) => (
+                                            <img key={i} src={url} alt="" className="w-full h-full object-contain shrink-0" />
+                                        ))
+                                    ) : product.image_url ? (
                                         <img src={product.image_url} alt={product.name} className="w-full h-full object-contain" />
                                     ) : (
                                         <FiShoppingBag className="text-gray-600 w-8 h-8" />

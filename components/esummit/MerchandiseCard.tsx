@@ -9,6 +9,7 @@ interface Product {
     name: string;
     price: string;
     image_url: string | null;
+    image_urls?: string[] | null;
     category: string | null;
     details_url?: string | null;
 }
@@ -29,17 +30,28 @@ export default function MerchandiseCard({ product }: { product: Product }) {
         >
             {/* Product Image Container */}
             <div className="relative aspect-[4/5] max-h-[400px] md:max-h-none overflow-hidden bg-white/[0.02]">
-                {product.image_url ? (
+                {/* Primary Image */}
+                {(product.image_urls?.[0] || product.image_url) ? (
                     <Image
-                        src={product.image_url}
+                        src={product.image_urls?.[0] || product.image_url!}
                         alt={product.name}
                         fill
-                        className="object-cover transition-all duration-700"
+                        className={`object-cover transition-all duration-700 ${product.image_urls?.[1] ? 'group-hover:opacity-0 group-hover:scale-110' : ''}`}
                     />
                 ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-gray-600">
                         <FiShoppingBag size={48} />
                     </div>
+                )}
+
+                {/* Secondary Image (Hover) */}
+                {product.image_urls?.[1] && (
+                    <Image
+                        src={product.image_urls[1]}
+                        alt={`${product.name} alternate view`}
+                        fill
+                        className="object-cover transition-all duration-700 opacity-0 group-hover:opacity-100 scale-110 group-hover:scale-100"
+                    />
                 )}
 
                 {/* Overlay with category badge */}

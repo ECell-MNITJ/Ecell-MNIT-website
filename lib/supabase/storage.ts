@@ -21,7 +21,7 @@ export async function uploadImage(
     const { data, error } = await supabase.storage
         .from(bucket)
         .upload(fileName, file, {
-            cacheControl: '3600',
+            cacheControl: '604800',
             upsert: false,
         });
 

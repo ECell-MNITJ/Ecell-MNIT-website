@@ -108,7 +108,9 @@ export default function SpeakersAdminPage() {
 
         const { error: uploadError } = await supabase.storage
             .from('esummit_uploads')
-            .upload(filePath, file);
+            .upload(filePath, file, {
+                cacheControl: '604800'
+            });
 
         if (uploadError) {
             throw uploadError;
