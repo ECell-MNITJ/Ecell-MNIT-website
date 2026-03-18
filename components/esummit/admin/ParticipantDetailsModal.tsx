@@ -153,40 +153,6 @@ export default function ParticipantDetailsModal({
                             )}
                         </div>
 
-                        {/* Document Display Area */}
-                        <div className="flex-1 min-h-0 space-y-3 flex flex-col">
-                            <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] ml-1 shrink-0 flex items-center gap-2">
-                                <FiExternalLink /> {participant.user_type === 'Student' ? 'Academic ID Verification' : 'Government ID Verification'}
-                            </label>
-                            <div className="flex-1 bg-gray-950 rounded-2xl border border-gray-800 overflow-hidden relative group shadow-2xl">
-                                {participant.college_id_url || participant.govt_id_url ? (
-                                    <>
-                                        <img 
-                                            src={participant.college_id_url || participant.govt_id_url} 
-                                            alt="ID Document" 
-                                            className="w-full h-full object-contain p-4"
-                                        />
-                                        <div className="absolute top-4 right-4 flex gap-2">
-                                            <a 
-                                                href={participant.college_id_url || participant.govt_id_url} 
-                                                target="_blank"
-                                                className="bg-white/10 hover:bg-white text-white hover:text-black p-3 rounded-xl backdrop-blur-md transition-all shadow-xl border border-white/10"
-                                                title="Open Original"
-                                            >
-                                                <FiExternalLink className="text-xl" />
-                                            </a>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <div className="absolute inset-0 flex flex-col items-center justify-center opacity-40 px-10 text-center">
-                                        <FiBriefcase className="w-16 h-16 mb-4 text-gray-600" />
-                                        <span className="text-sm font-black uppercase tracking-[0.3em] text-gray-500">Identity Documents Not Required</span>
-                                        <p className="text-[10px] text-gray-600 mt-2 max-w-xs">ID upload functionality has been disabled to conserve storage space. Professional status verified during check-in.</p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
                         {/* Metadata Row */}
                         <div className="shrink-0 flex justify-between items-center text-[9px] text-gray-600 font-mono border-t border-gray-800 pt-4">
                             <span>Last Updated: {formatDate(participant.updated_at)}</span>

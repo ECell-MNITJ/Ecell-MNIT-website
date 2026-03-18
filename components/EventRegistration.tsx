@@ -71,7 +71,7 @@ export default function EventRegistration({ event, user, hasValidPass }: EventRe
 
         const { data: profile } = await supabase
             .from('profiles')
-            .select('phone, age, qr_code_url, user_type, college_id_url, govt_id_url')
+            .select('phone, age, qr_code_url, user_type')
             .eq('id', user.id)
             .single() as any;
 

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { FiUser, FiSmartphone, FiCalendar, FiSave, FiX, FiInfo, FiBriefcase, FiBookOpen, FiUpload, FiFileText, FiUserPlus } from 'react-icons/fi';
+import { FiUser, FiSmartphone, FiCalendar, FiSave, FiX, FiInfo, FiBriefcase, FiBookOpen, FiUserPlus } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 interface RegistrationDetailsModalProps {
