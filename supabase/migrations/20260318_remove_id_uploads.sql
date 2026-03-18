@@ -46,10 +46,8 @@ ALTER TABLE public.profiles
 DROP COLUMN IF EXISTS college_id_url,
 DROP COLUMN IF EXISTS govt_id_url;
 
--- 3. Delete the storage bucket and its policies
--- Note: This requires the storage schema to be accessible
-DELETE FROM storage.policies WHERE bucket_id = 'user-documents';
-DELETE FROM storage.buckets WHERE id = 'user-documents';
+-- 3. Storage bucket 'user-documents' was manually deleted by the user.
+-- No further storage cleanup needed in this script.
 
 -- 4. Reload PostgREST schema cache
 NOTIFY pgrst, 'reload schema';

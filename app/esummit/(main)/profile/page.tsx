@@ -7,7 +7,7 @@ export default async function ESummitProfilePage() {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-        redirect('/login?next=/esummit/profile');
+        redirect('/esummit/login?next=/esummit/profile');
     }
 
     return (

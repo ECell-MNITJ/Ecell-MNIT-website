@@ -9,7 +9,7 @@ export default async function Profile() {
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
-        redirect('/login');
+        redirect('/login?next=/profile');
     }
 
     // Fetch registered events
