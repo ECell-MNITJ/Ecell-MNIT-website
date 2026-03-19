@@ -445,7 +445,7 @@ export default function ESummitLandingDataLayer() {
                 </section>
             )}
 
-            {/* Joined Marquee Section: Investors, Speakers, Sponsors */}
+            {/* Joined Marquee Section: Investors, Sponsors, Speakers */}
             <section className="py-24 bg-esummit-bg/40 backdrop-blur-md border-y border-white/5 relative overflow-hidden flex flex-col gap-24">
                 <SponsorsMarquee
                     sponsors={investors as any}
@@ -458,19 +458,19 @@ export default function ESummitLandingDataLayer() {
                     noSection={true}
                 />
 
-                {/* Speakers Section */}
-                <SpeakersMarquee
-                    speakers={speakers}
-                    heading={settings.speakers_heading}
-                    isVisible={settings.show_speakers}
-                    noSection={true}
-                />
-
                 {/* Sponsors Section */}
                 <SponsorsMarquee
                     sponsors={sponsors}
                     heading={settings.sponsors_heading}
                     isVisible={settings.show_sponsors}
+                    noSection={true}
+                />
+
+                {/* Speakers Section */}
+                <SpeakersMarquee
+                    speakers={speakers}
+                    heading={settings.speakers_heading}
+                    isVisible={settings.show_speakers}
                     noSection={true}
                 />
             </section>
