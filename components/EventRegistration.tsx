@@ -32,16 +32,28 @@ export default function EventRegistration({ event, user, hasValidPass }: EventRe
     const [activeTab, setActiveTab] = useState<'create' | 'join'>('create');
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
+    const [passesEnabled, setPassesEnabled] = useState(false);
 
     // Form states
     const [teamName, setTeamName] = useState('');
     const [joinCode, setJoinCode] = useState('');
 
     useEffect(() => {
+        fetchSettings();
         if (user) {
             checkRegistration();
         }
     }, [user, event.id]);
+
+    async function fetchSettings() {
+        const { data } = await supabase
+            .from('esummit_settings')
+            .select('passes_enabled')
+            .single();
+        if (data?.passes_enabled) {
+            setPassesEnabled(true);
+        }
+    }
 
     async function checkRegistration() {
         try {
@@ -282,18 +294,24 @@ export default function EventRegistration({ event, user, hasValidPass }: EventRe
 
     if (event.is_esummit && !hasValidPass && !registration) {
         return (
-            <div className="bg-red-500/10 p-6 rounded-xl border border-red-500/30 text-center">
-                <div className="w-12 h-12 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center mx-auto mb-4">
+            <div className={`p-6 rounded-xl border text-center ${passesEnabled ? 'bg-red-500/10 border-red-500/30' : 'bg-gray-500/10 border-gray-500/30'}`}>
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 ${passesEnabled ? 'bg-red-500/20 text-red-500' : 'bg-gray-500/20 text-gray-400'}`}>
                     <FiInfo className="w-6 h-6" />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">E-Summit Pass Required</h3>
-                <p className="text-gray-400 mb-6">You need an active E-Summit pass to register for this event.</p>
-                <button
-                    onClick={() => router.push('/esummit/passes')}
-                    className="bg-purple-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-500/25"
-                >
-                    Get Your Pass
-                </button>
+                <p className="text-gray-400 mb-6">
+                    {passesEnabled 
+                        ? 'You need an active E-Summit pass to register for this event.' 
+                        : 'Registration requires an E-Summit pass, but passes are currently unavailable.'}
+                </p>
+                {passesEnabled && (
+                    <button
+                        onClick={() => router.push('/esummit/passes')}
+                        className="bg-purple-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-500/25"
+                    >
+                        Get Your Pass
+                    </button>
+                )}
             </div>
         );
     }

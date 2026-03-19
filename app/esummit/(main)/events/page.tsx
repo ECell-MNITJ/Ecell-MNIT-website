@@ -62,9 +62,19 @@ export default async function ESummitEventsPage() {
         return 'past';
     };
 
-    const upcomingEvents = events.filter((e) => getCalculatedStatus(e) === 'upcoming');
-    const pastEvents = events.filter((e) => getCalculatedStatus(e) === 'past');
-    const ongoingEvents = events.filter((e) => getCalculatedStatus(e) === 'ongoing');
+    const sortSpeakerEventsFirst = (evs: Event[]) => {
+        return [...evs].sort((a, b) => {
+            const aIsSpeaker = a.category.toLowerCase().includes('speaker');
+            const bIsSpeaker = b.category.toLowerCase().includes('speaker');
+            if (aIsSpeaker && !bIsSpeaker) return -1;
+            if (!aIsSpeaker && bIsSpeaker) return 1;
+            return 0; // Maintain original order for others
+        });
+    };
+
+    const upcomingEvents = sortSpeakerEventsFirst(events.filter((e) => getCalculatedStatus(e) === 'upcoming'));
+    const pastEvents = sortSpeakerEventsFirst(events.filter((e) => getCalculatedStatus(e) === 'past'));
+    const ongoingEvents = sortSpeakerEventsFirst(events.filter((e) => getCalculatedStatus(e) === 'ongoing'));
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', {

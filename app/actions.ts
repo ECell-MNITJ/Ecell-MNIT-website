@@ -10,7 +10,10 @@ export async function deleteAccount(redirectPath: string = '/login') {
     const { data: { user }, error } = await supabase.auth.getUser();
 
     if (error || !user) {
-        throw new Error('Unauthorized');
+        // If we're already logged out or unauthorized, we can't delete the account.
+        // But instead of a generic Error, let's redirect to login for a fresh start.
+        console.warn('Delete account attempted without a valid session.');
+        redirect('/login');
     }
 
     // 2. Initialize Admin Client
@@ -88,6 +91,9 @@ export async function deleteAccount(redirectPath: string = '/login') {
         throw new Error(`Failed to delete account: ${deleteError.message}`);
     }
 
-    // 5. Redirect
+    // 5. Sign out locally to clear cookies/session
+    await supabase.auth.signOut();
+
+    // 6. Redirect
     redirect(redirectPath);
 }

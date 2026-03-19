@@ -42,6 +42,18 @@ function CheckoutContent() {
             }
             setUser(authUser);
 
+            // Fetch settings first to check if passes are enabled
+            const { data: settings } = await supabase
+                .from('esummit_settings')
+                .select('*')
+                .single();
+
+            if (settings && settings.passes_enabled === false) {
+                toast.error('Passes are currently unavailable');
+                router.push('/esummit/passes');
+                return;
+            }
+
             const { data: passData, error } = await supabase
                 .from('esummit_passes')
                 .select('*')
@@ -65,17 +77,7 @@ function CheckoutContent() {
                     .eq('applied_referral_code', caData.referral_code)
                     .eq('payment_status', 'success');
 
-                const { data: settings } = await supabase
-                    .from('esummit_settings')
-                    .select('ca_milestone_1_count, ca_milestone_1_discount, ca_milestone_2_count, ca_milestone_2_discount, passes_enabled')
-                    .single();
-
                 if (settings) {
-                    if (settings.passes_enabled === false) {
-                        toast.error('Passes are currently unavailable');
-                        router.push('/esummit/passes');
-                        return;
-                    }
                     const refs = count || 0;
                     let calculatedDiscount = 0;
 

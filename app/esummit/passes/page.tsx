@@ -16,7 +16,7 @@ const PassesPageContent = () => {
     const [passes, setPasses] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [globalFeatures, setGlobalFeatures] = useState<string[]>([]);
-    const [passesEnabled, setPassesEnabled] = useState(true);
+    const [passesEnabled, setPassesEnabled] = useState(false);
     const [user, setUser] = useState<any>(null);
 
     // Referral Logic
@@ -39,7 +39,9 @@ const PassesPageContent = () => {
                     .select('pass_features_list, ca_base_discount_percentage, passes_enabled')
                     .single();
 
-                if (settingsData?.passes_enabled === false) {
+                if (settingsData?.passes_enabled) {
+                    setPassesEnabled(true);
+                } else {
                     setPassesEnabled(false);
                     setLoading(false);
                     return;

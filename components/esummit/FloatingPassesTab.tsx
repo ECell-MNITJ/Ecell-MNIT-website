@@ -16,12 +16,12 @@ export default function FloatingPassesTab() {
                 .from('esummit_settings')
                 .select('passes_enabled')
                 .single();
-            setEnabled(data?.passes_enabled ?? true);
+            setEnabled(data?.passes_enabled ?? false);
         };
         checkEnabled();
     }, []);
 
-    if (enabled === false) return null;
+    if (!enabled) return null;
 
     return (
         <Link

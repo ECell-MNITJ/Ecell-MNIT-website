@@ -17,12 +17,23 @@ export default function Signup() {
     const [checking, setChecking] = useState(true);
 
     useEffect(() => {
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-            if (session) {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'SIGNED_IN' && session) {
                 router.push('/profile');
-            } else {
+                return;
+            } 
+            
+            if (event === 'INITIAL_SESSION') {
                 setChecking(false);
+                return;
             }
+
+            if (event === 'SIGNED_OUT') {
+                setChecking(false);
+                return;
+            }
+
+            setChecking(false);
         });
 
         return () => subscription.unsubscribe();
@@ -58,7 +69,7 @@ export default function Signup() {
             }
 
             toast.success('Registration successful! Please verify your email.');
-            router.push('/verify-email');
+            router.push(`/verify-email?email=${encodeURIComponent(email)}`);
         } catch (error: any) {
             toast.error(error.message || 'Signup failed');
         } finally {

@@ -19,6 +19,7 @@ interface SponsorsMarqueeProps {
     duration?: number;
     aspectRatio?: 'square' | 'portrait';
     size?: 'normal' | 'large';
+    noSection?: boolean;
 }
 
 export function SponsorsMarquee({
@@ -28,15 +29,16 @@ export function SponsorsMarquee({
     reverse = false,
     duration = 30,
     aspectRatio = 'square',
-    size = 'normal'
+    size = 'normal',
+    noSection = false
 }: SponsorsMarqueeProps) {
     if (!isVisible || !sponsors || sponsors.length === 0) return null;
 
     // Duplicate sponsors to create a seamless infinite loop
     const duplicatedSponsors = [...sponsors, ...sponsors];
 
-    return (
-        <section className="py-24 bg-esummit-bg/40 backdrop-blur-md border-y border-white/5 relative overflow-hidden">
+    const content = (
+        <>
             {/* Background glowing orb */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-esummit-primary/10 blur-[120px] rounded-[100%] pointer-events-none" />
 
@@ -116,6 +118,14 @@ export function SponsorsMarquee({
                     ))}
                 </motion.div>
             </div>
+        </>
+    );
+
+    if (noSection) return content;
+
+    return (
+        <section className="py-24 bg-esummit-bg/40 backdrop-blur-md border-y border-white/5 relative overflow-hidden">
+            {content}
         </section>
     );
 }

@@ -137,7 +137,7 @@ const FeatureRow = ({ title, desc, icon: Icon, align = 'left', delay, image_url 
 export default function ESummitLandingDataLayer() {
     const containerRef = useRef(null);
     const { scrollYProgress } = useScroll({ target: containerRef });
-    const [registerLink, setRegisterLink] = useState('/esummit/login'); // Existing link for CTA at bottom
+    const [registerLink, setRegisterLink] = useState('/esummit/signup'); // Fixed to point to signup
     const [enrollLink, setEnrollLink] = useState('/esummit/signup'); // Default to signup for new section
 
     // Dynamic Data States
@@ -166,6 +166,7 @@ export default function ESummitLandingDataLayer() {
                 setRegisterLink('/esummit/events');
                 setEnrollLink('/esummit/profile');
             } else {
+                setRegisterLink('/esummit/signup');
                 setEnrollLink('/esummit/signup');
             }
         };
@@ -444,30 +445,35 @@ export default function ESummitLandingDataLayer() {
                 </section>
             )}
 
-            {/* Investors Section */}
-            <SponsorsMarquee
-                sponsors={investors as any}
-                heading={settings.investors_heading}
-                isVisible={settings.show_investors}
-                reverse={true}
-                duration={30}
-                aspectRatio="portrait"
-                size="large"
-            />
+            {/* Joined Marquee Section: Investors, Speakers, Sponsors */}
+            <section className="py-24 bg-esummit-bg/40 backdrop-blur-md border-y border-white/5 relative overflow-hidden flex flex-col gap-24">
+                <SponsorsMarquee
+                    sponsors={investors as any}
+                    heading={settings.investors_heading}
+                    isVisible={settings.show_investors}
+                    reverse={true}
+                    duration={30}
+                    aspectRatio="portrait"
+                    size="large"
+                    noSection={true}
+                />
 
-            {/* Sponsors Section */}
-            <SponsorsMarquee
-                sponsors={sponsors}
-                heading={settings.sponsors_heading}
-                isVisible={settings.show_sponsors}
-            />
+                {/* Speakers Section */}
+                <SpeakersMarquee
+                    speakers={speakers}
+                    heading={settings.speakers_heading}
+                    isVisible={settings.show_speakers}
+                    noSection={true}
+                />
 
-            {/* Speakers Section */}
-            <SpeakersMarquee
-                speakers={speakers}
-                heading={settings.speakers_heading}
-                isVisible={settings.show_speakers}
-            />
+                {/* Sponsors Section */}
+                <SponsorsMarquee
+                    sponsors={sponsors}
+                    heading={settings.sponsors_heading}
+                    isVisible={settings.show_sponsors}
+                    noSection={true}
+                />
+            </section>
 
             {/* Gallery Preview */}
             <GallerySection source="esummit" className="py-16 md:py-20 relative z-10 bg-gradient-to-b from-esummit-bg to-esummit-card/20" />

@@ -15,16 +15,17 @@ interface SpeakersMarqueeProps {
     speakers: Speaker[];
     heading: string;
     isVisible: boolean;
+    noSection?: boolean;
 }
 
-export function SpeakersMarquee({ speakers, heading, isVisible }: SpeakersMarqueeProps) {
+export function SpeakersMarquee({ speakers, heading, isVisible, noSection = false }: SpeakersMarqueeProps) {
     if (!isVisible || !speakers || speakers.length === 0) return null;
 
     // Duplicate speakers to create a seamless infinite loop
     const duplicatedSpeakers = [...speakers, ...speakers];
 
-    return (
-        <section className="py-24 mt-12 md:mt-16 bg-esummit-bg/40 backdrop-blur-md border-y border-white/5 relative overflow-hidden">
+    const content = (
+        <>
             {/* Background glowing orb */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-esummit-primary/10 blur-[120px] rounded-[100%] pointer-events-none" />
 
@@ -87,6 +88,14 @@ export function SpeakersMarquee({ speakers, heading, isVisible }: SpeakersMarque
                     ))}
                 </motion.div>
             </div>
+        </>
+    );
+
+    if (noSection) return content;
+
+    return (
+        <section className="py-24 bg-esummit-bg/40 backdrop-blur-md border-y border-white/5 relative overflow-hidden">
+            {content}
         </section>
     );
 }

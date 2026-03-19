@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
@@ -14,8 +14,32 @@ export default function ESummitSignup() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [checking, setChecking] = useState(true);
     const router = useRouter();
     const supabase = createClient();
+
+    useEffect(() => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'SIGNED_IN' && session) {
+                router.push('/esummit/profile');
+                return;
+            }
+
+            if (event === 'INITIAL_SESSION') {
+                setChecking(false);
+                return;
+            }
+
+            if (event === 'SIGNED_OUT') {
+                setChecking(false);
+                return;
+            }
+
+            setChecking(false);
+        });
+
+        return () => subscription.unsubscribe();
+    }, [supabase, router]);
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -48,7 +72,7 @@ export default function ESummitSignup() {
             }
 
             toast.success('Registration successful! Please verify your email.');
-            router.push('/esummit/verify-email');
+            router.push(`/esummit/verify-email?email=${encodeURIComponent(email)}`);
         } catch (error: any) {
             toast.error(error.message || 'Signup failed');
         } finally {

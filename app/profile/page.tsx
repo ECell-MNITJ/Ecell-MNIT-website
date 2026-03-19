@@ -12,6 +12,18 @@ export default async function Profile() {
         redirect('/login?next=/profile');
     }
 
+    // Check if profile is complete
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+    const isComplete = profile?.full_name && profile?.phone && profile?.age && profile?.gender;
+    if (!isComplete) {
+        redirect('/complete-profile?next=/profile');
+    }
+
     // Fetch registered events
     const { data: registrations, error } = await supabase
         .from('event_registrations')

@@ -115,12 +115,27 @@ export default function Login() {
     const [checking, setChecking] = useState(true);
 
     useEffect(() => {
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-            if (session) {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'SIGNED_IN' && session) {
                 router.push('/profile');
-            } else {
+                return;
+            } 
+            
+            if (event === 'INITIAL_SESSION') {
+                // If there's an initial session, let the user manually go to profile 
+                // or wait for them to click something. 
+                // To avoid loops, we don't auto-redirect here.
                 setChecking(false);
+                return;
             }
+
+            if (event === 'SIGNED_OUT') {
+                setChecking(false);
+                return;
+            }
+
+            // For any other event, just stop the loading spinner
+            setChecking(false);
         });
 
         return () => subscription.unsubscribe();

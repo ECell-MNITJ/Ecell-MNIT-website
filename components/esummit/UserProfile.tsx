@@ -17,6 +17,7 @@ export default function ESummitUserProfile({ user }: { user: any }) {
     const [caData, setCaData] = useState<any>(null);
     const [referrerData, setReferrerData] = useState<{ name: string, code: string } | null>(null);
     const [registrations, setRegistrations] = useState<any[]>([]);
+    const [passesEnabled, setPassesEnabled] = useState(false);
 
     // Form state
     const [formData, setFormData] = useState({
@@ -39,6 +40,15 @@ export default function ESummitUserProfile({ user }: { user: any }) {
     async function getProfile() {
         try {
             setLoading(true);
+
+            // Fetch Passes Settings
+            const { data: settings } = await supabase
+                .from('esummit_settings')
+                .select('passes_enabled')
+                .single();
+            if (settings?.passes_enabled) {
+                setPassesEnabled(true);
+            }
 
             // First check if profile exists
             let { data, error } = await supabase
@@ -617,7 +627,7 @@ export default function ESummitUserProfile({ user }: { user: any }) {
                                                 </div>
                                             </div>
 
-                                            {caData.status === 'approved' && (
+                                            {caData.status === 'approved' && passesEnabled && (
                                                 <div className="bg-[#0b132b] px-6 py-4 rounded-2xl border border-white/10 flex flex-col items-center">
                                                     <span className="text-[9px] font-black uppercase tracking-widest text-gray-500 mb-1">Referral Link</span>
                                                     <button

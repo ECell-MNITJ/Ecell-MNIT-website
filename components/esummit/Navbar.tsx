@@ -256,7 +256,7 @@ export default function EsNavbar() {
                                         </Link>
                                     ) : (
                                         <Link
-                                            href="/esummit/login"
+                                            href="/esummit/signup"
                                             className="block py-4 px-6 text-center bg-gradient-to-r from-esummit-primary to-esummit-accent text-white font-black uppercase tracking-[0.2em] text-xs rounded-2xl shadow-[0_0_20px_rgba(37,99,235,0.3)]"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
